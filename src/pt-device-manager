@@ -1,9 +1,11 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
-import subprocess
-import sys
-import time
-import os
+# The entry point for the application. Creates the controller and handles 
+# high-level config e.g. debug level etc.
 
-_debug_mode = False
+import ptdm_controller
+
+debug_level = 0
+
+controller = ptdm_controller(debug_level)
+controller.start()
