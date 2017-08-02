@@ -1,0 +1,9 @@
+[Unit]
+Description=pi-top device auto-detection and configuration daemon
+
+[Service]
+Restart=always
+ExecStart=/opt/pt-device-manager/pt-device-manager
+
+[Install]
+WantedBy=multi-user.target
