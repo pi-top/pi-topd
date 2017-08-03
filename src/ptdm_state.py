@@ -1,2 +1,2 @@
 
-# Potentially stores the state of devices.
+# Stores the state of the hub
