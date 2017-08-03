@@ -10,6 +10,7 @@ _controller_callback = None
 _zmq_context = None
 _zmq_socket = None
 
+
 def initialise(logger, controller):
 
 	global _logger
@@ -33,19 +34,19 @@ def start_listening():
 
 	time.sleep(5)
 
-	for i in range(15):
+	for i in range(100):
 		_logger.info ("Publishing message...")
 		
 		_zmq_socket.send("test")
 
-		time.sleep(5)
+		time.sleep(2)
 
 	stop_listening()
 
 
 def stop_listening():
 	
-	_logger.info ("Closing responder socket...")
+	_logger.info ("Closing publisher socket...")
 
 	_zmq_socket.close()
 

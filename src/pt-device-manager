@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 # The entry point for the application. Creates the controller and handles 
 # high-level config e.g. debug level etc.
