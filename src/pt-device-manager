@@ -3,7 +3,7 @@
 # The entry point for the application. Creates the controller and handles 
 # high-level config e.g. debug level etc.
 
-import ptdm_controller
+from ptdm_controller import ptdm_controller
 
 debug_level = 0
 
