@@ -23,7 +23,6 @@ def initialise(logger, controller):
 	_zmq_context = zmq.Context()
 
 
-
 def start_listening():
 
 	global _zmq_socket
@@ -31,7 +30,7 @@ def start_listening():
 	_logger.info ("Opening responder socket...")
 
 	_zmq_socket = _zmq_context.socket(zmq.REP)
-	_zmq_socket.bind("tcp://*:30004")
+	_zmq_socket.bind("tcp://127.0.0.1:30004")
 
 
 

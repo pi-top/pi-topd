@@ -2,7 +2,7 @@
 
 import ptdm_hub_manager
 import ptdm_peripheral_manager
-import ptdm_ipc_server
+import ptdm_publish_server
 import ptdm_logger
 
 def initialise():
@@ -11,13 +11,13 @@ def initialise():
 
 	#ptdm_hub_manager.initialise(ptdm_logger)
 	#ptdm_peripheral_manager.initialise(ptdm_logger)
-	ptdm_ipc_server.initialise(ptdm_logger, _on_get_brightness)
+	ptdm_publish_server.initialise(ptdm_logger, _on_get_brightness)
 
 def run():
 
 	ptdm_logger.info("Running device manager")
 
-	ptdm_ipc_server.start_listening()
+	ptdm_publish_server.start_listening()
 
 	
 def _on_get_brightness():
