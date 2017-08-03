@@ -1,6 +1,6 @@
 src/pt-device-manager           /opt/pt-device-manager/
 src/ptdm_controller.py          /opt/pt-device-manager/
 src/ptdm_state.py           	/opt/pt-device-manager/
-src/ptdm_ipc.py           		/opt/pt-device-manager/
+src/ptdm_ipc_server.py          /opt/pt-device-manager/
 src/ptdm_peripheral_manager.py	/opt/pt-device-manager/
 src/ptdm_hub_manager.py 		/opt/pt-device-manager/
