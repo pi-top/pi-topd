@@ -1,28 +1,27 @@
 # Instantiates and coordinates between the other classes
 
-from ptdm_hub_manager import ptdm_hub_manager
-from ptdm_peripheral_manager import ptdm_peripheral_manager
-from ptdm_ipc_server import ptdm_ipc_server
+import ptdm_hub_manager
+import ptdm_peripheral_manager
+import ptdm_ipc_server
+import ptdm_logger
 
-class ptdm_controller:
+def initialise():
+	
+	ptdm_logger.info("Initialising device manager")	
 
-	def __init__(self, debug_level):
-		
-		self._debug_level = debug_level
-		self._hub_manager = ptdm_hub_manager(self._debug_level)
-		self._peripheral_manager = ptdm_peripheral_manager(self._debug_level)
-		self._ipc_server = ptdm_ipc_server(self._debug_level, self)
+	#ptdm_hub_manager.initialise(ptdm_logger)
+	#ptdm_peripheral_manager.initialise(ptdm_logger)
+	ptdm_ipc_server.initialise(ptdm_logger, _on_get_brightness)
 
+def run():
 
-	def start(self):
+	ptdm_logger.info("Running device manager")
 
-		#self._ipc_server.send_message()
-		self._ipc_server.start_listening()
-		
-		
+	ptdm_ipc_server.start_listening()
 
-	def on_get_brightness(self):
+	
+def _on_get_brightness():
 
-		# Get the brightness from the hub manager
+	# Get the brightness from the hub manager
 
-		return 100
+	return 100
