@@ -6,20 +6,16 @@ import zmq
 import time
 
 _logger = None
-_controller_callback = None
 _zmq_context = None
 _zmq_socket = None
 
 
-def initialise(logger, controller):
+def initialise(logger):
 
 	global _logger
-	global _controller_callback
 	global _zmq_context
 
 	_logger = logger
-	_controller_callback = controller
-
 	_zmq_context = zmq.Context()
 
 
@@ -30,14 +26,15 @@ def start_listening():
 	_logger.info ("Opening publisher socket...")
 
 	_zmq_socket = _zmq_context.socket(zmq.PUB)
-	_zmq_socket.bind("tcp://*:30003")
+	_zmq_socket.bind("tcp://127.0.0.1:5561")
 
 	time.sleep(5)
 
 	for i in range(100):
+
 		_logger.info ("Publishing message...")
 		
-		_zmq_socket.send("test")
+		_zmq_socket.send_string("test")
 
 		time.sleep(2)
 
