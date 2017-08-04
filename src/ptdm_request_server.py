@@ -2,43 +2,60 @@
 # Creates an IPC server for clients to connect to. Sends/receives messages 
 # from these clients and responds accordingly.
 
-import zmq
+import socketserver
 import time
+from threading import Thread
 
 _logger = None
-_controller_callback = None
-_zmq_context = None
-_zmq_socket = None
+_on_get_brightness = None
+_thread = None
+_tcp_server = None
+
+_max_clients = 5
 
 
-def initialise(logger, controller):
+class RequestHandler(socketserver.BaseRequestHandler):
+
+	def handle(self):
+		
+		data = str(self.request.recv(1024).strip())
+
+		_logger.info ("Received request:" + data)
+
+		# Check the type of request and get a response
+
+		if (True):
+
+			response = _on_get_brightness()
+			self.request.sendall(56)
+
+		else:
+
+			self.request.sendall("unknown request")
+
+		_logger.info ("Reply sent")
+
+
+def initialise(logger, on_get_brightness):
 
 	global _logger
-	global _controller_callback
-	global _zmq_context
+	global _on_get_brightness
 
 	_logger = logger
-	_controller_callback = controller
-
-	_zmq_context = zmq.Context()
+	_on_get_brightness = on_get_brightness
 
 
 def start_listening():
 
-	global _zmq_socket
+	global _thread
 
-	_logger.info ("Opening responder socket...")
+	_logger.info ("Opening server...")
 
-	_zmq_socket = _zmq_context.socket(zmq.REP)
-	_zmq_socket.bind("tcp://127.0.0.1:30004")
+	address = ("127.0.0.1", 30003)
+	_tcp_server = socketserver.TCPServer(address, RequestHandler)
 
+	_thread = Thread(target=_tcp_server.serve_forever)
+	_thread.setDaemon(True)
+	_thread.start()
 
-
-def stop_listening():
-	
-	_logger.info ("Closing responder socket...")
-
-	_zmq_socket.close()
-
-	_logger.info ("Done.")
-
+	_thread.join()
