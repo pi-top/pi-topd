@@ -26,11 +26,11 @@ def start_listening():
 	_logger.info ("Opening publisher socket...")
 
 	_zmq_socket = _zmq_context.socket(zmq.PUB)
-	_zmq_socket.bind("tcp://127.0.0.1:5561")
+	_zmq_socket.bind("tcp://127.0.0.1:6666")
 
 	time.sleep(5)
 
-	for i in range(100):
+	for i in range(10000):
 
 		_logger.info ("Publishing message...")
 		
