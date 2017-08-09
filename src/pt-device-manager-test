@@ -18,7 +18,7 @@ for i in range(100):
 
 	print ("Sending message...")
 	
-	zmq_socket.send_string("Test")
+	zmq_socket.send_string("get_brightness")
 
 	print ("Waiting for response...")
 	response = zmq_socket.recv_string()
