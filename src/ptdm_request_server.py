@@ -1,6 +1,6 @@
 
 # Creates a server for clients to connect to, and then responds to
-# queries from these clients for device-related information.
+# queries from these clients for device-related debugrmation.
 
 import zmq
 import time
@@ -13,11 +13,17 @@ _thread = None
 _continue = True
 _continue = True
 
-def initialise(logger):
+# Callback methods
+
+_fn_on_get_brightness = None
+
+def initialise(logger, fn_on_get_brightness):
 
 	global _logger
+	global _fn_on_get_brightness
 
 	_logger = logger
+	_fn_on_get_brightness = fn_on_get_brightness
 
 
 def start_listening():
@@ -26,7 +32,7 @@ def start_listening():
 	global _zmq_socket
 	global _thread
 	
-	_logger.info ("Opening responder socket...")
+	_logger.debug ("Opening responder socket...")
 
 	_zmq_context = zmq.Context()
 	_zmq_socket = _zmq_context.socket(zmq.REP)
@@ -42,19 +48,19 @@ def stop_listening():
 	
 	global _continue
 
-	_logger.info ("Closing responder socket...")
+	_logger.debug ("Closing responder socket...")
 
 	_continue = False
 	_thread.join()
 
 	_zmq_socket.close()
 
-	_logger.info ("Done.")
+	_logger.debug ("Done.")
 
 
 def _thread_method():
 
-	_logger.info ("Listening for requests...")
+	_logger.debug ("Listening for requests...")
 
 	while _continue:
 
@@ -66,9 +72,23 @@ def _thread_method():
 		if (len(events) > 0):
 
 			message = _zmq_socket.recv_string()
-			_logger.info ("Request received: " + message)
+			_logger.debug ("Request received: " + message)
 			
-			time.sleep(0.1)
+			response = _route_request(message)
+			response_string = str(response)
 
-			_logger.info ("Sending response...")
-			_zmq_socket.send_string("Hello")
+			_logger.debug ("Sending response: " + response_string)
+			_zmq_socket.send_string(response_string)
+
+
+def _route_request(message):
+
+	if ("brightness" in message):
+
+		return _fn_on_get_brightness()
+
+	else:
+
+		_logger.error("Unknown request received: " + message)
+
+		return "bad request"

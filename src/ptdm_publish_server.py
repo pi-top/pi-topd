@@ -22,7 +22,7 @@ def start_listening():
 	global _zmq_context
 	global _zmq_socket
 	
-	_logger.info ("Opening publisher socket...")
+	_logger.debug ("Opening publisher socket...")
 
 	_zmq_context = zmq.Context()
 	_zmq_socket = _zmq_context.socket(zmq.PUB)
@@ -31,15 +31,15 @@ def start_listening():
 
 def stop_listening():
 	
-	_logger.info ("Closing publisher socket...")
+	_logger.debug ("Closing publisher socket...")
 
 	_zmq_socket.close()
 
-	_logger.info ("Done.")
+	_logger.debug ("Done.")
 
 
 def send_message(message):
 
-    _logger.info ("Publishing message: " + message)
+    _logger.debug ("Publishing message: " + message)
 	    
     _zmq_socket.send_text(message)
