@@ -1,61 +1,74 @@
 
-# Creates an IPC server for clients to connect to. Sends/receives messages 
-# from these clients and responds accordingly.
+# Creates a server for clients to connect to, and then responds to
+# queries from these clients for device-related information.
 
-import socketserver
+import zmq
 import time
-from threading import Thread
+import threading
 
 _logger = None
-_on_get_brightness = None
+_zmq_context = None
+_zmq_socket = None
 _thread = None
-_tcp_server = None
+_continue = True
+_continue = True
 
-_max_clients = 5
-
-
-class RequestHandler(socketserver.BaseRequestHandler):
-
-	def handle(self):
-		
-		data = str(self.request.recv(1024).strip())
-
-		_logger.info ("Received request:" + data)
-
-		# Check the type of request and get a response
-
-		if (True):
-
-			response = _on_get_brightness()
-			self.request.sendall(56)
-
-		else:
-
-			self.request.sendall("unknown request")
-
-		_logger.info ("Reply sent")
-
-
-def initialise(logger, on_get_brightness):
+def initialise(logger):
 
 	global _logger
-	global _on_get_brightness
 
 	_logger = logger
-	_on_get_brightness = on_get_brightness
 
 
 def start_listening():
 
+	global _zmq_context
+	global _zmq_socket
 	global _thread
+	
+	_logger.info ("Opening responder socket...")
 
-	_logger.info ("Opening server...")
+	_zmq_context = zmq.Context()
+	_zmq_socket = _zmq_context.socket(zmq.REP)
+	_zmq_socket.bind("tcp://*:3782")
 
-	address = ("127.0.0.1", 30003)
-	_tcp_server = socketserver.TCPServer(address, RequestHandler)
+	time.sleep(0.5)
 
-	_thread = Thread(target=_tcp_server.serve_forever)
-	_thread.setDaemon(True)
+	_thread = threading.Thread(target=_thread_method)
 	_thread.start()
 
+
+def stop_listening():
+	
+	global _continue
+
+	_logger.info ("Closing responder socket...")
+
+	_continue = False
 	_thread.join()
+
+	_zmq_socket.close()
+
+	_logger.info ("Done.")
+
+
+def _thread_method():
+
+	_logger.info ("Listening for requests...")
+
+	while _continue:
+
+		poller = zmq.Poller()
+		poller.register(_zmq_socket, zmq.POLLIN)
+		
+		events = poller.poll(500)
+
+		if (len(events) > 0):
+
+			message = _zmq_socket.recv_string()
+			_logger.info ("Request received: " + message)
+			
+			time.sleep(0.1)
+
+			_logger.info ("Sending response...")
+			_zmq_socket.send_string("Hello")

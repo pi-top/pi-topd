@@ -6,23 +6,26 @@ import zmq
 import time
 
 zmq_context = zmq.Context()
-zmq_socket = zmq_context.socket(zmq.SUB)
+zmq_socket = zmq_context.socket(zmq.REQ)
 
 print ("Connecting...")
-zmq_socket.connect("tcp://127.0.0.1:3781")
-zmq_socket.subscribe("")
+zmq_socket.connect("tcp://127.0.0.1:3782")
 print ("OK.")
 
 time.sleep(1)
 
 for i in range(100):
 
-	print ("Waiting for message...")
+	print ("Sending message...")
 	
-	print (zmq_socket.recv())
+	zmq_socket.send_string("Test")
 
-	time.sleep(2)
+	print ("Waiting for response...")
+	response = zmq_socket.recv_string()
 
+	print ("Received: " + response)
+
+	time.sleep(1)
 
 print ("Closing socket...")
 
