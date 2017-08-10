@@ -28,12 +28,15 @@ def start_listening():
 	_zmq_socket = _zmq_context.socket(zmq.PUB)
 	_zmq_socket.bind("tcp://*:3781")
 
+	_logger.info ("Publish server ready...")
+
 
 def stop_listening():
 	
 	_logger.debug ("Closing publisher socket...")
 
 	_zmq_socket.close()
+	_zmq_context.destroy()
 
 	_logger.debug ("Done.")
 

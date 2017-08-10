@@ -54,13 +54,14 @@ def stop_listening():
 	_thread.join()
 
 	_zmq_socket.close()
+	_zmq_context.destroy()
 
 	_logger.debug ("Done.")
 
 
 def _thread_method():
 
-	_logger.debug ("Listening for requests...")
+	_logger.info ("Listening for requests...")
 
 	while _continue:
 

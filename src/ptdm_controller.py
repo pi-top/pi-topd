@@ -4,33 +4,38 @@ import ptdm_hub_manager
 import ptdm_peripheral_manager
 import ptdm_publish_server
 import ptdm_request_server
-import ptdm_logger
+from ptdm_logger import Logger
 import time
 import signal
 import sys
+import logging
 
 _continue_running = True
+_logger = None
 
-def _signal_handler(signal, frame):
 
-    ptdm_logger.info("Signal received. Stopping...")
-    stop()
+# Settings
+
+LOG_LEVEL = logging.DEBUG
 
 
 def initialise():
 	
-	ptdm_logger.info("Initialising device manager")	
+	global _logger
 
-	#ptdm_hub_manager.initialise(ptdm_logger)
-	#ptdm_peripheral_manager.initialise(ptdm_logger)
-    
-	ptdm_publish_server.initialise(ptdm_logger)
-	ptdm_request_server.initialise(ptdm_logger, _on_get_brightness)
+	_logger = Logger(LOG_LEVEL)
+
+	_logger.info("Initialising device manager")	
+
+	#ptdm_hub_manager.initialise(_logger)
+	#ptdm_peripheral_manager.initialise(_logger)
+	ptdm_publish_server.initialise(_logger)
+	ptdm_request_server.initialise(_logger, _on_get_brightness)
 
 
 def run():
 
-	ptdm_logger.info("Running device manager")
+	_logger.info("Running device manager")
 
 	ptdm_publish_server.start_listening()
 	ptdm_request_server.start_listening()
@@ -61,4 +66,11 @@ def _on_get_brightness():
 
 # Capture interrupts
 
+def _signal_handler(signal, frame):
+
+    _logger.info("Signal received. Stopping...")
+    stop()
+
+
 signal.signal(signal.SIGINT, _signal_handler)
+signal.signal(signal.SIGTERM, _signal_handler)
