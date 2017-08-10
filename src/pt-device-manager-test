@@ -16,9 +16,9 @@ time.sleep(1)
 
 for i in range(100):
 
-	print ("Sending message...")
+	print ("Sending ping message...")
 	
-	zmq_socket.send_string("get_brightness")
+	zmq_socket.send_string("113|40")
 
 	print ("Waiting for response...")
 	response = zmq_socket.recv_string()

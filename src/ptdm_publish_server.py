@@ -95,11 +95,7 @@ def publish_battery_time_remaining_changed(new_time):
 
 def _send_message(message_id, parameters):
 
-	message_to_send = str(message_id)
-
-	for message_param in parameters:
-		message_to_send += "|"
-		message_to_send += str(message_param)
+	message_to_send = ptdm_messages.build_message(message_id, parameters)
 
 	_logger.debug ("Publishing message: " + message_to_send)
 		
