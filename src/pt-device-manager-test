@@ -4,6 +4,9 @@
 
 import zmq
 import time
+import ptdm_messages
+
+
 
 zmq_context = zmq.Context()
 zmq_socket = zmq_context.socket(zmq.REQ)
@@ -12,20 +15,52 @@ print ("Connecting...")
 zmq_socket.connect("tcp://127.0.0.1:3782")
 print ("OK.")
 
-time.sleep(1)
+time.sleep(0.5)
 
-for i in range(100):
+print ("Testing REQ_PING...")
+zmq_socket.send_string(str(ptdm_messages.REQ_PING))
+message_id, parameters = ptdm_messages.parse_message(zmq_socket.recv_string())
 
-	print ("Sending ping message...")
-	
-	zmq_socket.send_string("113|40")
+if (message_id != ptdm_messages.RSP_PONG):
+	print ("Unexpected response: " + str(message_id))
+else:
+	print ("OK")
 
-	print ("Waiting for response...")
-	response = zmq_socket.recv_string()
+time.sleep(0.1)
 
-	print ("Received: " + response)
+print ("Testing REQ_GET_HUB_INFO...")
+zmq_socket.send_string(str(ptdm_messages.REQ_GET_HUB_INFO))
+message_id, parameters = ptdm_messages.parse_message(zmq_socket.recv_string())
 
-	time.sleep(1)
+if (message_id != ptdm_messages.RSP_GET_HUB_INFO):
+	print ("Unexpected response: " + str(message_id))
+else:
+	print ("OK")
+
+time.sleep(0.1)
+
+print ("Testing REQ_GET_BRIGHTNESS...")
+zmq_socket.send_string(str(ptdm_messages.REQ_GET_BRIGHTNESS))
+message_id, parameters = ptdm_messages.parse_message(zmq_socket.recv_string())
+
+if (message_id != ptdm_messages.RSP_GET_BRIGHTNESS):
+	print ("Unexpected response: " + str(message_id))
+else:
+	print ("OK")
+
+time.sleep(0.1)
+
+print ("Testing REQ_SET_BRIGHTNESS...")
+zmq_socket.send_string(str(ptdm_messages.REQ_SET_BRIGHTNESS) + "|23")
+message_id, parameters = ptdm_messages.parse_message(zmq_socket.recv_string())
+
+if (message_id != ptdm_messages.RSP_SET_BRIGHTNESS):
+	print ("Unexpected response: " + str(message_id))
+else:
+	print ("OK")
+
+time.sleep(0.1)
+
 
 print ("Closing socket...")
 
