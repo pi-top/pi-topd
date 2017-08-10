@@ -30,7 +30,7 @@ def initialise():
 	#ptdm_hub_manager.initialise(_logger)
 	#ptdm_peripheral_manager.initialise(_logger)
 	ptdm_publish_server.initialise(_logger)
-	ptdm_request_server.initialise(_logger, _on_get_brightness)
+	ptdm_request_server.initialise(_logger, _on_get_brightness, _on_set_brightness)
 
 
 def run():
@@ -57,6 +57,8 @@ def stop():
 	_continue_running = False
 
 
+# Internal methods
+
 def _on_get_brightness():
 
 	# Get the brightness from the hub manager
@@ -64,12 +66,18 @@ def _on_get_brightness():
 	return 100
 
 
+def _on_set_brightness(brightness):
+
+	# Set the brightness in the hub manager
+	print ("Brightness set to " + str(brightness))
+	
+
 # Capture interrupts
 
 def _signal_handler(signal, frame):
 
-    _logger.info("Signal received. Stopping...")
-    stop()
+	_logger.info("Signal received. Stopping...")
+	stop()
 
 
 signal.signal(signal.SIGINT, _signal_handler)
