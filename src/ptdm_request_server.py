@@ -17,16 +17,19 @@ _continue = True
 
 _fn_on_get_brightness = None
 _fn_on_set_brightness = None
+_fn_on_get_hub_info = None
 
-def initialise(logger, fn_on_get_brightness, fn_on_set_brightness):
+def initialise(logger, fn_on_get_brightness, fn_on_set_brightness, fn_on_get_hub_info):
 
 	global _logger
 	global _fn_on_get_brightness
 	global _fn_on_set_brightness
+	global _fn_on_get_hub_info
 
 	_logger = logger
 	_fn_on_get_brightness = fn_on_get_brightness
 	_fn_on_set_brightness = fn_on_set_brightness
+	_fn_on_get_hub_info = fn_on_get_hub_info
 
 
 def start_listening():

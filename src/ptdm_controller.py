@@ -30,7 +30,7 @@ def initialise():
 	#ptdm_hub_manager.initialise(_logger)
 	#ptdm_peripheral_manager.initialise(_logger)
 	ptdm_publish_server.initialise(_logger)
-	ptdm_request_server.initialise(_logger, _on_get_brightness, _on_set_brightness)
+	ptdm_request_server.initialise(_logger, _on_get_brightness, _on_set_brightness, _fn_on_get_hub_info)
 
 
 def run():
@@ -70,7 +70,13 @@ def _on_set_brightness(brightness):
 
 	# Set the brightness in the hub manager
 	print ("Brightness set to " + str(brightness))
-	
+
+
+def _fn_on_get_hub_info():
+
+	# Get the device id
+	return 1
+
 
 # Capture interrupts
 
