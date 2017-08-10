@@ -2,11 +2,13 @@ Source: pt-device-manager
 Section: utils
 Priority: optional
 Maintainer: pi-top <deb-maintainers@pi-top.com>
+Build-Depends: debhelper (>= 7), dh-python
 Standards-Version: 3.8.4
 Depends: python3-zmq
 Homepage: https://pi-top.com/
 
 Package: pt-device-manager
 Architecture: armhf
+Depends: ${misc:Depends}, ${python3:Depends}, python3-pip, libzmq3-dev, python3-zmq
 Description: pi-top Device Manager -
  Core pi-top application for interfacing with pi-top hardware
