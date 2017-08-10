@@ -1,11 +1,8 @@
-src/pt-device-manager				/opt/pt-device-manager/
-src/ptdm_controller.py				/opt/pt-device-manager/
-src/ptdm_hub_manager.py				/opt/pt-device-manager/
-src/ptdm_logger.py					/opt/pt-device-manager/
-src/ptdm_peripheral_manager.py		/opt/pt-device-manager/
-src/ptdm_publish_server.py			/opt/pt-device-manager/
-src/ptdm_request_server.py			/opt/pt-device-manager/
-src/ptdm_state.py					/opt/pt-device-manager/
-src/python3-pt-hub/pthub.py			/opt/pt-device-manager/python3-pt-hub
-
-
+src/pt-device-manager                   /usr/lib/pt-device-manager/
+src/ptdm_controller.py                  /usr/lib/pt-device-manager/
+src/ptdm_hub_manager.py                 /usr/lib/pt-device-manager/
+src/ptdm_logger.py                      /usr/lib/pt-device-manager/
+src/ptdm_peripheral_manager.py          /usr/lib/pt-device-manager/
+src/ptdm_publish_server.py              /usr/lib/pt-device-manager/
+src/ptdm_request_server.py              /usr/lib/pt-device-manager/
+src/ptdm_state.py                       /usr/lib/pt-device-manager/
