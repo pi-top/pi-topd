@@ -5,7 +5,7 @@
 import zmq
 import time
 import threading
-import ptdm_messages
+from ptdm_messages import Message
 
 _logger = None
 _zmq_context = None
@@ -91,49 +91,49 @@ def _process_request(request):
 
 	try:
 
-		message_type, parameters = ptdm_messages.parse_message(request)
+		message = Message(request)
 
-		if (message_type == ptdm_messages.REQ_PING):
+		if (message.message_id() == Message.REQ_PING):
 
-			ptdm_messages.validate_parameters(parameters, 0)
+			message.validate_parameters([])
 
-			return ptdm_messages.build_message(ptdm_messages.RSP_PONG, [])
+			return Message.build_message_string(Message.RSP_PING, [])
 
-		elif (message_type == ptdm_messages.REQ_GET_HUB_INFO):
+		elif (message.message_id() == Message.REQ_GET_HUB_INFO):
 
-			ptdm_messages.validate_parameters(parameters, 0)
+			message.validate_parameters([])
 
 			device_id = _fn_on_get_hub_info()
 
-			return ptdm_messages.build_message(ptdm_messages.RSP_GET_HUB_INFO, [ device_id ])
+			return Message.build_message_string(Message.RSP_GET_HUB_INFO, [ device_id ])
 
-		elif (message_type == ptdm_messages.REQ_GET_BRIGHTNESS):
+		elif (message.message_id() == Message.REQ_GET_BRIGHTNESS):
 
-			ptdm_messages.validate_parameters(parameters, 0)
+			message.validate_parameters([])
 
 			brightness = _fn_on_get_brightness()
 
-			return ptdm_messages.build_message(ptdm_messages.RSP_GET_BRIGHTNESS, [ brightness ])
+			return Message.build_message_string(Message.RSP_GET_BRIGHTNESS, [ brightness ])
 
-		elif (message_type == ptdm_messages.REQ_SET_BRIGHTNESS):
+		elif (message.message_id() == Message.REQ_SET_BRIGHTNESS):
 
-			ptdm_messages.validate_parameters(parameters, 1)
+			message.validate_parameters([ int ])
 			
-			_fn_on_set_brightness(parameters[0])
+			_fn_on_set_brightness(int(message.parameters()[0]))
 
-			return ptdm_messages.build_message(ptdm_messages.RSP_SET_BRIGHTNESS, [])
+			return Message.build_message_string(Message.RSP_SET_BRIGHTNESS, [])
 
 		else:
 
 			_logger.error("Unsupported request received: " + request)
-			return ptdm_messages.build_message(ptdm_messages.RSP_ERR_UNSUPPORTED, [])
+			return Message.build_message_string(Message.RSP_ERR_UNSUPPORTED, [])
 
 	except ValueError as ex:
 		
 		_logger.error("Error processing message: " + str(ex))
-		return ptdm_messages.build_message(ptdm_messages.RSP_ERR_MALFORMED, [])
+		return Message.build_message_string(Message.RSP_ERR_MALFORMED, [])
 
 	except Exception as ex:
 
 		_logger.error("Unknown error processing message: " + str(ex))
-		return ptdm_messages.build_message(ptdm_messages.RSP_ERR_SERVER, [])
+		return Message.build_message_string(Message.RSP_ERR_SERVER, [])
