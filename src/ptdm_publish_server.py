@@ -6,101 +6,98 @@ import zmq
 import time
 import ptdm_messages
 
-_logger = None
-_zmq_context = None
-_zmq_socket = None
-_continue = True
+class PublishServer():
 
-def initialise(logger):
+	def initialise(self, logger):
 
-	global _logger
-
-	_logger = logger
+		self._logger = logger
 
 
-def start_listening():
+	def start_listening(self):
 
-	global _zmq_context
-	global _zmq_socket
-	
-	_logger.debug ("Opening publisher socket...")
+		self._logger.debug ("Opening publisher socket...")
 
-	try:
-		_zmq_context = zmq.Context()
-		_zmq_socket = _zmq_context.socket(zmq.PUB)
-		_zmq_socket.bind("tcp://*:3781")
-		_logger.info ("Publish server ready...")
+		try:
+			self._zmq_context = zmq.Context()
+			self._zmq_socket = self._zmq_context.socket(zmq.PUB)
+			self._zmq_socket.bind("tcp://*:3781")
+			self._logger.info ("Publish server ready...")
 
-	except zmq.error.ZMQError as ex:
-		_logger.error("Error starting the publish server: " + str(ex))
-		raise ex
+		except zmq.error.ZMQError as ex:
+			self._logger.error("Error starting the publish server: " + str(ex))
+			raise ex
 
 
-def stop_listening():
-	
-	_logger.debug ("Closing publisher socket...")
-
-	_zmq_socket.close()
-	_zmq_context.destroy()
-
-	_logger.debug ("Done.")
-
-
-def publish_brightness_changed(new_brightness):
-
-	_logger.debug ("Publishing brightness changed")
-	_send_message(ptdm_messages.PUB_BRIGHTNESS_CHANGED, [ new_brightness ])
-
-
-def publish_peripheral_connected(peripheral_id):
-
-	_logger.debug ("Publishing peripheral connected")
-	_send_message(ptdm_messages.PUB_PERIPHERAL_CONNECTED, [ peripheral_id ])
-
-
-def publish_peripheral_disconnected(peripheral_id):
-
-	_logger.debug ("Publishing peripheral disconnected")
-	_send_message(ptdm_messages.PUB_PERIPHERAL_DISCONNECTED, [ peripheral_id ])
-
-
-def publish_shutdown_requested():
-
-	_logger.debug ("Publishing shutdown requested")
-	_send_message(ptdm_messages.PUB_SHUTDOWN_REQUESTED, [ ])
-
-
-def publish_reboot_required():
-
-	_logger.debug ("Publishing reboot required")
-	_send_message(ptdm_messages.PUB_REBOOT_REQUIRED, [ ])
-
-
-def publish_battery_charging_state_changed(connected_int):
-
-	_logger.debug ("Publishing battery charging state changed")
-
-	_send_message(ptdm_messages.PUB_BATTERY_CHARGING_STATE_CHANGED, [ connected_int ])
-
-
-def publish_battery_capacity_changed(new_capacity):
-
-	_logger.debug ("Publishing battery capacity changed")
-	_send_message(ptdm_messages.PUB_BATTERY_CAPACITY_CHANGED, [ new_capacity ])
-
-
-def publish_battery_time_remaining_changed(new_time):
-
-	_logger.debug ("Publishing battery time remaining changed")
-	_send_message(ptdm_messages.PUB_BATTERY_TIME_REMAINING_CHANGED, [ new_time ])
-
-
-# Internal functions
-
-def _send_message(message_id, parameters):
-
-	message_to_send = ptdm_messages.build_message(message_id, parameters)
-
-	_logger.debug ("Publishing message: " + message_to_send)
+	def stop_listening(self):
 		
-	_zmq_socket.send_string(message_to_send)
+		self._logger.debug ("Closing publisher socket...")
+
+		self._zmq_socket.close()
+		self._zmq_context.destroy()
+
+		self._logger.debug ("Done.")
+
+
+	def publish_brightness_changed(self, new_brightness):
+
+		self._logger.debug ("Publishing brightness changed")
+		self._send_message(ptdm_messages.PUB_BRIGHTNESS_CHANGED, [ new_brightness ])
+
+
+	def publish_peripheral_connected(self, peripheral_id):
+
+		self._logger.debug ("Publishing peripheral connected")
+		self._send_message(ptdm_messages.PUB_PERIPHERAL_CONNECTED, [ peripheral_id ])
+
+
+	def publish_peripheral_disconnected(self, peripheral_id):
+
+		self._logger.debug ("Publishing peripheral disconnected")
+		self._send_message(ptdm_messages.PUB_PERIPHERAL_DISCONNECTED, [ peripheral_id ])
+
+
+	def publish_shutdown_requested(self):
+
+		self._logger.debug ("Publishing shutdown requested")
+		self._send_message(ptdm_messages.PUB_SHUTDOWN_REQUESTED, [ ])
+
+
+	def publish_reboot_required(self):
+
+		self._logger.debug ("Publishing reboot required")
+		self._send_message(ptdm_messages.PUB_REBOOT_REQUIRED, [ ])
+
+
+	def publish_battery_charging_state_changed(self, connected_int):
+
+		self._logger.debug ("Publishing battery charging state changed")
+
+		self._send_message(ptdm_messages.PUB_BATTERY_CHARGING_STATE_CHANGED, [ connected_int ])
+
+
+	def publish_battery_capacity_changed(self, new_capacity):
+
+		self._logger.debug ("Publishing battery capacity changed")
+		self._send_message(ptdm_messages.PUB_BATTERY_CAPACITY_CHANGED, [ new_capacity ])
+
+
+	def publish_battery_time_remaining_changed(self, new_time):
+
+		self._logger.debug ("Publishing battery time remaining changed")
+		self._send_message(ptdm_messages.PUB_BATTERY_TIME_REMAINING_CHANGED, [ new_time ])
+
+
+	# Internal functions
+
+	def _send_message(self, message_id, parameters):
+
+		message_to_send = ptdm_messages.build_message(message_id, parameters)
+
+		self._logger.debug ("Publishing message: " + message_to_send)
+		
+		try:	
+			self._zmq_socket.send_string(message_to_send)
+
+		except zmq.error.ZMQError as ex:
+			self._logger.error("Communication error in publish server: " + str(ex))
+

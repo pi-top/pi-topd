@@ -1,47 +1,51 @@
 # Instantiates and coordinates between the other classes
 
 from ptdm_logger import Logger
-import ptdm_hub_manager
-import ptdm_peripheral_manager
-import ptdm_publish_server
-import ptdm_request_server
+from ptdm_hub_manager import HubManager
+from ptdm_peripheral_manager import PeripheralManager
+from ptdm_publish_server import PublishServer
+from ptdm_request_server import RequestServer
 import time
 import sys
 import logging
 
-
-
-LOG_LEVEL = logging.DEBUG
-
-
 class Controller():
 
-	def initialise(self):
+	def initialise(self, log_level):
 		
 		self._continue_running = True
-		self._logger = Logger(LOG_LEVEL)
+		self._logger = Logger(log_level)
 
 		self._logger.info("Initialising device manager")	
 
-		#ptdm_hub_manager.initialise(self._logger)
-		#ptdm_peripheral_manager.initialise(self._logger)
-		ptdm_publish_server.initialise(self._logger)
-		ptdm_request_server.initialise(self._logger, self)
+		# Create classes
+
+		self._hub_manager = HubManager()
+		self._peripheral_manager = PeripheralManager()
+		self._publish_server = PublishServer()
+		self._request_server = RequestServer()
+
+		# Initialise
+
+		self._hub_manager.initialise(self._logger, self)
+		self._peripheral_manager.initialise(self._logger, self)
+		self._publish_server.initialise(self._logger)
+		self._request_server.initialise(self._logger, self)
 
 
 	def run(self):
 
 		self._logger.info("Running device manager")
 
-		ptdm_publish_server.start_listening()
-		ptdm_request_server.start_listening()
+		self._publish_server.start_listening()
+		self._request_server.start_listening()
 
 		while (self._continue_running):
 
 			time.sleep(0.5)
 
-		ptdm_request_server.stop_listening()
-		ptdm_publish_server.stop_listening()
+		self._request_server.stop_listening()
+		self._publish_server.stop_listening()
 
 		sys.exit(0)
 
@@ -52,7 +56,9 @@ class Controller():
 		self._continue_running = False
 
 
-	# Callback methods
+	###########################################
+	# Request server callback methods
+	###########################################
 
 	def _on_request_get_brightness(self):
 
@@ -73,3 +79,7 @@ class Controller():
 		return 1
 
 
+	###########################################
+	# Hub Manager callback methods
+	###########################################
+	
