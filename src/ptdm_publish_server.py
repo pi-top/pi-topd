@@ -4,7 +4,7 @@
 
 import zmq
 import time
-import ptdm_messages
+from ptdm_messages import Message
 
 class PublishServer():
 
@@ -41,57 +41,57 @@ class PublishServer():
 	def publish_brightness_changed(self, new_brightness):
 
 		self._logger.debug ("Publishing brightness changed")
-		self._send_message(ptdm_messages.PUB_BRIGHTNESS_CHANGED, [ new_brightness ])
+		self._send_message(Message.PUB_BRIGHTNESS_CHANGED, [ new_brightness ])
 
 
 	def publish_peripheral_connected(self, peripheral_id):
 
 		self._logger.debug ("Publishing peripheral connected")
-		self._send_message(ptdm_messages.PUB_PERIPHERAL_CONNECTED, [ peripheral_id ])
+		self._send_message(Message.PUB_PERIPHERAL_CONNECTED, [ peripheral_id ])
 
 
 	def publish_peripheral_disconnected(self, peripheral_id):
 
 		self._logger.debug ("Publishing peripheral disconnected")
-		self._send_message(ptdm_messages.PUB_PERIPHERAL_DISCONNECTED, [ peripheral_id ])
+		self._send_message(Message.PUB_PERIPHERAL_DISCONNECTED, [ peripheral_id ])
 
 
 	def publish_shutdown_requested(self):
 
 		self._logger.debug ("Publishing shutdown requested")
-		self._send_message(ptdm_messages.PUB_SHUTDOWN_REQUESTED, [ ])
+		self._send_message(Message.PUB_SHUTDOWN_REQUESTED, [ ])
 
 
 	def publish_reboot_required(self):
 
 		self._logger.debug ("Publishing reboot required")
-		self._send_message(ptdm_messages.PUB_REBOOT_REQUIRED, [ ])
+		self._send_message(Message.PUB_REBOOT_REQUIRED, [ ])
 
 
 	def publish_battery_charging_state_changed(self, connected_int):
 
 		self._logger.debug ("Publishing battery charging state changed")
 
-		self._send_message(ptdm_messages.PUB_BATTERY_CHARGING_STATE_CHANGED, [ connected_int ])
+		self._send_message(Message.PUB_BATTERY_CHARGING_STATE_CHANGED, [ connected_int ])
 
 
 	def publish_battery_capacity_changed(self, new_capacity):
 
 		self._logger.debug ("Publishing battery capacity changed")
-		self._send_message(ptdm_messages.PUB_BATTERY_CAPACITY_CHANGED, [ new_capacity ])
+		self._send_message(Message.PUB_BATTERY_CAPACITY_CHANGED, [ new_capacity ])
 
 
 	def publish_battery_time_remaining_changed(self, new_time):
 
 		self._logger.debug ("Publishing battery time remaining changed")
-		self._send_message(ptdm_messages.PUB_BATTERY_TIME_REMAINING_CHANGED, [ new_time ])
+		self._send_message(Message.PUB_BATTERY_TIME_REMAINING_CHANGED, [ new_time ])
 
 
 	# Internal functions
 
 	def _send_message(self, message_id, parameters):
 
-		message_to_send = ptdm_messages.build_message(message_id, parameters)
+		message_to_send = Message.build_message_string(message_id, parameters)
 
 		self._logger.debug ("Publishing message: " + message_to_send)
 		
