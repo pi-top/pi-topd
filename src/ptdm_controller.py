@@ -1,3 +1,4 @@
+
 # Instantiates and coordinates between the other classes
 
 from ptdm_logger import Logger
@@ -62,24 +63,62 @@ class Controller():
 
 	def _on_request_get_brightness(self):
 
-		# Get the brightness from the hub manager
-
-		return 100
+		return self._hub_manager.get_brightness()
 
 
 	def _on_request_set_brightness(self, brightness):
 
-		# Set the brightness in the hub manager
-		print ("Brightness set to " + str(brightness))
+		self._hub_manager.set_brightness()
 
 
 	def _on_request_get_hub_info(self):
 
-		# Get the device id
-		return 1
+		return self._hub_manager.get_device_info()
 
 
 	###########################################
 	# Hub Manager callback methods
 	###########################################
 	
+	def _on_hub_shutdown_requested(self):
+
+		self._publish_server.publish_shutdown_requested()
+
+
+	def _on_reboot_required(self):
+
+		self._publish_server.publish_reboot_required()
+
+
+	def _on_hub_brightness_changed(self, new_value):
+
+		self._publish_server.publish_brightness_changed(new_value)
+
+
+	def _on_hub_battery_charging_state_changed(self, new_value):
+
+		self._publish_server.publish_battery_charging_state_changed(new_value)
+
+
+	def _on_hub_battery_capacity_changed(self, new_value):
+
+		self._publish_server.publish_battery_capacity_changed(new_value)
+
+
+	def _on_hub_battery_time_remaining_changed(self, new_value):
+
+		self._publish_server.publish_battery_time_remaining_changed(new_value)
+
+
+	###########################################
+	# Peripheral Manager callback methods
+	###########################################
+	
+	def _on_peripheral_connected(self, device_id):
+
+		self._publish_server.publish_peripheral_connected(device_id)
+
+
+	def _on_peripheral_disconnected(self, device_id):
+
+		self._publish_server.publish_peripheral_disconnected(device_id)
