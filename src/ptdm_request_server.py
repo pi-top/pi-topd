@@ -15,21 +15,15 @@ _continue = True
 
 # Callback methods
 
-_fn_on_get_brightness = None
-_fn_on_set_brightness = None
-_fn_on_get_hub_info = None
+_callback_client = None
 
-def initialise(logger, fn_on_get_brightness, fn_on_set_brightness, fn_on_get_hub_info):
+def initialise(logger, callback_client):
 
 	global _logger
-	global _fn_on_get_brightness
-	global _fn_on_set_brightness
-	global _fn_on_get_hub_info
+	global _callback_client 
 
 	_logger = logger
-	_fn_on_get_brightness = fn_on_get_brightness
-	_fn_on_set_brightness = fn_on_set_brightness
-	_fn_on_get_hub_info = fn_on_get_hub_info
+	_callback_client = callback_client
 
 
 def start_listening():
@@ -38,11 +32,17 @@ def start_listening():
 	global _zmq_socket
 	global _thread
 	
-	_logger.debug ("Opening responder socket...")
+	_logger.debug ("Opening request socket...")
 
-	_zmq_context = zmq.Context()
-	_zmq_socket = _zmq_context.socket(zmq.REP)
-	_zmq_socket.bind("tcp://*:3782")
+	try:
+		_zmq_context = zmq.Context()
+		_zmq_socket = _zmq_context.socket(zmq.REP)
+		_zmq_socket.bind("tcp://*:3782")
+		_logger.info ("Responder server ready.")
+
+	except zmq.error.ZMQError as ex:
+		_logger.error("Error starting the request server: " + str(ex))
+		raise ex
 
 	time.sleep(0.5)
 
@@ -103,7 +103,7 @@ def _process_request(request):
 
 			message.validate_parameters([])
 
-			device_id = _fn_on_get_hub_info()
+			device_id = _callback_client._on_request_get_hub_info()
 
 			return Message.build_message_string(Message.RSP_GET_HUB_INFO, [ device_id ])
 
@@ -111,7 +111,7 @@ def _process_request(request):
 
 			message.validate_parameters([])
 
-			brightness = _fn_on_get_brightness()
+			brightness = _callback_client._on_request_get_brightness()
 
 			return Message.build_message_string(Message.RSP_GET_BRIGHTNESS, [ brightness ])
 
@@ -119,7 +119,7 @@ def _process_request(request):
 
 			message.validate_parameters([ int ])
 			
-			_fn_on_set_brightness(int(message.parameters()[0]))
+			_callback_client._on_request_set_brightness(int(message.parameters()[0]))
 
 			return Message.build_message_string(Message.RSP_SET_BRIGHTNESS, [])
 

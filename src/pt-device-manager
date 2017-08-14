@@ -3,8 +3,21 @@
 # The entry point for the application. Creates the controller and handles 
 # high-level config e.g. debug level etc.
 
-import ptdm_controller
+import signal
+from ptdm_controller import Controller
 
-ptdm_controller.initialise()
-ptdm_controller.run()
+controller = Controller()
 
+def signal_handler(signal, frame):
+
+	controller.stop()
+
+# Capture and handle interrupts
+
+signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGTERM, signal_handler)
+
+# Start the controller
+
+controller.initialise()
+controller.run()
