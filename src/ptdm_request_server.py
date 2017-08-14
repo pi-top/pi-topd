@@ -25,9 +25,9 @@ class RequestServer():
 			self._zmq_socket.bind("tcp://*:3782")
 			self._logger.info ("Responder server ready.")
 
-		except zmq.error.ZMQError as ex:
-			self._logger.error("Error starting the request server: " + str(ex))
-			raise ex
+		except zmq.error.ZMQError as e:
+			self._logger.error("Error starting the request server: " + str(e))
+			raise e
 
 		time.sleep(0.5)
 
@@ -112,15 +112,15 @@ class RequestServer():
 				self._logger.error("Unsupported request received: " + request)
 				return Message.build_message_string(Message.RSP_ERR_UNSUPPORTED, [])
 
-		except zmq.error.ZMQError as ex:
-			self._logger.error("Communication error in request server: " + str(ex))
+		except zmq.error.ZMQError as e:
+			self._logger.error("Communication error in request server: " + str(e))
 
-		except ValueError as ex:
+		except ValueError as e:
 			
-			self._logger.error("Error processing message: " + str(ex))
+			self._logger.error("Error processing message: " + str(e))
 			return Message.build_message_string(Message.RSP_ERR_MALFORMED, [])
 
-		except Exception as ex:
+		except Exception as e:
 
-			self._logger.error("Unknown error processing message: " + str(ex))
+			self._logger.error("Unknown error processing message: " + str(e))
 			return Message.build_message_string(Message.RSP_ERR_SERVER, [])
