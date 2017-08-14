@@ -18,7 +18,7 @@ class Logger:
 
 	def debug(self, message):
 		
-		if (self._logging_level <= 20):
+		if (self._logging_level <= 10):
 			print (message)
 
 		self._journal_log.debug(message)
@@ -34,7 +34,7 @@ class Logger:
 
 	def warning(self, message):
 		
-		if (self._logging_level <= 20):
+		if (self._logging_level <= 30):
 			print (message)
 		
 		self._journal_log.warning(message)
@@ -42,7 +42,7 @@ class Logger:
 
 	def error(self, message):
 		
-		if (self._logging_level <= 20):
+		if (self._logging_level <= 40):
 			print (message)
 		
 		self._journal_log.error(message)
