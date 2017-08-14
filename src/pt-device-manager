@@ -5,6 +5,8 @@
 
 import signal
 from ptdm_controller import Controller
+import logging
+import sys
 
 controller = Controller()
 
@@ -12,12 +14,22 @@ def signal_handler(signal, frame):
 
 	controller.stop()
 
+
 # Capture and handle interrupts
 
 signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
+
+# Get any custom log level
+
+log_level = logging.INFO
+
+if (len(sys.argv) > 1):
+	log_level = int(sys.argv[1])
+
+
 # Start the controller
 
-controller.initialise()
+controller.initialise(log_level)
 controller.run()
