@@ -1,90 +1,75 @@
 # Instantiates and coordinates between the other classes
 
+from ptdm_logger import Logger
 import ptdm_hub_manager
 import ptdm_peripheral_manager
 import ptdm_publish_server
 import ptdm_request_server
-from ptdm_logger import Logger
 import time
-import signal
 import sys
 import logging
 
-_continue_running = True
-_logger = None
 
-
-# Settings
 
 LOG_LEVEL = logging.DEBUG
 
 
-def initialise():
-	
-	global _logger
+class Controller():
 
-	_logger = Logger(LOG_LEVEL)
+	def initialise(self):
+		
+		self._continue_running = True
+		self._logger = Logger(LOG_LEVEL)
 
-	_logger.info("Initialising device manager")	
+		self._logger.info("Initialising device manager")	
 
-	#ptdm_hub_manager.initialise(_logger)
-	#ptdm_peripheral_manager.initialise(_logger)
-	ptdm_publish_server.initialise(_logger)
-	ptdm_request_server.initialise(_logger, _on_get_brightness, _on_set_brightness, _fn_on_get_hub_info)
-
-
-def run():
-
-	_logger.info("Running device manager")
-
-	ptdm_publish_server.start_listening()
-	ptdm_request_server.start_listening()
-
-	while (_continue_running):
-
-		time.sleep(0.5)
-
-	ptdm_request_server.stop_listening()
-	ptdm_publish_server.stop_listening()
-
-	sys.exit(0)
-
-	
-def stop():
-
-	global _continue_running
-
-	_continue_running = False
+		#ptdm_hub_manager.initialise(self._logger)
+		#ptdm_peripheral_manager.initialise(self._logger)
+		ptdm_publish_server.initialise(self._logger)
+		ptdm_request_server.initialise(self._logger, self)
 
 
-# Internal methods
+	def run(self):
 
-def _on_get_brightness():
+		self._logger.info("Running device manager")
 
-	# Get the brightness from the hub manager
+		ptdm_publish_server.start_listening()
+		ptdm_request_server.start_listening()
 
-	return 100
+		while (self._continue_running):
 
+			time.sleep(0.5)
 
-def _on_set_brightness(brightness):
+		ptdm_request_server.stop_listening()
+		ptdm_publish_server.stop_listening()
 
-	# Set the brightness in the hub manager
-	print ("Brightness set to " + str(brightness))
+		sys.exit(0)
 
+		
+	def stop(self):
 
-def _fn_on_get_hub_info():
-
-	# Get the device id
-	return 1
-
-
-# Capture interrupts
-
-def _signal_handler(signal, frame):
-
-	_logger.info("Signal received. Stopping...")
-	stop()
+		self._logger.info("Stopping...")
+		self._continue_running = False
 
 
-signal.signal(signal.SIGINT, _signal_handler)
-signal.signal(signal.SIGTERM, _signal_handler)
+	# Callback methods
+
+	def _on_request_get_brightness(self):
+
+		# Get the brightness from the hub manager
+
+		return 100
+
+
+	def _on_request_set_brightness(self, brightness):
+
+		# Set the brightness in the hub manager
+		print ("Brightness set to " + str(brightness))
+
+
+	def _on_request_get_hub_info(self):
+
+		# Get the device id
+		return 1
+
+

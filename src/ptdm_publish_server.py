@@ -25,11 +25,15 @@ def start_listening():
 	
 	_logger.debug ("Opening publisher socket...")
 
-	_zmq_context = zmq.Context()
-	_zmq_socket = _zmq_context.socket(zmq.PUB)
-	_zmq_socket.bind("tcp://*:3781")
+	try:
+		_zmq_context = zmq.Context()
+		_zmq_socket = _zmq_context.socket(zmq.PUB)
+		_zmq_socket.bind("tcp://*:3781")
+		_logger.info ("Publish server ready...")
 
-	_logger.info ("Publish server ready...")
+	except zmq.error.ZMQError as ex:
+		_logger.error("Error starting the publish server: " + str(ex))
+		raise ex
 
 
 def stop_listening():
