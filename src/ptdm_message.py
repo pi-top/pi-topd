@@ -1,5 +1,5 @@
-# Messages sent to/from pt-device-manager clients
 
+# Messages sent to/from pt-device-manager clients
 
 class Message:
 
@@ -10,18 +10,15 @@ class Message:
 	REQ_GET_BRIGHTNESS 					= 112
 	REQ_SET_BRIGHTNESS 					= 113
 
-
 	# Responses
 
 	RSP_ERR_SERVER						= 201
 	RSP_ERR_MALFORMED					= 202
 	RSP_ERR_UNSUPPORTED					= 203
-
 	RSP_PING							= 210
 	RSP_GET_HUB_INFO					= 211
 	RSP_GET_BRIGHTNESS 					= 212
 	RSP_SET_BRIGHTNESS 					= 213
-
 
 	# Broadcast/published messages
 

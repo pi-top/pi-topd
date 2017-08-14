@@ -1,3 +1,6 @@
+
+# Handles logging to the systemd log (journalctl)
+
 import logging
 from systemd.journal import JournalHandler
 
