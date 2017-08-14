@@ -34,7 +34,7 @@ class Controller():
 		self._request_server.initialise(self._logger, self)
 
 
-	def run(self):
+	def start(self):
 
 		self._logger.info("Device Manager running")
 

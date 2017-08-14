@@ -32,4 +32,4 @@ if (len(sys.argv) > 1):
 # Start the controller
 
 controller.initialise(log_level)
-controller.run()
+controller.start()
