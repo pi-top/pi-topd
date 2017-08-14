@@ -23,9 +23,9 @@ class PublishServer():
 			self._zmq_socket.bind("tcp://*:3781")
 			self._logger.info ("Publish server ready...")
 
-		except zmq.error.ZMQError as ex:
-			self._logger.error("Error starting the publish server: " + str(ex))
-			raise ex
+		except zmq.error.ZMQError as e:
+			self._logger.error("Error starting the publish server: " + str(e))
+			raise e
 
 
 	def stop_listening(self):
@@ -98,6 +98,6 @@ class PublishServer():
 		try:	
 			self._zmq_socket.send_string(message_to_send)
 
-		except zmq.error.ZMQError as ex:
-			self._logger.error("Communication error in publish server: " + str(ex))
+		except zmq.error.ZMQError as e:
+			self._logger.error("Communication error in publish server: " + str(e))
 

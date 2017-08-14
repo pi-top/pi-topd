@@ -36,7 +36,9 @@ class Controller():
 
 	def run(self):
 
-		self._logger.info("Running device manager")
+		self._logger.info("Device Manager running")
+
+		self._hub_manager.connect_to_hub()
 
 		self._publish_server.start_listening()
 		self._request_server.start_listening()
@@ -68,12 +70,12 @@ class Controller():
 
 	def _on_request_set_brightness(self, brightness):
 
-		self._hub_manager.set_brightness()
+		self._hub_manager.set_brightness(brightness)
 
 
 	def _on_request_get_hub_info(self):
 
-		return self._hub_manager.get_device_info()
+		return self._hub_manager.get_hub_info()
 
 
 	###########################################
