@@ -10,61 +10,62 @@ from ptdm_messages import Message
 zmq_context = zmq.Context()
 zmq_socket = zmq_context.socket(zmq.REQ)
 
-print ("Connecting...")
+print("Connecting...")
 zmq_socket.connect("tcp://127.0.0.1:3782")
-print ("OK.")
+print("OK.")
 
 time.sleep(0.5)
 
-print ("Testing REQ_PING...")
+print("Testing REQ_PING...")
 zmq_socket.send_string(Message.build_message_string(Message.REQ_PING))
 response = Message(zmq_socket.recv_string())
 
 if (response.message_id() != Message.RSP_PING):
-	print ("Unexpected response: " + str(response.message_id()))
+    print("Unexpected response: " + str(response.message_id()))
 else:
-	print ("OK")
+    print("OK")
 
 time.sleep(0.1)
 
-print ("Testing REQ_GET_HUB_INFO...")
+print("Testing REQ_GET_HUB_INFO...")
 zmq_socket.send_string(Message.build_message_string(Message.REQ_GET_HUB_INFO))
 response = Message(zmq_socket.recv_string())
 
 if (response.message_id() != Message.RSP_GET_HUB_INFO):
-	print ("Unexpected response: " + str(response.message_id()))
+    print("Unexpected response: " + str(response.message_id()))
 else:
-	print ("OK")
+    print("OK")
 
 time.sleep(0.1)
 
-print ("Testing REQ_GET_BRIGHTNESS...")
-zmq_socket.send_string(Message.build_message_string(Message.REQ_GET_BRIGHTNESS))
+print("Testing REQ_GET_BRIGHTNESS...")
+string_to_send = Message.build_message_string(Message.REQ_GET_BRIGHTNESS)
+zmq_socket.send_string(string_to_send)
 response = Message(zmq_socket.recv_string())
 
 if (response.message_id() != Message.RSP_GET_BRIGHTNESS):
-	print ("Unexpected response: " + str(response.message_id()))
+    print("Unexpected response: " + str(response.message_id()))
 else:
-	print ("OK")
+    print("OK")
 
 time.sleep(0.1)
 
-print ("Testing REQ_SET_BRIGHTNESS...")
-zmq_socket.send_string(Message.build_message_string(Message.REQ_SET_BRIGHTNESS, ["20"] ))
+print("Testing REQ_SET_BRIGHTNESS...")
+val = ["20"]
+string_to_send = Message.build_message_string(Message.REQ_SET_BRIGHTNESS, val)
+zmq_socket.send_string(string_to_send)
 response = Message(zmq_socket.recv_string())
 
 if (response.message_id() != Message.RSP_SET_BRIGHTNESS):
-	print ("Unexpected response: " + str(response.message_id()))
+    print("Unexpected response: " + str(response.message_id()))
 else:
-	print ("OK")
+    print("OK")
 
 time.sleep(0.1)
 
 
-
-print ("Closing socket...")
+print("Closing socket...")
 
 zmq_socket.close()
 
-print ("Done.")
-
+print("Done.")

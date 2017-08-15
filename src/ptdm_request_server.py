@@ -7,120 +7,117 @@ import time
 import threading
 from ptdm_messages import Message
 
+
 class RequestServer():
 
-	def initialise(self, logger, callback_client):
-		
-		self._logger = logger
-		self._callback_client = callback_client
+    def initialise(self, logger, callback_client):
+        self._logger = logger
+        self._callback_client = callback_client
 
+    def start_listening(self):
+        self._logger.debug("Opening request socket...")
 
-	def start_listening(self):
+        try:
+            self._zmq_context = zmq.Context()
+            self._zmq_socket = self._zmq_context.socket(zmq.REP)
+            self._zmq_socket.bind("tcp://*:3782")
+            self._logger.info("Responder server ready.")
 
-		self._logger.debug ("Opening request socket...")
+        except zmq.error.ZMQError as e:
+            self._logger.error("Error starting the request server: " + str(e))
+            raise e
 
-		try:
-			self._zmq_context = zmq.Context()
-			self._zmq_socket = self._zmq_context.socket(zmq.REP)
-			self._zmq_socket.bind("tcp://*:3782")
-			self._logger.info ("Responder server ready.")
+        time.sleep(0.5)
 
-		except zmq.error.ZMQError as e:
-			self._logger.error("Error starting the request server: " + str(e))
-			raise e
+        self._continue = True
+        self._thread = threading.Thread(target=self._thread_method)
+        self._thread.start()
 
-		time.sleep(0.5)
+    def stop_listening(self):
 
-		self._continue = True
-		self._thread = threading.Thread(target=self._thread_method)
-		self._thread.start()
+        self._logger.debug("Closing responder socket...")
 
+        self._continue = False
+        self._thread.join()
 
-	def stop_listening(self):
-		
-		self._logger.debug ("Closing responder socket...")
+        self._zmq_socket.close()
+        self._zmq_context.destroy()
 
-		self._continue = False
-		self._thread.join()
+        self._logger.debug("Done.")
 
-		self._zmq_socket.close()
-		self._zmq_context.destroy()
+    def _thread_method(self):
 
-		self._logger.debug ("Done.")
+        self._logger.info("Listening for requests...")
 
+        while self._continue:
 
-	def _thread_method(self):
+            poller = zmq.Poller()
+            poller.register(self._zmq_socket, zmq.POLLIN)
 
-		self._logger.info ("Listening for requests...")
+            events = poller.poll(500)
 
-		while self._continue:
+            if (len(events) > 0):
 
-			poller = zmq.Poller()
-			poller.register(self._zmq_socket, zmq.POLLIN)
-			
-			events = poller.poll(500)
+                request = self._zmq_socket.recv_string()
+                self._logger.info("Request received: " + request)
 
-			if (len(events) > 0):
+                response = self._process_request(request)
 
-				request = self._zmq_socket.recv_string()
-				self._logger.info ("Request received: " + request)
-				
-				response = self._process_request(request)
+                self._logger.info("Sending response: " + response)
+                self._zmq_socket.send_string(response)
 
-				self._logger.info ("Sending response: " + response)
-				self._zmq_socket.send_string(response)
+    def _process_request(self, request):
 
+        try:
 
-	def _process_request(self, request):
+            message = Message(request)
 
-		try:
+            if (message.message_id() == Message.REQ_PING):
 
-			message = Message(request)
+                message.validate_parameters([])
 
-			if (message.message_id() == Message.REQ_PING):
+                return Message.build_message_string(Message.RSP_PING, [])
 
-				message.validate_parameters([])
+            elif (message.message_id() == Message.REQ_GET_HUB_INFO):
 
-				return Message.build_message_string(Message.RSP_PING, [])
+                message.validate_parameters([])
 
-			elif (message.message_id() == Message.REQ_GET_HUB_INFO):
+                device_id = self._callback_client._on_request_get_hub_info()
 
-				message.validate_parameters([])
+                return Message.build_message_string(Message.RSP_GET_HUB_INFO, [device_id])
 
-				device_id = self._callback_client._on_request_get_hub_info()
+            elif (message.message_id() == Message.REQ_GET_BRIGHTNESS):
 
-				return Message.build_message_string(Message.RSP_GET_HUB_INFO, [ device_id ])
+                message.validate_parameters([])
 
-			elif (message.message_id() == Message.REQ_GET_BRIGHTNESS):
+                brightness = self._callback_client._on_request_get_brightness()
 
-				message.validate_parameters([])
+                return Message.build_message_string(Message.RSP_GET_BRIGHTNESS, [brightness])
 
-				brightness = self._callback_client._on_request_get_brightness()
+            elif (message.message_id() == Message.REQ_SET_BRIGHTNESS):
 
-				return Message.build_message_string(Message.RSP_GET_BRIGHTNESS, [ brightness ])
+                message.validate_parameters([int])
 
-			elif (message.message_id() == Message.REQ_SET_BRIGHTNESS):
+                self._callback_client._on_request_set_brightness(
+                    int(message.parameters()[0]))
 
-				message.validate_parameters([ int ])
-				
-				self._callback_client._on_request_set_brightness(int(message.parameters()[0]))
+                return Message.build_message_string(Message.RSP_SET_BRIGHTNESS, [])
 
-				return Message.build_message_string(Message.RSP_SET_BRIGHTNESS, [])
+            else:
 
-			else:
+                self._logger.error("Unsupported request received: " + request)
+                return Message.build_message_string(Message.RSP_ERR_UNSUPPORTED, [])
 
-				self._logger.error("Unsupported request received: " + request)
-				return Message.build_message_string(Message.RSP_ERR_UNSUPPORTED, [])
+        except zmq.error.ZMQError as e:
+            self._logger.error(
+                "Communication error in request server: " + str(e))
 
-		except zmq.error.ZMQError as e:
-			self._logger.error("Communication error in request server: " + str(e))
+        except ValueError as e:
 
-		except ValueError as e:
-			
-			self._logger.error("Error processing message: " + str(e))
-			return Message.build_message_string(Message.RSP_ERR_MALFORMED, [])
+            self._logger.error("Error processing message: " + str(e))
+            return Message.build_message_string(Message.RSP_ERR_MALFORMED, [])
 
-		except Exception as e:
+        except Exception as e:
 
-			self._logger.error("Unknown error processing message: " + str(e))
-			return Message.build_message_string(Message.RSP_ERR_SERVER, [])
+            self._logger.error("Unknown error processing message: " + str(e))
+            return Message.build_message_string(Message.RSP_ERR_SERVER, [])
