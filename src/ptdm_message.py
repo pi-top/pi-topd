@@ -31,6 +31,8 @@ class Message:
     PUB_BATTERY_CHARGING_STATE_CHANGED  = 305
     PUB_BATTERY_CAPACITY_CHANGED        = 306
     PUB_BATTERY_TIME_REMAINING_CHANGED  = 307
+    PUB_SCREEN_BLANK_STATE_CHANGED      = 308
+    PUB_DEVICE_ID_CHANGED               = 309
 
     def __init__(self, message_string):
 
