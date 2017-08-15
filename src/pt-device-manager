@@ -1,16 +1,16 @@
 #!/usr/bin/python3
 
-# The entry point for the application. Creates the controller and handles 
+# The entry point for the application. Creates the controller and handles
 # high-level config e.g. debug level etc. Note the log level can be
 # customised by pass an integer on the command line:
 #
-# Level		Value
-# CRITICAL	50
-# ERROR		40
-# WARNING	30
-# INFO		20
-# DEBUG		10
-# NOTSET	0
+# Level     Value
+# CRITICAL  50
+# ERROR     40
+# WARNING   30
+# INFO      20
+# DEBUG     10
+# NOTSET    0
 
 import signal
 from ptdm_controller import Controller
@@ -19,9 +19,9 @@ import sys
 
 controller = Controller()
 
-def signal_handler(signal, frame):
 
-	controller.stop()
+def signal_handler(signal, frame):
+    controller.stop()
 
 
 # Capture and handle interrupts
@@ -35,9 +35,9 @@ signal.signal(signal.SIGTERM, signal_handler)
 log_level = logging.INFO
 
 if (len(sys.argv) > 1):
-	log_level = int(sys.argv[1])
+    log_level = int(sys.argv[1])
 
-print ("Log level set to " + str(log_level))
+print("Log level set to " + str(log_level))
 
 # Start the controller
 
