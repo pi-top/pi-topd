@@ -70,7 +70,10 @@ class PublishServer():
 
     def publish_screen_blank_state_changed(blanked_bool):
         self._logger.debug("Publishing screen blank state changed")
-        self._send_message(Message.PUB_SCREEN_BLANK_STATE_CHANGED, [int(blanked_bool)])
+        if blanked_bool is True:
+            self._send_message(Message.PUB_SCREEN_BLANKED, [])
+        else:
+            self._send_message(Message.PUB_SCREEN_UNBLANKED, [])
 
     def publish_device_id_changed(device_id_int):
         self._logger.debug("Publishing device ID changed")
