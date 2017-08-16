@@ -15,7 +15,7 @@ class HubManager():
         try:
             self._module_hub_v1 = self._import_module("pthub.pthub")
 
-            if (self._module_hub_v1.initialise() is True):
+            if (self._module_hub_v1.initialise(self._logger) is True):
                 self._active_hub_module = self._module_hub_v1
                 self._logger.info("Connected to hub v1")
                 return
@@ -28,7 +28,7 @@ class HubManager():
         try:
             self._module_hub_v2 = self._import_module("pthubv2")
 
-            if (self._module_hub_v2.initialise() is True):
+            if (self._module_hub_v2.initialise(self._logger) is True):
                 self._active_hub_module = self._module_hub_v2
                 self._logger.info("Connected to hub v2")
                 return
