@@ -54,7 +54,7 @@ class HubManager():
             client._on_hub_brightness_changed,
             client._on_screen_blank_state_changed,
             client._on_hub_shutdown_requested,
-            client._on_device_name_changed,
+            client._on_device_id_changed,
             client._on_hub_battery_charging_state_changed,
             client._on_hub_battery_capacity_changed,
             client._on_hub_battery_time_remaining_changed)
@@ -79,9 +79,9 @@ class HubManager():
         self.check_hub_connected()
         return self._active_hub_module.get_shutdown_state()
 
-    def get_device_name(self):
+    def get_device_id(self):
         self.check_hub_connected()
-        return self._active_hub_module.get_device_name()
+        return self._active_hub_module.get_device_id()
 
     def get_battery_charging_state(self):
         self.check_hub_connected()
