@@ -78,13 +78,13 @@ class RequestServer():
 
                 return Message.build_message_string(Message.RSP_PING, [])
 
-            elif (message.message_id() == Message.REQ_GET_HUB_INFO):
+            elif (message.message_id() == Message.REQ_GET_DEVICE_ID):
 
                 message.validate_parameters([])
 
-                device_id = self._callback_client._on_request_get_hub_info()
+                device_id = self._callback_client._on_request_get_device_id()
 
-                return Message.build_message_string(Message.RSP_GET_HUB_INFO, [device_id])
+                return Message.build_message_string(Message.RSP_GET_DEVICE_ID, [device_id])
 
             elif (message.message_id() == Message.REQ_GET_BRIGHTNESS):
 
