@@ -41,15 +41,15 @@ class HubManager():
         self._logger.error("Could not connect to a hub!")
 
     def start():
-        _throw_error_if_hub_is_not_active()
+        self.check_hub_connected()
         self._module_hub_v1.start()
 
     def stop():
-        _throw_error_if_hub_is_not_active()
+        self.check_hub_connected()
         self._module_hub_v1.stop()
 
     def register_client(controller_obj):
-        _throw_error_if_hub_is_not_active()
+        self.check_hub_connected()
         self._active_hub_module.register_client(
             controller_obj._on_hub_brightness_changed,
             controller_obj._on_screen_blank_state_changed,
@@ -61,62 +61,62 @@ class HubManager():
         )
 
     # def set_logging(stdout, log_to_file):
-    #   _throw_error_if_hub_is_not_active()
+    #   self.check_hub_connected()
     #   self._active_hub_module.set_logging(stdout, log_to_file)
 
     def set_speed(no_of_polls_per_second):
-        _throw_error_if_hub_is_not_active()
+        self.check_hub_connected()
         self._active_hub_module.set_speed(no_of_polls_per_second)
 
     def get_brightness(self):
-        _throw_error_if_hub_is_not_active()
+        self.check_hub_connected()
         return self._active_hub_module.get_brightness()
 
     def get_screen_off_state(self):
-        _throw_error_if_hub_is_not_active()
+        self.check_hub_connected()
         return self._active_hub_module.get_screen_off_state()
 
     def get_shutdown_state(self):
-        _throw_error_if_hub_is_not_active()
+        self.check_hub_connected()
         return self._active_hub_module.get_shutdown_state()
 
     def get_device_name(self):
-        _throw_error_if_hub_is_not_active()
+        self.check_hub_connected()
         return self._active_hub_module.get_device_name()
 
     def get_battery_charging_state(self):
-        _throw_error_if_hub_is_not_active()
+        self.check_hub_connected()
         return self._active_hub_module.get_battery_charging_state()
 
     def get_battery_time_state(self):
-        _throw_error_if_hub_is_not_active()
+        self.check_hub_connected()
         return self._active_hub_module.get_battery_time_state()
 
     def get_battery_capacity_state(self):
-        _throw_error_if_hub_is_not_active()
+        self.check_hub_connected()
         return self._active_hub_module.get_battery_capacity_state()
 
     def set_brightness(self, brightness):
-        _throw_error_if_hub_is_not_active()
+        self.check_hub_connected()
         self._active_hub_module.set_brightness(brightness)
 
     def increment_brightness(self):
-        _throw_error_if_hub_is_not_active()
+        self.check_hub_connected()
         self._active_hub_module.increment_brightness()
 
     def decrement_brightness(self):
-        _throw_error_if_hub_is_not_active()
+        self.check_hub_connected()
         self._active_hub_module.decrement_brightness()
 
     def blank_screen(self):
-        _throw_error_if_hub_is_not_active()
+        self.check_hub_connected()
         self._active_hub_module.blank_screen()
 
     def unblank_screen(self):
-        _throw_error_if_hub_is_not_active()
+        self.check_hub_connected()
         self._active_hub_module.unblank_screen()
 
-    def _throw_error_if_hub_is_not_active(self):
+    def check_hub_connected(self):
         if (self._active_hub_module is None):
             raise RuntimeError("No hub connected")
 
