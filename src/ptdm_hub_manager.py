@@ -13,15 +13,17 @@ class HubManager():
 
     def connect_to_hub(self):
         try:
-            self._module_hub_v1 = self._import_module("pthub")
+            self._module_hub_v1 = self._import_module("pthub.pthub")
 
             if (self._module_hub_v1.initialise() is True):
                 self._active_hub_module = self._module_hub_v1
                 self._logger.info("Connected to hub v1")
                 return
+            else:
+                self._logger.warning("Could not initialise v1 hub")
 
         except Exception as e:
-            self._logger.info("Failed to connect to a v1 hub")
+            self._logger.info("Failed to connect to a v1 hub. " + str(e))
 
         try:
             self._module_hub_v2 = self._import_module("pthubv2")
@@ -29,11 +31,12 @@ class HubManager():
             if (self._module_hub_v2.initialise() is True):
                 self._active_hub_module = self._module_hub_v2
                 self._logger.info("Connected to hub v2")
-
                 return
+            else:
+                self._logger.warning("Could not initialise v2 hub")
 
         except Exception as e:
-            self._logger.info("Failed to connect to a v2 hub")
+            self._logger.info("Failed to connect to a v2 hub. " + str(e))
 
         self._logger.error("Could not connect to a hub!")
 
@@ -119,8 +122,7 @@ class HubManager():
 
     def _import_module(self, module_name):
         try:
-            module_config_name = str(module_name + ".configuration")
-            return import_module(module_config_name)
+            return import_module(module_name)
 
         except ImportError as e:
             print("Failed to import " + module_name + ". Error: " + str(e))

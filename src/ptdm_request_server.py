@@ -5,7 +5,7 @@
 import zmq
 import time
 import threading
-from ptdm_messages import Message
+from ptdm_message import Message
 
 
 class RequestServer():

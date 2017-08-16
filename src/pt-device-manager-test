@@ -4,7 +4,7 @@
 
 import zmq
 import time
-from ptdm_messages import Message
+from ptdm_message import Message
 
 
 zmq_context = zmq.Context()
