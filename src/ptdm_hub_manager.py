@@ -40,31 +40,30 @@ class HubManager():
 
         self._logger.error("Could not connect to a hub!")
 
-    def start():
+    def start(self):
         self.check_hub_connected()
-        self._module_hub_v1.start()
+        self._active_hub_module.start()
 
-    def stop():
+    def stop(self):
         self.check_hub_connected()
-        self._module_hub_v1.stop()
+        self._active_hub_module.stop()
 
-    def register_client(controller_obj):
+    def register_client(self, client):
         self.check_hub_connected()
         self._active_hub_module.register_client(
-            controller_obj._on_hub_brightness_changed,
-            controller_obj._on_screen_blank_state_changed,
-            controller_obj._on_hub_shutdown_requested,
-            controller_obj._on_device_name_changed,
-            controller_obj._on_hub_battery_charging_state_changed,
-            controller_obj._on_hub_battery_capacity_changed,
-            controller_obj._on_hub_battery_time_remaining_changed
-        )
+            client._on_hub_brightness_changed,
+            client._on_screen_blank_state_changed,
+            client._on_hub_shutdown_requested,
+            client._on_device_name_changed,
+            client._on_hub_battery_charging_state_changed,
+            client._on_hub_battery_capacity_changed,
+            client._on_hub_battery_time_remaining_changed)
 
     # def set_logging(stdout, log_to_file):
     #   self.check_hub_connected()
     #   self._active_hub_module.set_logging(stdout, log_to_file)
 
-    def set_speed(no_of_polls_per_second):
+    def set_speed(self, no_of_polls_per_second):
         self.check_hub_connected()
         self._active_hub_module.set_speed(no_of_polls_per_second)
 

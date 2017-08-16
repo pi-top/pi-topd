@@ -7,7 +7,7 @@ class Message:
     # Requests
 
     REQ_PING                            = 110
-    REQ_GET_HUB_INFO                    = 111
+    REQ_GET_DEVICE_ID                   = 111
     REQ_GET_BRIGHTNESS                  = 112
     REQ_SET_BRIGHTNESS                  = 113
 
@@ -17,7 +17,7 @@ class Message:
     RSP_ERR_MALFORMED                   = 202
     RSP_ERR_UNSUPPORTED                 = 203
     RSP_PING                            = 210
-    RSP_GET_HUB_INFO                    = 211
+    RSP_GET_DEVICE_ID                   = 211
     RSP_GET_BRIGHTNESS                  = 212
     RSP_SET_BRIGHTNESS                  = 213
 

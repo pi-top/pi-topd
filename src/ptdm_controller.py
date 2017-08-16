@@ -37,6 +37,7 @@ class Controller():
         self._logger.info("Device Manager running")
 
         self._hub_manager.connect_to_hub()
+        self._hub_manager.start()
 
         self._publish_server.start_listening()
         self._request_server.start_listening()
@@ -47,6 +48,8 @@ class Controller():
 
         self._request_server.stop_listening()
         self._publish_server.stop_listening()
+
+        self._hub_manager.stop()
 
         sys.exit(0)
 
@@ -64,8 +67,8 @@ class Controller():
     def _on_request_set_brightness(self, brightness):
         self._hub_manager.set_brightness(brightness)
 
-    def _on_request_get_hub_info(self):
-        return self._hub_manager.get_hub_info()
+    def _on_request_get_device_id(self):
+        return self._hub_manager.get_device_id()
 
     ###########################################
     # Hub Manager callback methods
