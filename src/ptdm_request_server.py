@@ -98,8 +98,7 @@ class RequestServer():
 
                 message.validate_parameters([int])
 
-                self._callback_client._on_request_set_brightness(
-                    int(message.parameters()[0]))
+                self._callback_client._on_request_set_brightness(int(message.parameters()[0]))
 
                 return Message.build_message_string(Message.RSP_SET_BRIGHTNESS, [])
 
