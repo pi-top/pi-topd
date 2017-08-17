@@ -37,6 +37,7 @@ class Controller():
         self._logger.info("Device Manager running")
 
         self._hub_manager.connect_to_hub()
+        self._hub_manager.register_client(self)
         self._hub_manager.start()
 
         self._publish_server.start_listening()

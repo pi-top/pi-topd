@@ -4,19 +4,18 @@
 
 import zmq
 import time
+import threading
 from ptdm_message import Message
 
 
 def test_request(test_name, message_request_id, parameters, expected_response_id, expected_response_parameters):
-    print("Test " + test_name)
-    message_string = Message.build_message_string(
-        message_request_id, parameters)
-    print("Sending:" + message_string)
-    zmq_socket.send_string(message_string)
-    response_string = zmq_socket.recv_string()
-    print("Received response:" + response_string)
+    print("[Test " + test_name + "]")
 
-    response = Message(response_string)
+    message = Message.from_parts(message_request_id, parameters)
+    zmq_socket.send_string(message.to_string())
+
+    response_string = zmq_socket.recv_string()
+    response = Message.from_string(response_string)
 
     if (response.message_id() != expected_response_id):
         print("Test failed. Unexpected response: " + str(response.message_id()))
@@ -27,25 +26,58 @@ def test_request(test_name, message_request_id, parameters, expected_response_id
             print("Test failed. Unexpected response parameter. Expected: " + str(expected_response_parameters[i]) + ", got:" + str(response.parameters()[i]))
             return
 
-    print("Test passed")
+    print("[Test passed]")
 
 
-zmq_context = zmq.Context()
-zmq_socket = zmq_context.socket(zmq.REQ)
+def listen_thread():
 
-print("Connecting...")
+    print("Connecting to publish server...")
+    zmq_context_listen = zmq.Context()
+    zmq_socket = zmq_context_listen.socket(zmq.SUB)
+    zmq_socket.setsockopt_string(zmq.SUBSCRIBE, "")
+    zmq_socket.connect("tcp://127.0.0.1:3781")
+    print("Connected to publish server")
+
+    time.sleep(0.5)
+
+    while continue_listening:
+        poller = zmq.Poller()
+        poller.register(zmq_socket, zmq.POLLIN)
+        events = poller.poll(500)
+
+        for i in range(len(events)):
+            message_string = zmq_socket.recv_string()
+            message = Message.from_string(message_string)
+            print("Received publish event: " + message.message_friendly_string())
+
+print("Starting thread...")
+
+continue_listening = True
+thread = threading.Thread(target=listen_thread)
+thread.start()
+
+print("Connecting to request server...")
+zmq_context_send = zmq.Context()
+zmq_socket = zmq_context_send.socket(zmq.REQ)
 zmq_socket.connect("tcp://127.0.0.1:3782")
-time.sleep(0.5)
-print("OK.")
+print("Connected to request server.")
 
-test_request("Set Brightness to 2", Message.REQ_SET_BRIGHTNESS, ["2"], Message.RSP_SET_BRIGHTNESS, [])
-test_request("Get Brightness", Message.REQ_GET_BRIGHTNESS, [], Message.RSP_GET_BRIGHTNESS, ["2"])
+time.sleep(0.5)
+
 test_request("Set Brightness to 10", Message.REQ_SET_BRIGHTNESS, ["10"], Message.RSP_SET_BRIGHTNESS, [])
-test_request("Get Brightness", Message.REQ_GET_BRIGHTNESS, [], Message.RSP_GET_BRIGHTNESS, ["10"])
+test_request("Set Brightness to 9", Message.REQ_SET_BRIGHTNESS, ["9"], Message.RSP_SET_BRIGHTNESS, [])
+test_request("Set Brightness to 8", Message.REQ_SET_BRIGHTNESS, ["8"], Message.RSP_SET_BRIGHTNESS, [])
+test_request("Set Brightness to 7", Message.REQ_SET_BRIGHTNESS, ["7"], Message.RSP_SET_BRIGHTNESS, [])
+test_request("Set Brightness to 6", Message.REQ_SET_BRIGHTNESS, ["6"], Message.RSP_SET_BRIGHTNESS, [])
 test_request("Get Device ID", Message.REQ_GET_DEVICE_ID, [], Message.RSP_GET_DEVICE_ID, ["2"])
 
-print("Closing socket...")
+print("Waiting for any further events...")
+time.sleep(5)
 
+print("Closing sockets...")
+
+continue_listening = False
+thread.join()
 zmq_socket.close()
 
 print("Done.")
