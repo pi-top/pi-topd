@@ -33,43 +33,30 @@ class PublishServer():
         self._logger.debug("Done.")
 
     def publish_brightness_changed(self, new_brightness):
-        self._logger.debug("Publishing brightness changed")
         self._send_message(Message.PUB_BRIGHTNESS_CHANGED, [new_brightness])
 
     def publish_peripheral_connected(self, peripheral_id):
-        self._logger.debug("Publishing peripheral connected")
         self._send_message(Message.PUB_PERIPHERAL_CONNECTED, [peripheral_id])
 
     def publish_peripheral_disconnected(self, peripheral_id):
-        self._logger.debug("Publishing peripheral disconnected")
         self._send_message(Message.PUB_PERIPHERAL_DISCONNECTED, [peripheral_id])
 
     def publish_shutdown_requested(self):
-        self._logger.debug("Publishing shutdown requested")
         self._send_message(Message.PUB_SHUTDOWN_REQUESTED, [])
 
     def publish_reboot_required(self):
-        self._logger.debug("Publishing reboot required")
         self._send_message(Message.PUB_REBOOT_REQUIRED, [])
 
-    def publish_brightness_changed(new_value):
-        self._logger.debug("Publishing battery charging state changed")
-        self._send_message(Message.PUB_BRIGHTNESS_CHANGED, [new_value])
-
     def publish_battery_charging_state_changed(self, connected_int):
-        self._logger.debug("Publishing battery charging state changed")
         self._send_message(Message.PUB_BATTERY_CHARGING_STATE_CHANGED, [connected_int])
 
     def publish_battery_capacity_changed(self, new_capacity):
-        self._logger.debug("Publishing battery capacity changed")
         self._send_message(Message.PUB_BATTERY_CAPACITY_CHANGED, [new_capacity])
 
     def publish_battery_time_remaining_changed(self, new_time):
-        self._logger.debug("Publishing battery time remaining changed")
         self._send_message(Message.PUB_BATTERY_TIME_REMAINING_CHANGED, [new_time])
 
     def publish_screen_blank_state_changed(blanked_bool):
-        self._logger.debug("Publishing screen blank state changed")
         if blanked_bool is True:
             self._send_message(Message.PUB_SCREEN_BLANKED, [])
         else:
@@ -79,22 +66,15 @@ class PublishServer():
         self._logger.debug("Publishing device ID changed")
         self._send_message(Message.PUB_DEVICE_ID_CHANGED, [device_id_int])
 
-    def publish_peripheral_connected(peripheral_device_id_int):
-        self._logger.debug("Publishing new peripheral connection")
-        self._send_message(Message.PUB_PERIPHERAL_CONNECTED, [peripheral_device_id_int])
-
-    def publish_peripheral_disconnected(peripheral_device_id_int):
-        self._logger.debug("Publishing new peripheral disconnection")
-        self._send_message(Message.PUB_PERIPHERAL_DISCONNECTED, [peripheral_device_id_int])
-
     # Internal functions
 
     def _send_message(self, message_id, parameters):
-        message_to_send = Message.build_message_string(message_id, parameters)
-        self._logger.debug("Publishing message: " + message_to_send)
+
+        message = Message.from_parts(message_id, parameters)
+        self._logger.debug("Publishing message: " + message.message_friendly_string())
 
         try:
-            self._zmq_socket.send_string(message_to_send)
+            self._zmq_socket.send_string(message.to_string())
 
         except zmq.error.ZMQError as e:
             self._logger.error("Communication error in publish server: " + str(e))

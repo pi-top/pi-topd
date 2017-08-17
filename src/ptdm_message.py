@@ -4,12 +4,19 @@
 
 class Message:
 
+    _message_names = {}
+
     # Requests
 
     REQ_PING                            = 110
     REQ_GET_DEVICE_ID                   = 111
     REQ_GET_BRIGHTNESS                  = 112
     REQ_SET_BRIGHTNESS                  = 113
+
+    _message_names[REQ_PING] = "REQ_PING"
+    _message_names[REQ_GET_DEVICE_ID] = "REQ_GET_DEVICE_ID"
+    _message_names[REQ_GET_BRIGHTNESS] = "REQ_GET_BRIGHTNESS"
+    _message_names[REQ_SET_BRIGHTNESS] = "REQ_SET_BRIGHTNESS"
 
     # Responses
 
@@ -20,6 +27,14 @@ class Message:
     RSP_GET_DEVICE_ID                   = 211
     RSP_GET_BRIGHTNESS                  = 212
     RSP_SET_BRIGHTNESS                  = 213
+
+    _message_names[RSP_ERR_SERVER] = "RSP_ERR_SERVER"
+    _message_names[RSP_ERR_MALFORMED] = "RSP_ERR_MALFORMED"
+    _message_names[RSP_ERR_UNSUPPORTED] = "RSP_ERR_UNSUPPORTED"
+    _message_names[RSP_PING] = "RSP_PING"
+    _message_names[RSP_GET_DEVICE_ID] = "RSP_GET_DEVICE_ID"
+    _message_names[RSP_GET_BRIGHTNESS] = "RSP_GET_BRIGHTNESS"
+    _message_names[RSP_SET_BRIGHTNESS] = "RSP_SET_BRIGHTNESS"
 
     # Broadcast/published messages
 
@@ -35,17 +50,41 @@ class Message:
     PUB_SCREEN_UNBLANKED                = 309
     PUB_DEVICE_ID_CHANGED               = 310
 
-    def __init__(self, message_string):
-
-        self._message_string = message_string
-        self._parse()
+    _message_names[PUB_BRIGHTNESS_CHANGED] = "PUB_BRIGHTNESS_CHANGED"
+    _message_names[PUB_PERIPHERAL_CONNECTED] = "PUB_PERIPHERAL_CONNECTED"
+    _message_names[PUB_PERIPHERAL_DISCONNECTED] = "PUB_PERIPHERAL_DISCONNECTED"
+    _message_names[PUB_SHUTDOWN_REQUESTED] = "PUB_SHUTDOWN_REQUESTED"
+    _message_names[PUB_REBOOT_REQUIRED] = "PUB_REBOOT_REQUIRED"
+    _message_names[PUB_BATTERY_CHARGING_STATE_CHANGED] = "PUB_BATTERY_CHARGING_STATE_CHANGED"
+    _message_names[PUB_BATTERY_CAPACITY_CHANGED] = "PUB_BATTERY_CAPACITY_CHANGED"
+    _message_names[PUB_BATTERY_TIME_REMAINING_CHANGED] = "PUB_BATTERY_TIME_REMAINING_CHANGED"
+    _message_names[PUB_SCREEN_BLANKED] = "PUB_SCREEN_BLANKED"
+    _message_names[PUB_SCREEN_UNBLANKED] = "PUB_SCREEN_UNBLANKED"
+    _message_names[PUB_DEVICE_ID_CHANGED] = "PUB_DEVICE_ID_CHANGED"
 
     @classmethod
-    def build_message_string(self, message_id, parameters=[]):
+    def from_string(cls, message_string):
 
-        message_to_send = str(message_id)
+        new_object = cls()
+        new_object._message_string = message_string
+        new_object._parse()
 
-        for message_param in parameters:
+        return new_object
+
+    @classmethod
+    def from_parts(cls, message_id, parameters):
+
+        new_object = cls()
+        new_object._message_id = message_id
+        new_object._parameters = parameters
+
+        return new_object
+
+    def to_string(self):
+
+        message_to_send = str(self._message_id)
+
+        for message_param in self._parameters:
             message_to_send += "|"
             message_to_send += str(message_param)
 
@@ -73,7 +112,22 @@ class Message:
                     raise ValueError(msg)
 
     def message_id(self):
+
         return self._message_id
+
+    def message_id_name(self):
+
+        return self._message_names[self._message_id]
+
+    def message_friendly_string(self):
+
+        result = self.message_id_name()
+
+        for param in self._parameters:
+            result += " "
+            result += str(param)
+
+        return result
 
     def parameters(self):
         return self._parameters

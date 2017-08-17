@@ -59,24 +59,26 @@ class RequestServer():
             if (len(events) > 0):
 
                 request = self._zmq_socket.recv_string()
-                self._logger.info("Request received: " + request)
+                self._logger.debug("Request received: " + request)
 
                 response = self._process_request(request)
 
-                self._logger.info("Sending response: " + response)
+                self._logger.debug("Sending response: " + response)
                 self._zmq_socket.send_string(response)
 
     def _process_request(self, request):
 
         try:
 
-            message = Message(request)
+            message = Message.from_string(request)
+
+            self._logger.info("Received request: " + message.message_friendly_string())
 
             if (message.message_id() == Message.REQ_PING):
 
                 message.validate_parameters([])
 
-                return Message.build_message_string(Message.RSP_PING, [])
+                response = Message.from_parts(Message.RSP_PING, [])
 
             elif (message.message_id() == Message.REQ_GET_DEVICE_ID):
 
@@ -84,7 +86,7 @@ class RequestServer():
 
                 device_id = self._callback_client._on_request_get_device_id()
 
-                return Message.build_message_string(Message.RSP_GET_DEVICE_ID, [device_id])
+                response = Message.from_parts(Message.RSP_GET_DEVICE_ID, [device_id])
 
             elif (message.message_id() == Message.REQ_GET_BRIGHTNESS):
 
@@ -92,7 +94,7 @@ class RequestServer():
 
                 brightness = self._callback_client._on_request_get_brightness()
 
-                return Message.build_message_string(Message.RSP_GET_BRIGHTNESS, [brightness])
+                response = Message.from_parts(Message.RSP_GET_BRIGHTNESS, [brightness])
 
             elif (message.message_id() == Message.REQ_SET_BRIGHTNESS):
 
@@ -100,12 +102,12 @@ class RequestServer():
 
                 self._callback_client._on_request_set_brightness(int(message.parameters()[0]))
 
-                return Message.build_message_string(Message.RSP_SET_BRIGHTNESS, [])
+                response = Message.from_parts(Message.RSP_SET_BRIGHTNESS, [])
 
             else:
 
                 self._logger.error("Unsupported request received: " + request)
-                return Message.build_message_string(Message.RSP_ERR_UNSUPPORTED, [])
+                response = Message.from_parts(Message.RSP_ERR_UNSUPPORTED, [])
 
         except zmq.error.ZMQError as e:
             self._logger.error(
@@ -114,9 +116,14 @@ class RequestServer():
         except ValueError as e:
 
             self._logger.error("Error processing message: " + str(e))
-            return Message.build_message_string(Message.RSP_ERR_MALFORMED, [])
+            response = Message.from_parts(Message.RSP_ERR_MALFORMED, [])
 
         except Exception as e:
 
             self._logger.error("Unknown error processing message: " + str(e))
-            return Message.build_message_string(Message.RSP_ERR_SERVER, [])
+            response = Message.from_parts(Message.RSP_ERR_SERVER, [])
+            raise e
+
+        self._logger.info("Sending response: " + response.message_friendly_string())
+
+        return response.to_string()
