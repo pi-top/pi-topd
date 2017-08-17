@@ -71,6 +71,18 @@ class Controller():
     def _on_request_get_device_id(self):
         return self._hub_manager.get_device_id()
 
+    def _on_request_increment_brightness(self):
+        self._hub_manager.increment_brightness()
+
+    def _on_request_decrement_brightness(self):
+        self._hub_manager.decrement_brightness()
+
+    def _on_request_blank_screen(self):
+        self._hub_manager.blank_screen()
+
+    def _on_request_unblank_screen(self):
+        self._hub_manager.unblank_screen()
+
     ###########################################
     # Hub Manager callback methods
     ###########################################
