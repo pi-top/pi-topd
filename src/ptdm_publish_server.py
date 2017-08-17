@@ -71,7 +71,7 @@ class PublishServer():
     def _send_message(self, message_id, parameters):
 
         message = Message.from_parts(message_id, parameters)
-        self._logger.debug("Publishing message: " + message.message_friendly_string())
+        self._logger.info("Publishing message: " + message.message_friendly_string())
 
         try:
             self._zmq_socket.send_string(message.to_string())
