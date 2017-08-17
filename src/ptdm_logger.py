@@ -24,7 +24,9 @@ class Logger:
             print(message)
 
     def debug(self, message):
-        self.print_message(message)
+        if (self._logging_level <= 10):
+            self.print_message(message)
+
         self._journal_log.debug(message)
 
     def info(self, message):
