@@ -24,6 +24,7 @@ class HubManager():
 
         except Exception as e:
             self._logger.info("Failed to connect to a v1 hub. " + str(e))
+            raise e
 
         try:
             self._module_hub_v2 = self._import_module("pthubv2")

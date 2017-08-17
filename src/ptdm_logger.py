@@ -1,6 +1,7 @@
 
 # Handles logging to the systemd log (journalctl)
 
+import inspect
 import logging
 from systemd.journal import JournalHandler
 
@@ -16,26 +17,24 @@ class Logger:
         self._journal_log.setLevel(self._logging_level)
         self._journal_log.info("Logging started.")
 
-    def debug(self, message):
+    def print_message(self, message):
         if (self._logging_level <= 10):
+            print(inspect.stack()[1][3] + ": " + message)
+        else:
             print(message)
 
+    def debug(self, message):
+        print_message(message)
         self._journal_log.debug(message)
 
     def info(self, message):
-        if (self._logging_level <= 20):
-            print(message)
-
+        print_message(message)
         self._journal_log.info(message)
 
     def warning(self, message):
-        if (self._logging_level <= 30):
-            print(message)
-
+        print_message(message)
         self._journal_log.warning(message)
 
     def error(self, message):
-        if (self._logging_level <= 40):
-            print(message)
-
+        print_message(message)
         self._journal_log.error(message)
