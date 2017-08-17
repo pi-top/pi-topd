@@ -25,7 +25,7 @@ class RequestServer():
 
         except zmq.error.ZMQError as e:
             self._logger.error("Error starting the request server: " + str(e))
-            raise e
+            return
 
         time.sleep(0.5)
 
@@ -141,10 +141,6 @@ class RequestServer():
                 self._logger.error("Unsupported request received: " + request)
                 response = Message.from_parts(Message.RSP_ERR_UNSUPPORTED, [])
 
-        except zmq.error.ZMQError as e:
-            self._logger.error(
-                "Communication error in request server: " + str(e))
-
         except ValueError as e:
 
             self._logger.error("Error processing message: " + str(e))
@@ -154,7 +150,6 @@ class RequestServer():
 
             self._logger.error("Unknown error processing message: " + str(e))
             response = Message.from_parts(Message.RSP_ERR_SERVER, [])
-            raise e
 
         self._logger.info("Sending response: " + response.message_friendly_string())
 

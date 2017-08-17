@@ -23,7 +23,7 @@ class PublishServer():
 
         except zmq.error.ZMQError as e:
             self._logger.error("Error starting the publish server: " + str(e))
-            raise e
+            return
 
     def stop_listening(self):
         self._logger.debug("Closing publisher socket...")
