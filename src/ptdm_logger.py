@@ -24,17 +24,23 @@ class Logger:
             print(message)
 
     def debug(self, message):
-        self.print_message(message)
+        print_message(message)
         self._journal_log.debug(message)
 
     def info(self, message):
-        self.print_message(message)
+        if (self._logging_level <= 20):
+            self.print_message(message)
+
         self._journal_log.info(message)
 
     def warning(self, message):
-        self.print_message(message)
+        if (self._logging_level <= 30):
+            self.print_message(message)
+
         self._journal_log.warning(message)
 
     def error(self, message):
-        self.print_message(message)
+        if (self._logging_level <= 40):
+            self.print_message(message)
+
         self._journal_log.error(message)
