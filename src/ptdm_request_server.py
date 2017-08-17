@@ -104,6 +104,38 @@ class RequestServer():
 
                 response = Message.from_parts(Message.RSP_SET_BRIGHTNESS, [])
 
+            elif (message.message_id() == Message.REQ_INCREMENT_BRIGHTNESS):
+
+                message.validate_parameters([])
+
+                self._callback_client._on_request_increment_brightness()
+
+                response = Message.from_parts(Message.RSP_INCREMENT_BRIGHTNESS, [])
+
+            elif (message.message_id() == Message.REQ_DECREMENT_BRIGHTNESS):
+
+                message.validate_parameters([])
+
+                self._callback_client._on_request_decrement_brightness()
+
+                response = Message.from_parts(Message.RSP_DECREMENT_BRIGHTNESS, [])
+
+            elif (message.message_id() == Message.REQ_BLANK_SCREEN):
+
+                message.validate_parameters([])
+
+                self._callback_client._on_request_blank_screen()
+
+                response = Message.from_parts(Message.RSP_BLANK_SCREEN, [])
+
+            elif (message.message_id() == Message.REQ_UNBLANK_SCREEN):
+
+                message.validate_parameters([])
+
+                self._callback_client._on_request_unblank_screen()
+
+                response = Message.from_parts(Message.RSP_UNBLANK_SCREEN, [])
+
             else:
 
                 self._logger.error("Unsupported request received: " + request)

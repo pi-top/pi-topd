@@ -42,83 +42,82 @@ class HubManager():
         self._logger.error("Could not connect to a hub!")
 
     def start(self):
-        self.check_hub_connected()
-        self._active_hub_module.start()
+        if (self._hub_connected()):
+            self._active_hub_module.start()
 
     def stop(self):
-        self.check_hub_connected()
-        self._active_hub_module.stop()
+        if (self._hub_connected()):
+            self._active_hub_module.stop()
 
     def register_client(self, client):
-        self.check_hub_connected()
-        self._active_hub_module.register_client(
-            client._on_hub_brightness_changed,
-            client._on_screen_blank_state_changed,
-            client._on_hub_shutdown_requested,
-            client._on_device_id_changed,
-            client._on_hub_battery_charging_state_changed,
-            client._on_hub_battery_capacity_changed,
-            client._on_hub_battery_time_remaining_changed)
+        if (self._hub_connected()):
+            self._active_hub_module.register_client(
+                client._on_hub_brightness_changed,
+                client._on_screen_blank_state_changed,
+                client._on_hub_shutdown_requested,
+                client._on_device_id_changed,
+                client._on_hub_battery_charging_state_changed,
+                client._on_hub_battery_capacity_changed,
+                client._on_hub_battery_time_remaining_changed)
 
-    # def set_logging(stdout, log_to_file):
-    #   self.check_hub_connected()
-    #   self._active_hub_module.set_logging(stdout, log_to_file)
+#   def set_logging(stdout, log_to_file):
+#       if (self._hub_connected()):
+#           self._active_hub_module.set_logging(stdout, log_to_file)
 
     def set_speed(self, no_of_polls_per_second):
-        self.check_hub_connected()
-        self._active_hub_module.set_speed(no_of_polls_per_second)
+        if (self._hub_connected()):
+            self._active_hub_module.set_speed(no_of_polls_per_second)
 
     def get_brightness(self):
-        self.check_hub_connected()
-        return self._active_hub_module.get_brightness()
+        if (self._hub_connected()):
+            return self._active_hub_module.get_brightness()
 
     def get_screen_off_state(self):
-        self.check_hub_connected()
-        return self._active_hub_module.get_screen_off_state()
+        if (self._hub_connected()):
+            return self._active_hub_module.get_screen_off_state()
 
     def get_shutdown_state(self):
-        self.check_hub_connected()
-        return self._active_hub_module.get_shutdown_state()
+        if (self._hub_connected()):
+            return self._active_hub_module.get_shutdown_state()
 
     def get_device_id(self):
-        self.check_hub_connected()
-        return self._active_hub_module.get_device_id()
+        if (self._hub_connected()):
+            return self._active_hub_module.get_device_id()
 
     def get_battery_charging_state(self):
-        self.check_hub_connected()
-        return self._active_hub_module.get_battery_charging_state()
+        if (self._hub_connected()):
+            return self._active_hub_module.get_battery_charging_state()
 
     def get_battery_time_state(self):
-        self.check_hub_connected()
-        return self._active_hub_module.get_battery_time_state()
+        if (self._hub_connected()):
+            return self._active_hub_module.get_battery_time_state()
 
     def get_battery_capacity_state(self):
-        self.check_hub_connected()
-        return self._active_hub_module.get_battery_capacity_state()
+        if (self._hub_connected()):
+            return self._active_hub_module.get_battery_capacity_state()
 
     def set_brightness(self, brightness):
-        self.check_hub_connected()
-        self._active_hub_module.set_brightness(brightness)
+        if (self._hub_connected()):
+            self._active_hub_module.set_brightness(brightness)
 
     def increment_brightness(self):
-        self.check_hub_connected()
-        self._active_hub_module.increment_brightness()
+        if (self._hub_connected()):
+            self._active_hub_module.increment_brightness()
 
     def decrement_brightness(self):
-        self.check_hub_connected()
-        self._active_hub_module.decrement_brightness()
+        if (self._hub_connected()):
+            self._active_hub_module.decrement_brightness()
 
     def blank_screen(self):
-        self.check_hub_connected()
-        self._active_hub_module.blank_screen()
+        if (self._hub_connected()):
+            self._active_hub_module.blank_screen()
 
     def unblank_screen(self):
-        self.check_hub_connected()
-        self._active_hub_module.unblank_screen()
+        if (self._hub_connected()):
+            self._active_hub_module.unblank_screen()
 
-    def check_hub_connected(self):
-        if (self._active_hub_module is None):
-            raise RuntimeError("No hub connected")
+    def _hub_connected(self):
+        return (self._active_hub_module is not None)
 
     def _import_module(self, module_name):
         try:

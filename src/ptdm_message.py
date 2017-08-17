@@ -12,11 +12,19 @@ class Message:
     REQ_GET_DEVICE_ID                   = 111
     REQ_GET_BRIGHTNESS                  = 112
     REQ_SET_BRIGHTNESS                  = 113
+    REQ_INCREMENT_BRIGHTNESS            = 114
+    REQ_DECREMENT_BRIGHTNESS            = 115
+    REQ_BLANK_SCREEN                    = 116
+    REQ_UNBLANK_SCREEN                  = 117
 
     _message_names[REQ_PING] = "REQ_PING"
     _message_names[REQ_GET_DEVICE_ID] = "REQ_GET_DEVICE_ID"
     _message_names[REQ_GET_BRIGHTNESS] = "REQ_GET_BRIGHTNESS"
     _message_names[REQ_SET_BRIGHTNESS] = "REQ_SET_BRIGHTNESS"
+    _message_names[REQ_INCREMENT_BRIGHTNESS] = "REQ_INCREMENT_BRIGHTNESS"
+    _message_names[REQ_DECREMENT_BRIGHTNESS] = "REQ_DECREMENT_BRIGHTNESS"
+    _message_names[REQ_BLANK_SCREEN] = "REQ_BLANK_SCREEN"
+    _message_names[REQ_UNBLANK_SCREEN] = "REQ_UNBLANK_SCREEN"
 
     # Responses
 
@@ -27,6 +35,10 @@ class Message:
     RSP_GET_DEVICE_ID                   = 211
     RSP_GET_BRIGHTNESS                  = 212
     RSP_SET_BRIGHTNESS                  = 213
+    RSP_INCREMENT_BRIGHTNESS            = 214
+    RSP_DECREMENT_BRIGHTNESS            = 215
+    RSP_BLANK_SCREEN                    = 216
+    RSP_UNBLANK_SCREEN                  = 217
 
     _message_names[RSP_ERR_SERVER] = "RSP_ERR_SERVER"
     _message_names[RSP_ERR_MALFORMED] = "RSP_ERR_MALFORMED"
@@ -35,6 +47,10 @@ class Message:
     _message_names[RSP_GET_DEVICE_ID] = "RSP_GET_DEVICE_ID"
     _message_names[RSP_GET_BRIGHTNESS] = "RSP_GET_BRIGHTNESS"
     _message_names[RSP_SET_BRIGHTNESS] = "RSP_SET_BRIGHTNESS"
+    _message_names[RSP_INCREMENT_BRIGHTNESS] = "RSP_INCREMENT_BRIGHTNESS"
+    _message_names[RSP_DECREMENT_BRIGHTNESS] = "RSP_DECREMENT_BRIGHTNESS"
+    _message_names[RSP_BLANK_SCREEN] = "RSP_BLANK_SCREEN"
+    _message_names[RSP_UNBLANK_SCREEN] = "RSP_UNBLANK_SCREEN"
 
     # Broadcast/published messages
 
