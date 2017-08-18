@@ -7,7 +7,7 @@ from os import system
 class Counter:
     """A simple counter class"""
 
-    def __init__(self, current, max):
+    def __init__(self, max, current=0):
         self._current = current
         self._max = max
 
@@ -29,8 +29,8 @@ class ShutdownManager:
     self.pi_top_device_id = 2
     self.warning_battery_level = 5
     self.critical_battery_level = 3
-    self.shutdown_warning_ctr = Counter(current=0, max=3)
-    self.shutdown_critical_ctr = Counter(current=0, max=3)
+    self.shutdown_warning_ctr = Counter(3)
+    self.shutdown_critical_ctr = Counter(3)
     self.shown_shutdown_warning = False
 
     def __init__(self):
