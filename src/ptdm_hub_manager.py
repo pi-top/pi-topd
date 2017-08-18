@@ -61,10 +61,6 @@ class HubManager():
                 client._on_hub_battery_capacity_changed,
                 client._on_hub_battery_time_remaining_changed)
 
-#   def set_logging(stdout, log_to_file):
-#       if (self._hub_connected()):
-#           self._active_hub_module.set_logging(stdout, log_to_file)
-
     def set_speed(self, no_of_polls_per_second):
         if (self._hub_connected()):
             self._active_hub_module.set_speed(no_of_polls_per_second)
