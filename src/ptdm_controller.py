@@ -108,6 +108,9 @@ class Controller():
     def _on_screen_blank_state_changed(self, blanked_bool):
         self._publish_server.publish_screen_blank_state_changed(blanked_bool)
 
+    def _on_lid_state_changed(self, lid_open_bool):
+        self._publish_server.publish_lid_state_changed(lid_open_bool)
+
     def _on_device_id_changed(self, device_id_int):
         self._publish_server.publish_device_id_changed(device_id_int)
 
