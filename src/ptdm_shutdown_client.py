@@ -59,6 +59,12 @@ class ShutdownManager:
     def device_is_pi_top(self):
         return (get_device_id() == self.pi_top_device_id)
 
+    def battery_state_fully_defined(self):
+        capacity_defined = (self._battery_state_mgr.battery_capacity is not None)
+        charging_defined = (self._battery_state_mgr.battery_charging is not None)
+
+        return (capacity_defined and charging_defined)
+
     def reset_counters(self):
         self.shutdown_warning_ctr.reset()
         self.shutdown_critical_ctr.reset()
@@ -77,12 +83,8 @@ class ShutdownManager:
     def process_battery_state(self):
         reset_ctrs = True
         # Is this necessary? Non-'pi-top' device would not be emitting battery events
-        if device_is_pi_top():
-            capacity_defined = (self._battery_state_mgr.battery_capacity is not None)
-            charging_defined = (self._battery_state_mgr.battery_charging is not None)
-
-            battery_state_fully_defined = (capacity_defined and charging_defined)
-            if battery_state_fully_defined:
+        if self.device_is_pi_top():
+            if self.battery_state_fully_defined():
 
                 discharging = (self._battery_state_mgr.battery_charging != "charging")
                 if discharging:
