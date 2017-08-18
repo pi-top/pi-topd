@@ -6,6 +6,7 @@ from ptdm_hub_manager import HubManager
 from ptdm_peripheral_manager import PeripheralManager
 from ptdm_publish_server import PublishServer
 from ptdm_request_server import RequestServer
+from ptdm_shutdown_client import ShutdownManager
 import time
 import sys
 import logging
@@ -21,6 +22,7 @@ class Controller():
 
         # Create classes
 
+        self._shutdown_mgr = ShutdownManager()
         self._hub_manager = HubManager()
         self._peripheral_manager = PeripheralManager()
         self._publish_server = PublishServer()
@@ -98,9 +100,14 @@ class Controller():
 
     def _on_hub_battery_charging_state_changed(self, new_value):
         self._publish_server.publish_battery_charging_state_changed(new_value)
+        self._publish_server.publish_battery_capacity_changed(new_value)
+        self._shutdown_mgr.set_battery_charging_state(new_value)
+        self.process_battery_state()
 
     def _on_hub_battery_capacity_changed(self, new_value):
         self._publish_server.publish_battery_capacity_changed(new_value)
+        self._shutdown_mgr.set_battery_capacity(new_value)
+        self.process_battery_state()
 
     def _on_hub_battery_time_remaining_changed(self, new_value):
         self._publish_server.publish_battery_time_remaining_changed(new_value)
@@ -113,6 +120,7 @@ class Controller():
 
     def _on_device_id_changed(self, device_id_int):
         self._publish_server.publish_device_id_changed(device_id_int)
+        self._shutdown_mgr.set_device_id(device_id_int)
 
     ###########################################
     # Peripheral Manager callback methods
