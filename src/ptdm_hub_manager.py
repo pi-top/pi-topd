@@ -54,6 +54,7 @@ class HubManager():
             self._active_hub_module.register_client(
                 client._on_hub_brightness_changed,
                 client._on_screen_blank_state_changed,
+                client._on_lid_state_changed,
                 client._on_hub_shutdown_requested,
                 client._on_device_id_changed,
                 client._on_hub_battery_charging_state_changed,
