@@ -4,7 +4,7 @@
 
 import zmq
 from time import sleep
-import threading
+from threading import Thread
 from ptdm_message import Message
 
 
@@ -125,7 +125,7 @@ def test_screen_blank_unblank():
 print("Starting thread...")
 
 continue_listening = True
-thread = threading.Thread(target=listen_thread)
+thread = Thread(target=listen_thread)
 thread.start()
 
 print("Connecting to request server...")

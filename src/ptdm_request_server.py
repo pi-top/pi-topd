@@ -4,7 +4,7 @@
 
 import zmq
 import time
-import threading
+from threading import Thread
 from ptdm_message import Message
 
 
@@ -32,7 +32,7 @@ class RequestServer():
         time.sleep(0.5)
 
         self._continue = True
-        self._thread = threading.Thread(target=self._thread_method)
+        self._thread = Thread(target=self._thread_method)
         self._thread.start()
 
     def stop_listening(self):
