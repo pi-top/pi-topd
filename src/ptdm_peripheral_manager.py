@@ -47,7 +47,7 @@ class PeripheralManager():
 
         # Get the initial state of the system configuration
         self.determine_i2s_mode_from_system()
-        self.determine_i2c_mode_from_system()
+        self.determineself._i2c_mode_from_system()
 
         self.configure_hifiberry_alsactl()
 
@@ -77,14 +77,14 @@ class PeripheralManager():
         try:
 
             i = import_module(cfg_module_str)
-            _custom_imported_modules[module_name] = i
+            self._custom_imported_modules[module_name] = i
 
         except ImportError:
             self._logger.info("COULD NOT IMPORT " + cfg_module_str)
 
     def add_known_device(self, device):
 
-        _known_devices.append(device)
+        self._known_devices.append(device)
 
     def update_device_indicator_files(self):
 
@@ -111,7 +111,7 @@ class PeripheralManager():
 
         self._logger.debug("Adding enabled device: " + device['name'])
 
-        _enabled_devices.append(device)
+        self._enabled_devices.append(device)
         update_device_indicator_files()
 
     def remove_enabled_device(self, device):
@@ -119,7 +119,7 @@ class PeripheralManager():
         self._logger.debug(
             "Removing device from enabled devices: " + device['name'])
 
-        _enabled_devices.remove(device)
+        self._enabled_devices.remove(device)
         update_device_indicator_files()
 
     def initialise_known_device(self, device):
@@ -128,7 +128,7 @@ class PeripheralManager():
 
     def get_device_by_address(self, addr):
 
-        for device in _known_devices:
+        for device in self._known_devices:
             if device['addr'] == int(addr, 16):
                 return device
 
@@ -136,7 +136,7 @@ class PeripheralManager():
 
     def get_device_by_name(self, name):
 
-        for device in _known_devices:
+        for device in self._known_devices:
             if device['name'] == name:
                 return device
         return None
@@ -146,10 +146,10 @@ class PeripheralManager():
         global enabled_device
 
         if 'pi-topPULSE' in device['name']:
-            if 'ptpulse' in _custom_imported_modules:
-                ptpulse_cfg = _custom_imported_modules['ptpulse']
+            if 'ptpulse' in self._custom_imported_modules:
+                ptpulse_cfg = self._custom_imported_modules['ptpulse']
 
-                if _i2s_mode_current is True:
+                if self._i2s_mode_current is True:
                     self._logger.info("I2S is already enabled")
 
                     if enable:
@@ -159,10 +159,10 @@ class PeripheralManager():
                         self._logger.debug("Disabling " + device['name'])
 
                     # Switch on I2C if it's not enabled
-                    if _i2c_mode is False:
+                    if self._i2c_mode is False:
                         enable_i2c(True)
 
-                    if _i2c_mode is False:
+                    if self._i2c_mode is False:
                         self._logger.error("Unable to initialise I2C")
 
                     else:
@@ -177,7 +177,7 @@ class PeripheralManager():
                             self._logger.error("Unable to verify state of " + str(device['name']))
 
                 else:
-                    if _i2s_mode_next is False:
+                    if self._i2s_mode_next is False:
                         self._logger.debug(
                             "I2S appears to be disabled - enabling...")
                         enable_i2s(True)
@@ -195,7 +195,7 @@ class PeripheralManager():
 
                 remove_serial_from_cmdline()
 
-                if (_i2s_mode_current != _i2s_mode_next):
+                if (self._i2s_mode_current != self._i2s_mode_next):
                     display_reboot_message()
 
             else:
@@ -214,11 +214,11 @@ class PeripheralManager():
         self._logger.debug("Updating addon device state...")
 
         if 'pi-topSPEAKER' in device['name']:
-            if 'ptspeaker' in _custom_imported_modules:
-                ptspeaker_cfg = _custom_imported_modules['ptspeaker']
+            if 'ptspeaker' in self._custom_imported_modules:
+                ptspeaker_cfg = self._custom_imported_modules['ptspeaker']
 
-                if _i2s_mode_current is True:
-                    if _i2s_mode_next is True:
+                if self._i2s_mode_current is True:
+                    if self._i2s_mode_next is True:
                         self._logger.debug(
                             "I2S appears to be enabled - disabling...")
                         enable_i2s(False)
@@ -240,10 +240,10 @@ class PeripheralManager():
                                 mode = format(device['addr'], 'x')
 
                                 # Switch on I2C if it's not enabled
-                                if _i2c_mode is False:
+                                if self._i2c_mode is False:
                                     enable_i2c(True)
 
-                                if _i2c_mode is False:
+                                if self._i2c_mode is False:
                                     self._logger.error("Unable to initialise I2C")
 
                                 else:
@@ -268,7 +268,7 @@ class PeripheralManager():
                     # else:
                         # Do nothing - speaker cannot currently be disabled
 
-                if (_i2s_mode_current != _i2s_mode_next):
+                if (self._i2s_mode_current != self._i2s_mode_next):
                     display_reboot_message()
 
             else:
@@ -290,7 +290,7 @@ class PeripheralManager():
         else:
             self._logger.info("Disabling device: " + device['name'])
 
-        device_enabled = (device in _enabled_devices)
+        device_enabled = (device in self._enabled_devices)
         valid = (enable != device_enabled)
 
         if valid:
@@ -311,10 +311,10 @@ class PeripheralManager():
         addresses_arr = []
 
         # Switch on I2C if it's not enabled
-        if _i2c_mode is False:
+        if self._i2c_mode is False:
             enable_i2c(True)
 
-        if _i2c_mode is False:
+        if self._i2c_mode is False:
             self._logger.error("Unable to initialise I2C")
 
         else:
@@ -364,7 +364,7 @@ class PeripheralManager():
             if current_device_name in detected_device:
                 status['detected'] = True
 
-        for enabled_device in _enabled_devices:
+        for enabled_device in self._enabled_devices:
             if current_device_name in enabled_device['name']:
                 status['enabled'] = True
 
@@ -383,7 +383,7 @@ class PeripheralManager():
             self._logger.debug("Disabling I2C...")
             subprocess.call(["/usr/bin/raspi-config", "nonint", "do_i2c", "1"])
 
-        determine_i2c_mode_from_system()
+        determineself._i2c_mode_from_system()
 
     def enable_i2s(self, enable):
 
@@ -617,33 +617,33 @@ class PeripheralManager():
 
         return temp_file_tuple[1]
 
-    def determine_i2c_mode_from_system(self):
+    def determineself._i2c_mode_from_system(self):
 
-        global _i2c_mode
+        global self._i2c_mode
 
         i2c_output = subprocess.check_output(
             ["/usr/bin/raspi-config", "nonint", "get_i2c"])
-        _i2c_mode = (str(i2c_output) == "0\n")
+        self._i2c_mode = (str(i2c_output) == "0\n")
 
-        if _i2c_mode is False and (str(i2c_output) == "1\n"):
+        if self._i2c_mode is False and (str(i2c_output) == "1\n"):
             self._logger.error("Unable to verify I2C mode - assuming disabled")
 
     def determine_i2s_mode_from_system(self):
 
-        global _i2s_mode_current
-        global _i2s_mode_next
+        global self._i2s_mode_current
+        global self._i2s_mode_next
 
-        _i2s_mode_current = False
-        _i2s_mode_next = False
+        self._i2s_mode_current = False
+        self._i2s_mode_next = False
 
         i2s_output = subprocess.check_output(["/usr/bin/pt-i2s"]).splitlines()
 
         for line in i2s_output:
             if 'I2S is currently enabled' in str(line):
-                _i2s_mode_current = True
+                self._i2s_mode_current = True
 
             elif 'I2S is due to be enabled on reboot' in str(line):
-                _i2s_mode_next = True
+                self._i2s_mode_next = True
 
     ################################
     # EXPORTED FUNCTIONS           #
@@ -656,7 +656,7 @@ class PeripheralManager():
         if current_device is None:
             self._logger.warning("Device " + current_device_name + " not recognised")
 
-        elif current_device in _enabled_devices:
+        elif current_device in self._enabled_devices:
             self._logger.debug("updating device state")
             update_device_state(current_device, False)
 
@@ -670,9 +670,9 @@ class PeripheralManager():
         if current_device is None:
             self._logger.error("Attempted to enable device " + current_device_name + ", but it was not recognised")
 
-        elif current_device not in _enabled_devices:
+        elif current_device not in self._enabled_devices:
 
-            for enabled_device in _enabled_devices:
+            for enabled_device in self._enabled_devices:
 
                 if current_device['id'] not in enabled_device['compatible_ids']:
                     return
@@ -687,7 +687,7 @@ class PeripheralManager():
 
         addresses = get_connected_device_addresses()
 
-        for device in _enabled_devices:
+        for device in self._enabled_devices:
 
             if format(device['addr'], 'x') not in addresses:
 
@@ -715,7 +715,7 @@ class PeripheralManager():
 
     def configure_hifiberry_alsactl(self):
 
-        if _i2s_mode_current is True and os.path.isfile(_i2s_configured_file_path) is False:
+        if self._i2s_mode_current is True and os.path.isfile(_i2s_configured_file_path) is False:
             subprocess.call(("/usr/sbin/alsactl", "-f",
                              _i2s_config_file_path, "restore"))
             touch(_i2s_configured_file_path)
