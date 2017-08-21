@@ -36,28 +36,24 @@ class PeripheralManager():
 
         self._logger.debug("Initialising peripheral manager...")
         # Dynamically add the required python modules, if they are installed
-        add_module_if_available('ptspeaker')
-        add_module_if_available('ptpulse')
+        self.add_module_if_available('ptspeaker')
+        self.add_module_if_available('ptpulse')
 
         # Initialise the devices that we support
-        initialise_known_device({'id': 0, 'compatible_ids': [
-                                None], 'name': 'pi-topPULSE', 'type': 'HAT', 'addr': 0x24})
-        initialise_known_device({'id': 1, 'compatible_ids': [
-                                2, 3], 'name': 'pi-topSPEAKER-Left', 'type': 'addon', 'addr': 0x71})
-        initialise_known_device({'id': 2, 'compatible_ids': [
-                                1, 3], 'name': 'pi-topSPEAKER-Mono', 'type': 'addon', 'addr': 0x73})
-        initialise_known_device({'id': 3, 'compatible_ids': [
-                                1, 2], 'name': 'pi-topSPEAKER-Right', 'type': 'addon', 'addr': 0x72})
+        self.initialise_known_device({'id': 0, 'compatible_ids': [None], 'name': 'pi-topPULSE', 'type': 'HAT', 'addr': 0x24})
+        self.initialise_known_device({'id': 1, 'compatible_ids': [2, 3], 'name': 'pi-topSPEAKER-Left', 'type': 'addon', 'addr': 0x71})
+        self.initialise_known_device({'id': 2, 'compatible_ids': [1, 3], 'name': 'pi-topSPEAKER-Mono', 'type': 'addon', 'addr': 0x73})
+        self.initialise_known_device({'id': 3, 'compatible_ids': [1, 2], 'name': 'pi-topSPEAKER-Right', 'type': 'addon', 'addr': 0x72})
 
         # Get the initial state of the system configuration
-        determine_i2s_mode_from_system()
-        determine_i2c_mode_from_system()
+        self.determine_i2s_mode_from_system()
+        self.determine_i2c_mode_from_system()
 
-        configure_hifiberry_alsactl()
+        self.configure_hifiberry_alsactl()
 
-        update_device_indicator_files()
+        self.update_device_indicator_files()
 
-    def start():
+    def start(self):
         if self.is_initialised(self):
             self._run_main_thread = True
             self._main_thread.start()
@@ -71,7 +67,7 @@ class PeripheralManager():
     def is_initialised(self):
         return (self._main_thread is not None)
 
-    def _main_thread_loop():
+    def _main_thread_loop(self):
         while self._run_main_thread:
             self.auto_initialise_peripherals()
             sleep(_loop_delay_seconds)
@@ -90,7 +86,7 @@ class PeripheralManager():
 
         _known_devices.append(device)
 
-    def update_device_indicator_files(self, ):
+    def update_device_indicator_files(self):
 
         self._logger.debug("Updating device indicator files...")
 
@@ -310,7 +306,7 @@ class PeripheralManager():
         else:
             self._logger.debug("Device state was already set")
 
-    def get_connected_device_addresses(self, ):
+    def get_connected_device_addresses(self):
 
         addresses_arr = []
 
@@ -332,7 +328,7 @@ class PeripheralManager():
 
         return addresses_arr
 
-    def get_connected_devices(self, ):
+    def get_connected_devices(self):
 
         addresses = get_connected_device_addresses()
 
@@ -345,7 +341,7 @@ class PeripheralManager():
 
         return detected_devices
 
-    def get_connected_device_names(self, ):
+    def get_connected_device_names(self):
 
         detected_devices = get_connected_devices()
 
@@ -422,7 +418,7 @@ class PeripheralManager():
 
         return line_to_change.replace("#", "")
 
-    def set_hdmi_drive_in_boot_config(self, ):
+    def set_hdmi_drive_in_boot_config(self):
 
         self._logger.debug("Checking hdmi_drive setting in " +
                            _boot_config_file_path + "...")
@@ -468,7 +464,7 @@ class PeripheralManager():
 
         return setting_updated
 
-    def set_serial_baud_rate_in_boot_config(self, ):
+    def set_serial_baud_rate_in_boot_config(self):
 
         config_values = {
             "init_uart_clock": "1627604",
@@ -554,12 +550,12 @@ class PeripheralManager():
         self._logger.info("Updating " + _boot_config_file_path + " to configure serial...")
         copy(temp_file, _boot_config_file_path)
 
-    def remove_serial_from_cmdline(self, ):
+    def remove_serial_from_cmdline(self):
 
         CommonFunctions.sed_inplace('/boot/cmdline.txt', r'console=ttyAMA0,[0-9]+ ', '')
         CommonFunctions.sed_inplace('/boot/cmdline.txt', r'console=serial0,[0-9]+ ', '')
 
-    def _baud_rate_correctly_configured(self, ):
+    def _baud_rate_correctly_configured(self):
 
         clock_string = get_value_from_boot_config("init_uart_clock")
         baud_string = get_value_from_boot_config("init_uart_baud")
@@ -599,7 +595,7 @@ class PeripheralManager():
 
         return value.strip()
 
-    def display_reboot_message(self, ):
+    def display_reboot_message(self):
 
         self._logger.info("System configuration changed. Display reboot message")
 
@@ -614,14 +610,14 @@ class PeripheralManager():
             subprocess.Popen(["/usr/bin/zenity", "--info", "--text", "The system settings have been modified to support a hardware change. Please reboot your system to complete the reconfiguration."],
                              env=dict(os.environ, DISPLAY=":0.0", XAUTHORITY="/home/pi/.Xauthority"))
 
-    def create_temp_file(self, ):
+    def create_temp_file(self):
 
         temp_file_tuple = mkstemp()
         os.close(temp_file_tuple[0])
 
         return temp_file_tuple[1]
 
-    def determine_i2c_mode_from_system(self, ):
+    def determine_i2c_mode_from_system(self):
 
         global _i2c_mode
 
@@ -632,7 +628,7 @@ class PeripheralManager():
         if _i2c_mode is False and (str(i2c_output) == "1\n"):
             self._logger.error("Unable to verify I2C mode - assuming disabled")
 
-    def determine_i2s_mode_from_system(self, ):
+    def determine_i2s_mode_from_system(self):
 
         global _i2s_mode_current
         global _i2s_mode_next
@@ -687,7 +683,7 @@ class PeripheralManager():
             self._logger.debug(
                 "Device " + current_device_name + " already enabled")
 
-    def auto_initialise_peripherals(self, ):
+    def auto_initialise_peripherals(self):
 
         addresses = get_connected_device_addresses()
 
@@ -713,11 +709,11 @@ class PeripheralManager():
         with open(fname, 'a'):
             os.utime(fname, times)
 
-    def reboot_system(self, ):
+    def reboot_system(self):
 
         subprocess.call(("/sbin/reboot"))
 
-    def configure_hifiberry_alsactl(self, ):
+    def configure_hifiberry_alsactl(self):
 
         if _i2s_mode_current is True and os.path.isfile(_i2s_configured_file_path) is False:
             subprocess.call(("/usr/sbin/alsactl", "-f",
