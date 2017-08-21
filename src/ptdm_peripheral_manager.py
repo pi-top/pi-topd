@@ -90,7 +90,7 @@ class PeripheralManager():
 
         self._logger.debug("Updating device indicator files...")
 
-        pulse_enabled = get_status_of_device_by_name("pi-topPULSE")['enabled']
+        pulse_enabled = self.get_status_of_device_by_name("pi-topPULSE")['enabled']
 
         if (pulse_enabled is True and os.path.isfile(_pulse_indicator_file_path) is False):
             open(_pulse_indicator_file_path, "a")
@@ -98,7 +98,7 @@ class PeripheralManager():
         elif (pulse_enabled is False and os.path.isfile(_pulse_indicator_file_path) is True):
             os.remove(_pulse_indicator_file_path)
 
-        speaker_enabled = get_status_of_device_by_name(
+        speaker_enabled = self.get_status_of_device_by_name(
             "pi-topSPEAKER")['enabled']
 
         if (speaker_enabled is True and os.path.isfile(_speaker_indicator_file_path) is False):
@@ -112,7 +112,7 @@ class PeripheralManager():
         self._logger.debug("Adding enabled device: " + device['name'])
 
         self._enabled_devices.append(device)
-        update_device_indicator_files()
+        self.update_device_indicator_files()
 
     def remove_enabled_device(self, device):
 
@@ -120,11 +120,11 @@ class PeripheralManager():
             "Removing device from enabled devices: " + device['name'])
 
         self._enabled_devices.remove(device)
-        update_device_indicator_files()
+        self.update_device_indicator_files()
 
     def initialise_known_device(self, device):
 
-        add_known_device(device)
+        self.add_known_device(device)
 
     def get_device_by_address(self, addr):
 
@@ -160,7 +160,7 @@ class PeripheralManager():
 
                     # Switch on I2C if it's not enabled
                     if self._i2c_mode is False:
-                        enable_i2c(True)
+                        self.enable_i2c(True)
 
                     if self._i2c_mode is False:
                         self._logger.error("Unable to initialise I2C")
@@ -168,10 +168,10 @@ class PeripheralManager():
                     else:
                         if ptpulse_cfg.reset_device_state(enable):
                             if enable:
-                                add_enabled_device(device)
+                                self.add_enabled_device(device)
 
                             else:
-                                remove_enabled_device(device)
+                                self.remove_enabled_device(device)
 
                         else:
                             self._logger.error("Unable to verify state of " + str(device['name']))
@@ -180,23 +180,23 @@ class PeripheralManager():
                     if self._i2s_mode_next is False:
                         self._logger.debug(
                             "I2S appears to be disabled - enabling...")
-                        enable_i2s(True)
+                        self.enable_i2s(True)
 
                     # Add to enabled devices to prevent further scans
                     # attempting to initialise device
-                    add_enabled_device(device)
+                    self.add_enabled_device(device)
 
-                if _baud_rate_correctly_configured() is True:
+                if self._baud_rate_correctly_configured() is True:
                     self._logger.debug(
                         "Baud rate is already configured for ptpulse")
 
                 else:
-                    set_serial_baud_rate_in_boot_config()
+                    self.set_serial_baud_rate_in_boot_config()
 
-                remove_serial_from_cmdline()
+                self.remove_serial_from_cmdline()
 
                 if (self._i2s_mode_current != self._i2s_mode_next):
-                    display_reboot_message()
+                    self.display_reboot_message()
 
             else:
                 if sys.version_info >= (3, 0):
@@ -221,15 +221,15 @@ class PeripheralManager():
                     if self._i2s_mode_next is True:
                         self._logger.debug(
                             "I2S appears to be enabled - disabling...")
-                        enable_i2s(False)
+                        self.enable_i2s(False)
 
                         # Also ensure that HDMI is correctly configured, so we
                         # don't have to reboot twice
-                        set_hdmi_drive_in_boot_config()
+                        self.set_hdmi_drive_in_boot_config()
 
                     # Add to enabled devices to prevent further scans
                     # attempting to initialise device
-                    add_enabled_device(device)
+                    self.add_enabled_device(device)
 
                 else:
                     self._logger.debug("Initialising pi-topSPEAKER...")
@@ -241,17 +241,17 @@ class PeripheralManager():
 
                                 # Switch on I2C if it's not enabled
                                 if self._i2c_mode is False:
-                                    enable_i2c(True)
+                                    self.enable_i2c(True)
 
                                 if self._i2c_mode is False:
                                     self._logger.error("Unable to initialise I2C")
 
                                 else:
                                     if ptspeaker_cfg.enable(mode):
-                                        add_enabled_device(device)
+                                        self.add_enabled_device(device)
 
-                                        if (set_hdmi_drive_in_boot_config() is True):
-                                            display_reboot_message()
+                                        if (self.set_hdmi_drive_in_boot_config() is True):
+                                            self.display_reboot_message()
 
                                         self._logger.debug("OK.")
                                         return True
@@ -269,7 +269,7 @@ class PeripheralManager():
                         # Do nothing - speaker cannot currently be disabled
 
                 if (self._i2s_mode_current != self._i2s_mode_next):
-                    display_reboot_message()
+                    self.display_reboot_message()
 
             else:
                 if sys.version_info >= (3, 0):
@@ -295,10 +295,10 @@ class PeripheralManager():
 
         if valid:
             if device['type'] == 'HAT':
-                update_hat_device_state(device, enable)
+                self.update_hat_device_state(device, enable)
 
             elif device['type'] == 'addon':
-                update_addon_device_state(device, enable)
+                self.update_addon_device_state(device, enable)
 
             else:
                 self._logger.error("Unrecognised device type")
@@ -312,7 +312,7 @@ class PeripheralManager():
 
         # Switch on I2C if it's not enabled
         if self._i2c_mode is False:
-            enable_i2c(True)
+            self.enable_i2c(True)
 
         if self._i2c_mode is False:
             self._logger.error("Unable to initialise I2C")
@@ -330,12 +330,12 @@ class PeripheralManager():
 
     def get_connected_devices(self):
 
-        addresses = get_connected_device_addresses()
+        addresses = self.get_connected_device_addresses()
 
         detected_devices = []
 
         for address in addresses:
-            current_device = get_device_by_address(address)
+            current_device = self.get_device_by_address(address)
             if current_device is not None:
                 detected_devices.append(current_device)
 
@@ -343,7 +343,7 @@ class PeripheralManager():
 
     def get_connected_device_names(self):
 
-        detected_devices = get_connected_devices()
+        detected_devices = self.get_connected_devices()
 
         detected_device_names = []
 
@@ -360,7 +360,7 @@ class PeripheralManager():
         status['detected'] = False
         status['enabled'] = False
 
-        for detected_device in get_connected_device_names():
+        for detected_device in self.get_connected_device_names():
             if current_device_name in detected_device:
                 status['detected'] = True
 
@@ -383,7 +383,7 @@ class PeripheralManager():
             self._logger.debug("Disabling I2C...")
             subprocess.call(["/usr/bin/raspi-config", "nonint", "do_i2c", "1"])
 
-        determine_i2c_mode_from_system()
+        self.determine_i2c_mode_from_system()
 
     def enable_i2s(self, enable):
 
@@ -392,7 +392,7 @@ class PeripheralManager():
         else:
             subprocess.call(["/usr/bin/pt-i2s", "disable"])
 
-        determine_i2s_mode_from_system()
+        self.determine_i2s_mode_from_system()
 
     def get_value_from_line(self, line_to_check):
 
@@ -405,12 +405,12 @@ class PeripheralManager():
 
     def is_line_commented(self, line_to_check):
 
-        stripped_line = strip_whitespace(line_to_check)
+        stripped_line = self.strip_whitespace(line_to_check)
         return stripped_line.startswith('#')
 
     def comment_line(self, line_to_change):
 
-        stripped_line = strip_whitespace(line_to_change)
+        stripped_line = self.strip_whitespace(line_to_change)
         commented_line = "#" + stripped_line
         return commented_line
 
@@ -426,7 +426,7 @@ class PeripheralManager():
         setting_updated = False
         setting_found = False
 
-        temp_file = create_temp_file()
+        temp_file = self.create_temp_file()
 
         with open(temp_file, 'w') as output_file:
             with open(_boot_config_file_path, 'r') as input_file:
@@ -439,8 +439,8 @@ class PeripheralManager():
                     if "hdmi_drive=" in line_to_write:
                         setting_found = True
 
-                        if (is_line_commented(line_to_write)):
-                            line_to_write = uncomment_line(line_to_write)
+                        if (self.is_line_commented(line_to_write)):
+                            line_to_write = self.uncomment_line(line_to_write)
                             setting_updated = True
 
                         if "hdmi_drive=2" not in line_to_write:
@@ -478,7 +478,7 @@ class PeripheralManager():
             "enable_uart": False
         }
 
-        temp_file = create_temp_file()
+        temp_file = self.create_temp_file()
 
         if not (os.path.isfile(_boot_config_file_path)):
             self._logger.error(_boot_config_file_path + " file not found!")
@@ -496,20 +496,20 @@ class PeripheralManager():
                         if field_to_find in line:
                             if config_values_enabled[field_to_find]:
 
-                                if not is_line_commented(line):
-                                    line_to_write = comment_line(line) + "\n"
+                                if not self.is_line_commented(line):
+                                    line_to_write = self.comment_line(line) + "\n"
 
                             else:
-                                if is_line_commented(line):
+                                if self.is_line_commented(line):
                                     # If value is correct, uncomment - else, leave alone
                                     # Check value is correct
-                                    last_field = get_value_from_line(line)
+                                    last_field = self.get_value_from_line(line)
 
                                     desired_value = config_values[
                                         field_to_find]
 
                                     if last_field == desired_value:
-                                        line_to_write = uncomment_line(
+                                        line_to_write = self.uncomment_line(
                                             line) + "\n"
                                         config_values_enabled[
                                             field_to_find] = True
@@ -518,7 +518,7 @@ class PeripheralManager():
                                 else:
                                     # If value is not correct, comment out - else, leave alone
                                     # Check value is correct
-                                    last_field = get_value_from_line(line)
+                                    last_field = self.get_value_from_line(line)
 
                                     desired_value = config_values[
                                         field_to_find]
@@ -531,7 +531,7 @@ class PeripheralManager():
                                     else:
                                         # Not correct -  line needs to be
                                         # commented out
-                                        line_to_write = comment_line(
+                                        line_to_write = self.comment_line(
                                             line) + "\n"
 
                             # Field was found - go to next line
@@ -557,9 +557,9 @@ class PeripheralManager():
 
     def _baud_rate_correctly_configured(self):
 
-        clock_string = get_value_from_boot_config("init_uart_clock")
-        baud_string = get_value_from_boot_config("init_uart_baud")
-        enabled_string = get_value_from_boot_config("enable_uart")
+        clock_string = self.get_value_from_boot_config("init_uart_clock")
+        baud_string = self.get_value_from_boot_config("init_uart_baud")
+        enabled_string = self.get_value_from_boot_config("enable_uart")
 
         return (clock_string == "1627604") and (baud_string == "460800") and (enabled_string == "1")
 
@@ -573,7 +573,7 @@ class PeripheralManager():
             for line in config_file:
                 if (property_name in line):
                     if not line.strip().startswith("#"):
-                        value = get_value_from_config_line(line)
+                        value = self.get_value_from_config_line(line)
                         return value
 
         return ""
@@ -611,16 +611,12 @@ class PeripheralManager():
                              env=dict(os.environ, DISPLAY=":0.0", XAUTHORITY="/home/pi/.Xauthority"))
 
     def create_temp_file(self):
-
         temp_file_tuple = mkstemp()
         os.close(temp_file_tuple[0])
 
         return temp_file_tuple[1]
 
     def determine_i2c_mode_from_system(self):
-
-        global self._i2c_mode
-
         i2c_output = subprocess.check_output(
             ["/usr/bin/raspi-config", "nonint", "get_i2c"])
         self._i2c_mode = (str(i2c_output) == "0\n")
@@ -629,10 +625,6 @@ class PeripheralManager():
             self._logger.error("Unable to verify I2C mode - assuming disabled")
 
     def determine_i2s_mode_from_system(self):
-
-        global self._i2s_mode_current
-        global self._i2s_mode_next
-
         self._i2s_mode_current = False
         self._i2s_mode_next = False
 
@@ -651,21 +643,21 @@ class PeripheralManager():
 
     def attempt_disable_device_by_name(self, current_device_name):
 
-        current_device = get_device_by_name(current_device_name)
+        current_device = self.get_device_by_name(current_device_name)
 
         if current_device is None:
             self._logger.warning("Device " + current_device_name + " not recognised")
 
         elif current_device in self._enabled_devices:
             self._logger.debug("updating device state")
-            update_device_state(current_device, False)
+            self.update_device_state(current_device, False)
 
         else:
             self._logger.warning("Device " + current_device_name + " already disabled")
 
     def attempt_enable_device_by_name(self, current_device_name):
 
-        current_device = get_device_by_name(current_device_name)
+        current_device = self.get_device_by_name(current_device_name)
 
         if current_device is None:
             self._logger.error("Attempted to enable device " + current_device_name + ", but it was not recognised")
@@ -677,7 +669,7 @@ class PeripheralManager():
                 if current_device['id'] not in enabled_device['compatible_ids']:
                     return
 
-            update_device_state(current_device, True)
+            self.update_device_state(current_device, True)
 
         else:
             self._logger.debug(
@@ -685,7 +677,7 @@ class PeripheralManager():
 
     def auto_initialise_peripherals(self):
 
-        addresses = get_connected_device_addresses()
+        addresses = self.get_connected_device_addresses()
 
         for device in self._enabled_devices:
 
@@ -694,15 +686,15 @@ class PeripheralManager():
                 self._logger.debug(
                     "Device " + device['name'] + " was enabled but not detected.")
 
-                remove_enabled_device(device)
-                attempt_disable_device_by_name(device['name'])
+                self.remove_enabled_device(device)
+                self.attempt_disable_device_by_name(device['name'])
 
         for address in addresses:
 
-            current_device = get_device_by_address(address)
+            current_device = self.get_device_by_address(address)
 
             if current_device is not None:
-                attempt_enable_device_by_name(current_device['name'])
+                self.attempt_enable_device_by_name(current_device['name'])
 
     def touch(self, fname, times=None):
 
@@ -718,5 +710,5 @@ class PeripheralManager():
         if self._i2s_mode_current is True and os.path.isfile(_i2s_configured_file_path) is False:
             subprocess.call(("/usr/sbin/alsactl", "-f",
                              _i2s_config_file_path, "restore"))
-            touch(_i2s_configured_file_path)
-            reboot_system()
+            self.touch(_i2s_configured_file_path)
+            self.reboot_system()
