@@ -9,6 +9,8 @@ from ptdm_message import Message
 
 
 class RequestServer():
+    def __init__(publish_server):
+        self._publish_server = publish_server
 
     def initialise(self, logger, callback_client):
         self._logger = logger
@@ -79,6 +81,14 @@ class RequestServer():
                 message.validate_parameters([])
 
                 response = Message.from_parts(Message.RSP_PING, [])
+
+            elif (message.message_id() == Message.REQ_TEST_PUB_EMITS):
+
+                message.validate_parameters([])
+
+                self._publish_server.test_all_publishes()
+
+                response = "OKAY"
 
             elif (message.message_id() == Message.REQ_GET_DEVICE_ID):
 

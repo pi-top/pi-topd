@@ -26,7 +26,7 @@ class Controller():
         self._hub_manager = HubManager()
         self._peripheral_manager = PeripheralManager()
         self._publish_server = PublishServer()
-        self._request_server = RequestServer()
+        self._request_server = RequestServer(self._publish_server)
 
         # Initialise
 
@@ -42,6 +42,8 @@ class Controller():
         self._hub_manager.register_client(self)
         self._hub_manager.start()
 
+        self._peripheral_manager.start()
+
         self._publish_server.start_listening()
         self._request_server.start_listening()
 
@@ -51,6 +53,8 @@ class Controller():
 
         self._request_server.stop_listening()
         self._publish_server.stop_listening()
+
+        self._peripheral_manager.stop()
 
         self._hub_manager.stop()
 

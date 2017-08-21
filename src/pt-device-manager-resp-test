@@ -1,0 +1,111 @@
+#!/usr/bin/python3
+
+# FUNCTIONALITY:
+# 1) send "test emits" message to device manager
+# 2) monitor emits; check that they meet defined behaviour
+
+
+import zmq
+from time import sleep
+import threading
+from ptdm_message import Message
+
+
+def send_request(message_request_id, parameters):
+
+    message = Message.from_parts(message_request_id, parameters)
+    zmq_socket.send_string(message.to_string())
+
+    response_string = zmq_socket.recv_string()
+    response = Message.from_string(response_string)
+
+    return response.message_id()
+
+
+def request_test_emits():
+    print("EXPECTED:")
+
+    print("DEVICE ID = 0")
+    print("DEVICE ID = 1")
+    print("DEVICE ID = 2")
+    print("DEVICE ID = 3")
+    print("BRIGHTNESS = 3")
+    print("BRIGHTNESS = 6")
+    print("BRIGHTNESS = 10")
+    print("PERIPHERAL 1 CONNECTED")
+    print("PERIPHERAL 1 DISCONNECTED")
+    print("BATTERY CHARGING")
+    print("BATTERY DISCHARGING")
+    print("BATTERY CAPACITY 95")
+    print("BATTERY CAPACITY 50")
+    print("BATTERY TIME REMAINING 300")
+    print("BATTERY TIME REMAINING 250")
+    print("SCREEN BLANK")
+    print("SCREEN UNBLANK")
+    print("SHUTDOWN REQUESTED")
+    print("REBOOT REQUIRED")
+    resp = send_request(Message.REQ_TEST_PUB_EMITS, [])
+    print(resp)
+
+
+def listen_thread():
+
+    print("Connecting to publish server...")
+    zmq_context_listen = zmq.Context()
+    zmq_socket = zmq_context_listen.socket(zmq.SUB)
+    zmq_socket.setsockopt_string(zmq.SUBSCRIBE, "")
+    zmq_socket.connect("tcp://127.0.0.1:3781")
+    print("Connected to publish server")
+
+    sleep(0.5)
+
+    while continue_listening:
+        poller = zmq.Poller()
+        poller.register(zmq_socket, zmq.POLLIN)
+        events = poller.poll(500)
+
+        for i in range(len(events)):
+            message_string = zmq_socket.recv_string()
+            message = Message.from_string(message_string)
+            print("Received publish event: " + message.message_friendly_string())
+
+
+print("Starting thread...")
+
+continue_listening = True
+thread = threading.Thread(target=listen_thread)
+thread.start()
+
+
+print("Connecting to request server...")
+zmq_context_send = zmq.Context()
+zmq_socket = zmq_context_send.socket(zmq.REQ)
+zmq_socket.connect("tcp://127.0.0.1:3782")
+print("Connected to request server.")
+
+
+sleep(0.5)
+request_test_emits()
+sleep(30)
+
+# PUB_BRIGHTNESS_CHANGED              = 300
+# PUB_PERIPHERAL_CONNECTED            = 301
+# PUB_PERIPHERAL_DISCONNECTED         = 302
+# PUB_SHUTDOWN_REQUESTED              = 303
+# PUB_REBOOT_REQUIRED                 = 304
+# PUB_BATTERY_CHARGING_STATE_CHANGED  = 305
+# PUB_BATTERY_CAPACITY_CHANGED        = 306
+# PUB_BATTERY_TIME_REMAINING_CHANGED  = 307
+# PUB_SCREEN_BLANKED                  = 308
+# PUB_SCREEN_UNBLANKED                = 309
+# PUB_DEVICE_ID_CHANGED               = 310
+
+print("*** End of tests ***")
+print("Waiting for any further events...")
+sleep(5)
+
+print("Closing sockets...")
+continue_listening = False
+thread.join()
+zmq_socket.close()
+print("Done.")
