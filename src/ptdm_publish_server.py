@@ -8,13 +8,13 @@ from ptdm_message import Message
 
 
 class PublishServer():
-    self.test_device_id_vals = [0, 1, 2, 3]
-    self.test_brightness_vals = [3, 6, 10]
-    self.test_peripheral_id = 1
-    self.test_battery_charging_state_vals = [1, 0]
-    self.test_battery_capacity_vals = [95, 50]
-    self.test_battery_time_remaining_vals = [300, 250]
-    self.test_screen_blank_vals = [True, False]
+    test_device_id_vals = [0, 1, 2, 3]
+    test_brightness_vals = [3, 6, 10]
+    test_peripheral_id = 1
+    test_battery_charging_state_vals = [1, 0]
+    test_battery_capacity_vals = [95, 50]
+    test_battery_time_remaining_vals = [300, 250]
+    test_screen_blank_vals = [True, False]
 
     def initialise(self, logger):
         self._logger = logger
