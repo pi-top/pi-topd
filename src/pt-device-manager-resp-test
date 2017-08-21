@@ -7,7 +7,7 @@
 
 import zmq
 from time import sleep
-import threading
+from threading import Thread
 from ptdm_message import Message
 
 
@@ -73,7 +73,7 @@ def listen_thread():
 print("Starting thread...")
 
 continue_listening = True
-thread = threading.Thread(target=listen_thread)
+thread = Thread(target=listen_thread)
 thread.start()
 
 

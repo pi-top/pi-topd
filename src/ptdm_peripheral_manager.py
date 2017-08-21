@@ -3,6 +3,7 @@ from ptdm_common import CommonFunctions
 from tempfile import mkstemp
 from importlib import import_module
 from string import whitespace
+from threading import Thread
 
 # Discovers which peripheral libraries are installed, and uses those to
 # detect, initialise, and communicate with the corresponding device
@@ -23,7 +24,7 @@ class PeripheralManager():
         self._logger = logger
         self._callback_client = callback_client
 
-        self._main_thread = threading.Thread(target=self._main_thread_loop)
+        self._main_thread = Thread(target=self._main_thread_loop)
         self._run_main_thread = False
 
         self._enabled_devices = []
