@@ -9,14 +9,14 @@ from string import whitespace
 
 
 class PeripheralManager():
-    self._loop_delay_seconds = 1
-    self._boot_config_file_path = "/boot/config.txt"
-    self._dashboard_visible_indicator_file_path = "/etc/pi-top/.dashboardVisible"
-    self._speaker_indicator_file_path = "/home/pi/.speaker"
-    self._pulse_indicator_file_path = "/home/pi/.pulse"
-    self._i2s_config_file_path = str(
+    _loop_delay_seconds = 1
+    _boot_config_file_path = "/boot/config.txt"
+    _dashboard_visible_indicator_file_path = "/etc/pi-top/.dashboardVisible"
+    _speaker_indicator_file_path = "/home/pi/.speaker"
+    _pulse_indicator_file_path = "/home/pi/.pulse"
+    _i2s_config_file_path = str(
         "/etc/pi-top/.i2s-vol/hifiberry-alsactl.restore")
-    self._i2s_configured_file_path = str("/etc/pi-top/.i2s-vol/configured")
+    _i2s_configured_file_path = str("/etc/pi-top/.i2s-vol/configured")
 
     def initialise(self, logger, callback_client):
 
