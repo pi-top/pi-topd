@@ -7,6 +7,7 @@ class Message:
     _message_names = {}
 
     # Requests
+    REQ_TEST_PUB_EMITS                  = 100
 
     REQ_PING                            = 110
     REQ_GET_DEVICE_ID                   = 111
@@ -17,6 +18,7 @@ class Message:
     REQ_BLANK_SCREEN                    = 116
     REQ_UNBLANK_SCREEN                  = 117
 
+    _message_names[REQ_TEST_PUB_EMITS] = "REQ_TEST_PUB_EMITS"
     _message_names[REQ_PING] = "REQ_PING"
     _message_names[REQ_GET_DEVICE_ID] = "REQ_GET_DEVICE_ID"
     _message_names[REQ_GET_BRIGHTNESS] = "REQ_GET_BRIGHTNESS"

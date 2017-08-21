@@ -1,4 +1,7 @@
+src/pt-brightness                       /usr/bin/
 src/pt-device-manager                   /usr/lib/pt-device-manager/
+src/pt-device-manager-req-test          /usr/lib/pt-device-manager/debug/
+src/pt-device-manager-resp-test         /usr/lib/pt-device-manager/debug/
 src/ptdm_controller.py                  /usr/lib/pt-device-manager/
 src/ptdm_hub_manager.py                 /usr/lib/pt-device-manager/
 src/ptdm_logger.py                      /usr/lib/pt-device-manager/
