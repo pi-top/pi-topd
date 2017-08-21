@@ -26,12 +26,12 @@ class Counter:
 
 
 class ShutdownManager:
-    self.pi_top_device_id = 2
-    self.warning_battery_level = 5
-    self.critical_battery_level = 3
-    self.shutdown_warning_ctr = Counter(3)
-    self.shutdown_critical_ctr = Counter(3)
-    self.shown_shutdown_warning = False
+    pi_top_device_id = 2
+    warning_battery_level = 5
+    critical_battery_level = 3
+    shutdown_warning_ctr = Counter(3)
+    shutdown_critical_ctr = Counter(3)
+    shown_shutdown_warning = False
 
     def __init__(self):
         self.battery_capacity = None
