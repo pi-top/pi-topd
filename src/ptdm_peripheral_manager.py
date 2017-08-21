@@ -47,7 +47,7 @@ class PeripheralManager():
 
         # Get the initial state of the system configuration
         self.determine_i2s_mode_from_system()
-        self.determineself._i2c_mode_from_system()
+        self.determine_i2c_mode_from_system()
 
         self.configure_hifiberry_alsactl()
 
@@ -383,7 +383,7 @@ class PeripheralManager():
             self._logger.debug("Disabling I2C...")
             subprocess.call(["/usr/bin/raspi-config", "nonint", "do_i2c", "1"])
 
-        determineself._i2c_mode_from_system()
+        determine_i2c_mode_from_system()
 
     def enable_i2s(self, enable):
 
@@ -617,7 +617,7 @@ class PeripheralManager():
 
         return temp_file_tuple[1]
 
-    def determineself._i2c_mode_from_system(self):
+    def determine_i2c_mode_from_system(self):
 
         global self._i2c_mode
 
