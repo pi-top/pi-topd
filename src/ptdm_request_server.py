@@ -9,7 +9,7 @@ from ptdm_message import Message
 
 
 class RequestServer():
-    def __init__(publish_server):
+    def __init__(self, publish_server):
         self._publish_server = publish_server
 
     def initialise(self, logger, callback_client):
