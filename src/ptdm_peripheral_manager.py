@@ -4,6 +4,9 @@ from tempfile import mkstemp
 from importlib import import_module
 from string import whitespace
 from threading import Thread
+from subprocess import check_output
+from subprocess import call
+from os import path
 
 # Discovers which peripheral libraries are installed, and uses those to
 # detect, initialise, and communicate with the corresponding device
@@ -15,9 +18,8 @@ class PeripheralManager():
     _dashboard_visible_indicator_file_path = "/etc/pi-top/.dashboardVisible"
     _speaker_indicator_file_path = "/home/pi/.speaker"
     _pulse_indicator_file_path = "/home/pi/.pulse"
-    _i2s_config_file_path = str(
-        "/etc/pi-top/.i2s-vol/hifiberry-alsactl.restore")
-    _i2s_configured_file_path = str("/etc/pi-top/.i2s-vol/configured")
+    _i2s_config_file_path = "/etc/pi-top/.i2s-vol/hifiberry-alsactl.restore"
+    _i2s_configured_file_path = "/etc/pi-top/.i2s-vol/configured"
 
     def initialise(self, logger, callback_client):
 
@@ -70,7 +72,7 @@ class PeripheralManager():
     def _main_thread_loop(self):
         while self._run_main_thread:
             self.auto_initialise_peripherals()
-            sleep(_loop_delay_seconds)
+            sleep(self._loop_delay_seconds)
 
     def add_module_if_available(self, module_name):
         cfg_module_str = str(module_name + ".configuration")
@@ -92,20 +94,20 @@ class PeripheralManager():
 
         pulse_enabled = self.get_status_of_device_by_name("pi-topPULSE")['enabled']
 
-        if (pulse_enabled is True and os.path.isfile(_pulse_indicator_file_path) is False):
-            open(_pulse_indicator_file_path, "a")
+        if (pulse_enabled is True and path.isfile(self._pulse_indicator_file_path) is False):
+            open(self._pulse_indicator_file_path, "a")
 
-        elif (pulse_enabled is False and os.path.isfile(_pulse_indicator_file_path) is True):
-            os.remove(_pulse_indicator_file_path)
+        elif (pulse_enabled is False and path.isfile(self._pulse_indicator_file_path) is True):
+            os.remove(self._pulse_indicator_file_path)
 
         speaker_enabled = self.get_status_of_device_by_name(
             "pi-topSPEAKER")['enabled']
 
-        if (speaker_enabled is True and os.path.isfile(_speaker_indicator_file_path) is False):
-            open(_speaker_indicator_file_path, "a")
+        if (speaker_enabled is True and path.isfile(self._speaker_indicator_file_path) is False):
+            open(self._speaker_indicator_file_path, "a")
 
-        elif (speaker_enabled is False and os.path.isfile(_speaker_indicator_file_path) is True):
-            os.remove(_speaker_indicator_file_path)
+        elif (speaker_enabled is False and path.isfile(self._speaker_indicator_file_path) is True):
+            os.remove(self._speaker_indicator_file_path)
 
     def add_enabled_device(self, device):
 
@@ -318,7 +320,7 @@ class PeripheralManager():
             self._logger.error("Unable to initialise I2C")
 
         else:
-            output_lines = subprocess.check_output(
+            output_lines = check_output(
                 ("/usr/sbin/i2cdetect", "-y", "1")).splitlines()[1:]
             for line in output_lines:
                 prefix, addresses_line = str(line).split(':')
@@ -421,7 +423,7 @@ class PeripheralManager():
     def set_hdmi_drive_in_boot_config(self):
 
         self._logger.debug("Checking hdmi_drive setting in " +
-                           _boot_config_file_path + "...")
+                           self._boot_config_file_path + "...")
 
         setting_updated = False
         setting_found = False
@@ -429,7 +431,7 @@ class PeripheralManager():
         temp_file = self.create_temp_file()
 
         with open(temp_file, 'w') as output_file:
-            with open(_boot_config_file_path, 'r') as input_file:
+            with open(self._boot_config_file_path, 'r') as input_file:
 
                 # Write all lines from input to output, except the hdmi_drive
                 # setting
@@ -455,12 +457,12 @@ class PeripheralManager():
 
         if (setting_updated is True):
 
-            self._logger.info("Updating " + _boot_config_file_path + " to set hdmi_drive setting...")
-            copy(temp_file, _boot_config_file_path)
+            self._logger.info("Updating " + self._boot_config_file_path + " to set hdmi_drive setting...")
+            copy(temp_file, self._boot_config_file_path)
 
         else:
             self._logger.debug(
-                "hdmi_drive setting already set in " + _boot_config_file_path)
+                "hdmi_drive setting already set in " + self._boot_config_file_path)
 
         return setting_updated
 
@@ -480,11 +482,11 @@ class PeripheralManager():
 
         temp_file = self.create_temp_file()
 
-        if not (os.path.isfile(_boot_config_file_path)):
-            self._logger.error(_boot_config_file_path + " file not found!")
+        if not (path.isfile(self._boot_config_file_path)):
+            self._logger.error(self._boot_config_file_path + " file not found!")
             return
 
-        with open(_boot_config_file_path, 'r') as input_file:
+        with open(self._boot_config_file_path, 'r') as input_file:
             with open(temp_file, 'w') as output_file:
 
                 # Write all lines from input to output, except those relating
@@ -547,8 +549,8 @@ class PeripheralManager():
                         output_file.write(field + "=" + str(value) + "\n")
                         output_file.write("\n")
 
-        self._logger.info("Updating " + _boot_config_file_path + " to configure serial...")
-        copy(temp_file, _boot_config_file_path)
+        self._logger.info("Updating " + self._boot_config_file_path + " to configure serial...")
+        copy(temp_file, self._boot_config_file_path)
 
     def remove_serial_from_cmdline(self):
 
@@ -565,11 +567,11 @@ class PeripheralManager():
 
     def get_value_from_boot_config(self, property_name):
 
-        if not (os.path.isfile(_boot_config_file_path)):
+        if not (path.isfile(self._boot_config_file_path)):
             self._logger.error("/boot/config.txt file not found!")
             return ""
 
-        with open(_boot_config_file_path) as config_file:
+        with open(self._boot_config_file_path) as config_file:
             for line in config_file:
                 if (property_name in line):
                     if not line.strip().startswith("#"):
@@ -602,7 +604,7 @@ class PeripheralManager():
         # If the dashboard is visible then show the message there, otherwise
         # raise a zenity message box
 
-        if (os.path.isfile(_dashboard_visible_indicator_file_path)):
+        if (path.isfile(self._dashboard_visible_indicator_file_path)):
             subprocess.Popen(["/usr/bin/pt-ipc", "pt-os-dashboard", "rebootmessage"],
                              env=dict(os.environ, DISPLAY=":0.0", XAUTHORITY="/home/pi/.Xauthority"))
 
@@ -617,7 +619,7 @@ class PeripheralManager():
         return temp_file_tuple[1]
 
     def determine_i2c_mode_from_system(self):
-        i2c_output = subprocess.check_output(
+        i2c_output = check_output(
             ["/usr/bin/raspi-config", "nonint", "get_i2c"])
         self._i2c_mode = (str(i2c_output) == "0\n")
 
@@ -628,7 +630,7 @@ class PeripheralManager():
         self._i2s_mode_current = False
         self._i2s_mode_next = False
 
-        i2s_output = subprocess.check_output(["/usr/bin/pt-i2s"]).splitlines()
+        i2s_output = check_output(["/usr/bin/pt-i2s"]).splitlines()
 
         for line in i2s_output:
             if 'I2S is currently enabled' in str(line):
@@ -707,8 +709,8 @@ class PeripheralManager():
 
     def configure_hifiberry_alsactl(self):
 
-        if self._i2s_mode_current is True and os.path.isfile(_i2s_configured_file_path) is False:
+        if self._i2s_mode_current is True and path.isfile(self._i2s_configured_file_path) is False:
             subprocess.call(("/usr/sbin/alsactl", "-f",
-                             _i2s_config_file_path, "restore"))
-            self.touch(_i2s_configured_file_path)
+                             self._i2s_config_file_path, "restore"))
+            self.touch(self._i2s_configured_file_path)
             self.reboot_system()
