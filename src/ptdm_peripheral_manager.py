@@ -56,7 +56,7 @@ class PeripheralManager():
         self.update_device_indicator_files()
 
     def start(self):
-        if self.is_initialised(self):
+        if self.is_initialised():
             self._run_main_thread = True
             self._main_thread.start()
         else:
@@ -379,20 +379,20 @@ class PeripheralManager():
 
         if enable:
             self._logger.debug("Enabling I2C...")
-            subprocess.call(["/usr/bin/raspi-config", "nonint", "do_i2c", "0"])
+            call(["/usr/bin/raspi-config", "nonint", "do_i2c", "0"])
 
         else:
             self._logger.debug("Disabling I2C...")
-            subprocess.call(["/usr/bin/raspi-config", "nonint", "do_i2c", "1"])
+            call(["/usr/bin/raspi-config", "nonint", "do_i2c", "1"])
 
         self.determine_i2c_mode_from_system()
 
     def enable_i2s(self, enable):
 
         if enable:
-            subprocess.call(["/usr/bin/pt-i2s", "enable"])
+            call(["/usr/bin/pt-i2s", "enable"])
         else:
-            subprocess.call(["/usr/bin/pt-i2s", "disable"])
+            call(["/usr/bin/pt-i2s", "disable"])
 
         self.determine_i2s_mode_from_system()
 
@@ -705,12 +705,11 @@ class PeripheralManager():
 
     def reboot_system(self):
 
-        subprocess.call(("/sbin/reboot"))
+        call(("/sbin/reboot"))
 
     def configure_hifiberry_alsactl(self):
 
         if self._i2s_mode_current is True and path.isfile(self._i2s_configured_file_path) is False:
-            subprocess.call(("/usr/sbin/alsactl", "-f",
-                             self._i2s_config_file_path, "restore"))
+            call(("/usr/sbin/alsactl", "-f", self._i2s_config_file_path, "restore"))
             self.touch(self._i2s_configured_file_path)
             self.reboot_system()
