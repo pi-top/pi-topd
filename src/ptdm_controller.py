@@ -106,12 +106,12 @@ class Controller():
         self._publish_server.publish_battery_charging_state_changed(new_value)
         self._publish_server.publish_battery_capacity_changed(new_value)
         self._shutdown_mgr.set_battery_charging_state(new_value)
-        self.process_battery_state()
+        self._shutdown_mgr.process_battery_state()
 
     def _on_hub_battery_capacity_changed(self, new_value):
         self._publish_server.publish_battery_capacity_changed(new_value)
         self._shutdown_mgr.set_battery_capacity(new_value)
-        self.process_battery_state()
+        self._shutdown_mgr.process_battery_state()
 
     def _on_hub_battery_time_remaining_changed(self, new_value):
         self._publish_server.publish_battery_time_remaining_changed(new_value)

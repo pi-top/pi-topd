@@ -7,6 +7,7 @@ from threading import Thread
 from subprocess import check_output
 from subprocess import call
 from os import path
+from time import sleep
 
 # Discovers which peripheral libraries are installed, and uses those to
 # detect, initialise, and communicate with the corresponding device
