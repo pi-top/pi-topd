@@ -1,4 +1,4 @@
-from ptdm_common import sed_inplace
+from ptdm_common import CommonFunctions
 
 from tempfile import mkstemp
 from importlib import import_module
@@ -555,8 +555,8 @@ class PeripheralManager():
 
     def remove_serial_from_cmdline(self, ):
 
-        sed_inplace('/boot/cmdline.txt', r'console=ttyAMA0,[0-9]+ ', '')
-        sed_inplace('/boot/cmdline.txt', r'console=serial0,[0-9]+ ', '')
+        CommonFunctions.sed_inplace('/boot/cmdline.txt', r'console=ttyAMA0,[0-9]+ ', '')
+        CommonFunctions.sed_inplace('/boot/cmdline.txt', r'console=serial0,[0-9]+ ', '')
 
     def _baud_rate_correctly_configured(self, ):
 
