@@ -11,6 +11,7 @@ from ptdm_message import Message
 class RequestServer():
     def __init__(self, publish_server):
         self._publish_server = publish_server
+        self._thread = Thread(target=self._thread_method)
 
     def initialise(self, logger, callback_client):
         self._logger = logger
@@ -32,7 +33,6 @@ class RequestServer():
         time.sleep(0.5)
 
         self._continue = True
-        self._thread = Thread(target=self._thread_method)
         self._thread.start()
 
     def stop_listening(self):
