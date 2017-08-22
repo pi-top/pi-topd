@@ -70,8 +70,7 @@ class PublishServer():
         self._send_message(Message.PUB_PERIPHERAL_CONNECTED, [peripheral_id])
 
     def publish_peripheral_disconnected(self, peripheral_id):
-        self._send_message(
-            Message.PUB_PERIPHERAL_DISCONNECTED, [peripheral_id])
+        self._send_message(Message.PUB_PERIPHERAL_DISCONNECTED, [peripheral_id])
 
     def publish_shutdown_requested(self):
         self._send_message(Message.PUB_SHUTDOWN_REQUESTED, [])
@@ -80,16 +79,13 @@ class PublishServer():
         self._send_message(Message.PUB_REBOOT_REQUIRED, [])
 
     def publish_battery_charging_state_changed(self, connected_int):
-        self._send_message(
-            Message.PUB_BATTERY_CHARGING_STATE_CHANGED, [connected_int])
+        self._send_message(Message.PUB_BATTERY_CHARGING_STATE_CHANGED, [connected_int])
 
     def publish_battery_capacity_changed(self, new_capacity):
-        self._send_message(
-            Message.PUB_BATTERY_CAPACITY_CHANGED, [new_capacity])
+        self._send_message(Message.PUB_BATTERY_CAPACITY_CHANGED, [new_capacity])
 
     def publish_battery_time_remaining_changed(self, new_time):
-        self._send_message(
-            Message.PUB_BATTERY_TIME_REMAINING_CHANGED, [new_time])
+        self._send_message(Message.PUB_BATTERY_TIME_REMAINING_CHANGED, [new_time])
 
     def publish_screen_blank_state_changed(self, blanked_bool):
         if blanked_bool is True:

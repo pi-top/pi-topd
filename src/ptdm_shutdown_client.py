@@ -60,8 +60,8 @@ class ShutdownManager:
         return (self.get_device_id() == self.pi_top_device_id)
 
     def battery_state_fully_defined(self):
-        capacity_defined = (self._battery_state_mgr.battery_capacity is not None)
-        charging_defined = (self._battery_state_mgr.battery_charging is not None)
+        capacity_defined = (self.battery_capacity is not None)
+        charging_defined = (self.battery_charging is not None)
 
         return (capacity_defined and charging_defined)
 
@@ -70,8 +70,8 @@ class ShutdownManager:
         self.shutdown_critical_ctr.reset()
 
     def update_counters_from_battery_state(self):
-        under_critical_threshold = (self._battery_state_mgr.battery_capacity <= self.critical_battery_level)
-        under_warning_threshold = (self._battery_state_mgr.battery_capacity <= self.warning_battery_level)
+        under_critical_threshold = (self.battery_capacity <= self.critical_battery_level)
+        under_warning_threshold = (self.battery_capacity <= self.warning_battery_level)
 
         if under_critical_threshold:
             self.shutdown_critical_ctr.increment()
@@ -86,7 +86,7 @@ class ShutdownManager:
         if self.device_is_pi_top():
             if self.battery_state_fully_defined():
 
-                discharging = (self._battery_state_mgr.battery_charging != "charging")
+                discharging = (self.battery_charging != "charging")
                 if discharging:
                     self.update_counters_from_battery_state()
                     reset_ctrs = False
