@@ -1,0 +1,63 @@
+#!/usr/bin/python3
+
+# Zenity message service
+#       Needs to be started with systemd. Probably belongs to another package - unsure how to 'from ptdm_message import Message' without being in same directory
+
+import zmq
+from time import sleep
+from threading import Thread
+from ptdm_message import Message
+from signal import signal
+from signal import SIGINT
+from signal import SIGTERM
+
+
+def cleanup():
+    global continue_listening
+
+    print("Closing sockets...")
+    continue_listening = False
+    thread.join()
+    zmq_socket.close()
+    print("Done.")
+
+
+def display_reboot_message(self):
+        subprocess.Popen(["/usr/bin/zenity", "--info", "--text", "The system settings have been modified to support a hardware change. Please reboot your system to complete the reconfiguration."],
+                         env=dict(os.environ, DISPLAY=":0.0", XAUTHORITY="/home/pi/.Xauthority"))
+
+
+def listen_thread():
+
+    print("Connecting to publish server...")
+    zmq_context_listen = zmq.Context()
+    zmq_socket = zmq_context_listen.socket(zmq.SUB)
+    zmq_socket.setsockopt_string(zmq.SUBSCRIBE, "")
+    zmq_socket.connect("tcp://127.0.0.1:3781")
+    print("Connected to publish server")
+
+    sleep(0.5)
+
+    while continue_listening:
+        poller = zmq.Poller()
+        poller.register(zmq_socket, zmq.POLLIN)
+        events = poller.poll(500)
+
+        for i in range(len(events)):
+            message_string = zmq_socket.recv_string()
+            message = Message.from_string(message_string)
+            print("Received publish event: " + message.message_friendly_string())
+
+            if (message.message_friendly_string() == "PUB_REBOOT_REQUIRED"):
+                display_reboot_message()
+
+# Capture and handle interrupts
+signal(SIGINT, cleanup)
+signal(SIGTERM, cleanup)
+
+print("Starting thread...")
+
+continue_listening = True
+thread = Thread(target=listen_thread)
+thread.start()
+thread.join()

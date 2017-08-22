@@ -40,7 +40,8 @@ class PublishServer():
         self._logger.debug("Done.")
 
     def test_all_publishes(self):
-        self.publish_device_id_changed(self.test_device_id)
+        for val in self.test_device_id_vals:
+            self.publish_device_id_changed(val)
 
         for val in self.test_brightness_vals:
             self.publish_brightness_changed(val)

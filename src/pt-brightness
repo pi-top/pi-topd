@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# Probably needs to be in a package associated with the hub (pt-hub?)
+#   unsure how to 'from ptdm_message import Message' without being in same directory
+
 import zmq
 from ptdm_message import Message
 import argparse

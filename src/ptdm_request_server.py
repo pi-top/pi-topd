@@ -91,7 +91,7 @@ class RequestServer():
 
                 self._publish_server.test_all_publishes()
 
-                response = "OKAY"
+                response = Message.from_parts(Message.RSP_DONE_TEST_PUB_EMITS, [])
 
             elif (message.message_id() == Message.REQ_GET_DEVICE_ID):
 

@@ -29,6 +29,7 @@ class Message:
     _message_names[REQ_UNBLANK_SCREEN] = "REQ_UNBLANK_SCREEN"
 
     # Responses
+    RSP_DONE_TEST_PUB_EMITS             = 200
 
     RSP_ERR_SERVER                      = 201
     RSP_ERR_MALFORMED                   = 202
@@ -42,6 +43,7 @@ class Message:
     RSP_BLANK_SCREEN                    = 216
     RSP_UNBLANK_SCREEN                  = 217
 
+    _message_names[RSP_DONE_TEST_PUB_EMITS] = "RSP_DONE_TEST_PUB_EMITS"
     _message_names[RSP_ERR_SERVER] = "RSP_ERR_SERVER"
     _message_names[RSP_ERR_MALFORMED] = "RSP_ERR_MALFORMED"
     _message_names[RSP_ERR_UNSUPPORTED] = "RSP_ERR_UNSUPPORTED"

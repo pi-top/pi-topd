@@ -24,28 +24,33 @@ def send_request(message_request_id, parameters):
 
 def request_test_emits():
     print("EXPECTED:")
+    print("---------")
 
-    print("DEVICE ID = 0")
-    print("DEVICE ID = 1")
-    print("DEVICE ID = 2")
-    print("DEVICE ID = 3")
-    print("BRIGHTNESS = 3")
-    print("BRIGHTNESS = 6")
-    print("BRIGHTNESS = 10")
-    print("PERIPHERAL 1 CONNECTED")
-    print("PERIPHERAL 1 DISCONNECTED")
-    print("BATTERY CHARGING")
-    print("BATTERY DISCHARGING")
-    print("BATTERY CAPACITY 95")
-    print("BATTERY CAPACITY 50")
-    print("BATTERY TIME REMAINING 300")
-    print("BATTERY TIME REMAINING 250")
-    print("SCREEN BLANK")
-    print("SCREEN UNBLANK")
-    print("SHUTDOWN REQUESTED")
-    print("REBOOT REQUIRED")
-    resp = send_request(Message.REQ_TEST_PUB_EMITS, [])
-    print(resp)
+    print("Received publish event: PUB_DEVICE_ID_CHANGED 0")
+    print("Received publish event: PUB_DEVICE_ID_CHANGED 1")
+    print("Received publish event: PUB_DEVICE_ID_CHANGED 2")
+    print("Received publish event: PUB_DEVICE_ID_CHANGED 3")
+    print("Received publish event: PUB_BRIGHTNESS_CHANGED 3")
+    print("Received publish event: PUB_BRIGHTNESS_CHANGED 6")
+    print("Received publish event: PUB_BRIGHTNESS_CHANGED 10")
+    print("Received publish event: PUB_PERIPHERAL_CONNECTED 1")
+    print("Received publish event: PUB_PERIPHERAL_DISCONNECTED 1")
+    print("Received publish event: PUB_BATTERY_CHARGING_STATE_CHANGED 1")
+    print("Received publish event: PUB_BATTERY_CHARGING_STATE_CHANGED 0")
+    print("Received publish event: PUB_BATTERY_CAPACITY_CHANGED 95")
+    print("Received publish event: PUB_BATTERY_CAPACITY_CHANGED 50")
+    print("Received publish event: PUB_BATTERY_TIME_REMAINING_CHANGED 300")
+    print("Received publish event: PUB_BATTERY_TIME_REMAINING_CHANGED 250")
+    print("Received publish event: PUB_SCREEN_BLANKED")
+    print("Received publish event: PUB_SCREEN_UNBLANKED")
+    print("Received publish event: PUB_SHUTDOWN_REQUESTED")
+    print("Received publish event: PUB_REBOOT_REQUIRED")
+
+    print("")
+    print(" ACTUAL: ")
+    print("---------")
+
+    send_request(Message.REQ_TEST_PUB_EMITS, [])
 
 
 def listen_thread():
@@ -86,23 +91,8 @@ print("Connected to request server.")
 
 sleep(0.5)
 request_test_emits()
-sleep(30)
-
-# PUB_BRIGHTNESS_CHANGED              = 300
-# PUB_PERIPHERAL_CONNECTED            = 301
-# PUB_PERIPHERAL_DISCONNECTED         = 302
-# PUB_SHUTDOWN_REQUESTED              = 303
-# PUB_REBOOT_REQUIRED                 = 304
-# PUB_BATTERY_CHARGING_STATE_CHANGED  = 305
-# PUB_BATTERY_CAPACITY_CHANGED        = 306
-# PUB_BATTERY_TIME_REMAINING_CHANGED  = 307
-# PUB_SCREEN_BLANKED                  = 308
-# PUB_SCREEN_UNBLANKED                = 309
-# PUB_DEVICE_ID_CHANGED               = 310
 
 print("*** End of tests ***")
-print("Waiting for any further events...")
-sleep(5)
 
 print("Closing sockets...")
 continue_listening = False

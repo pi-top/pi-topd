@@ -5,6 +5,7 @@ from importlib import import_module
 from string import whitespace
 from threading import Thread
 from subprocess import check_output
+from subprocess import Popen
 from subprocess import call
 from os import path
 from time import sleep
@@ -22,6 +23,12 @@ class PeripheralManager():
     _i2s_config_file_path = "/etc/pi-top/.i2s-vol/hifiberry-alsactl.restore"
     _i2s_configured_file_path = "/etc/pi-top/.i2s-vol/configured"
     _main_thread = Thread()
+
+    def __init__(self, publish_server):
+        self._publish_server = publish_server
+
+    def emit_reboot_message(self):
+        self._publish_server.publish_reboot_required()
 
     def initialise(self, logger, callback_client):
 
@@ -201,7 +208,7 @@ class PeripheralManager():
                 self.remove_serial_from_cmdline()
 
                 if (self._i2s_mode_current != self._i2s_mode_next):
-                    self.display_reboot_message()
+                    self.emit_reboot_message()
 
             else:
                 if sys.version_info >= (3, 0):
@@ -256,7 +263,7 @@ class PeripheralManager():
                                         self.add_enabled_device(device)
 
                                         if (self.set_hdmi_drive_in_boot_config() is True):
-                                            self.display_reboot_message()
+                                            self.emit_reboot_message()
 
                                         self._logger.debug("OK.")
                                         return True
@@ -274,7 +281,7 @@ class PeripheralManager():
                         # Do nothing - speaker cannot currently be disabled
 
                 if (self._i2s_mode_current != self._i2s_mode_next):
-                    self.display_reboot_message()
+                    self.emit_reboot_message()
 
             else:
                 if sys.version_info >= (3, 0):
@@ -598,21 +605,6 @@ class PeripheralManager():
             index = index + 1
 
         return value.strip()
-
-    def display_reboot_message(self):
-
-        self._logger.info("System configuration changed. Display reboot message")
-
-        # If the dashboard is visible then show the message there, otherwise
-        # raise a zenity message box
-
-        if (path.isfile(self._dashboard_visible_indicator_file_path)):
-            subprocess.Popen(["/usr/bin/pt-ipc", "pt-os-dashboard", "rebootmessage"],
-                             env=dict(os.environ, DISPLAY=":0.0", XAUTHORITY="/home/pi/.Xauthority"))
-
-        else:
-            subprocess.Popen(["/usr/bin/zenity", "--info", "--text", "The system settings have been modified to support a hardware change. Please reboot your system to complete the reconfiguration."],
-                             env=dict(os.environ, DISPLAY=":0.0", XAUTHORITY="/home/pi/.Xauthority"))
 
     def create_temp_file(self):
         temp_file_tuple = mkstemp()
