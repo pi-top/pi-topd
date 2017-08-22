@@ -24,8 +24,8 @@ class Controller():
 
         self._shutdown_mgr = ShutdownManager()
         self._hub_manager = HubManager()
-        self._peripheral_manager = PeripheralManager()
         self._publish_server = PublishServer()
+        self._peripheral_manager = PeripheralManager(self._publish_server)
         self._request_server = RequestServer(self._publish_server)
 
         # Initialise
