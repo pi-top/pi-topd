@@ -9,6 +9,8 @@ from ptdm_message import Message
 
 
 class RequestServer():
+    _thread = Thread()
+
     def __init__(self, publish_server):
         self._publish_server = publish_server
         self._thread = Thread(target=self._thread_method)
@@ -40,7 +42,8 @@ class RequestServer():
         self._logger.debug("Closing responder socket...")
 
         self._continue = False
-        self._thread.join()
+        if self._thread.is_alive():
+            self._thread.join()
 
         self._zmq_socket.close()
         self._zmq_context.destroy()
@@ -96,7 +99,7 @@ class RequestServer():
 
                 device_id = self._callback_client._on_request_get_device_id()
 
-                response = Message.from_parts(Message.RSP_GET_DEVICE_ID, [device_id])
+                response = Message.from_parts(Message.RSP_GET_DEVICE_ID, [device_id.value])
 
             elif (message.message_id() == Message.REQ_GET_BRIGHTNESS):
 

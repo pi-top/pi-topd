@@ -36,7 +36,7 @@ class Controller():
         self._request_server.initialise(self._logger, self)
 
     def start(self):
-        self._logger.info("Device Manager running")
+        self._logger.info("Starting device manager")
 
         self._hub_manager.connect_to_hub()
         self._hub_manager.register_client(self)
@@ -61,7 +61,7 @@ class Controller():
         sys.exit(0)
 
     def stop(self):
-        self._logger.info("Stopping...")
+        self._logger.info("Stopping device manager")
         self._continue_running = False
 
     ###########################################
@@ -104,7 +104,7 @@ class Controller():
 
     def _on_hub_battery_charging_state_changed(self, new_value):
         self._publish_server.publish_battery_charging_state_changed(new_value)
-        self._publish_server.publish_battery_capacity_changed(new_value)
+        # self._publish_server.publish_battery_capacity_changed(new_value)
         self._shutdown_mgr.set_battery_charging_state(new_value)
         self._shutdown_mgr.process_battery_state()
 

@@ -6,6 +6,14 @@ import zmq
 from time import sleep
 from threading import Thread
 from ptdm_message import Message
+from sys import exit
+
+
+def cleanup():
+    global continue_listening
+    continue_listening = False
+    thread.join()
+    zmq_socket.close()
 
 
 def test_request(test_name, message_request_id, parameters, expected_response_id, expected_response_parameters):
@@ -19,12 +27,14 @@ def test_request(test_name, message_request_id, parameters, expected_response_id
 
     if (response.message_id() != expected_response_id):
         print("Test failed. Unexpected response: " + str(response.message_id()))
-        return
+        cleanup()
+        exit()
 
     for i in range(len(expected_response_parameters)):
         if (expected_response_parameters[i] != response.parameters()[i]):
             print("Test failed. Unexpected response parameter. Expected: " + str(expected_response_parameters[i]) + ", got:" + str(response.parameters()[i]))
-            return
+            cleanup()
+            exit()
 
     print("[Test passed]")
 
@@ -48,7 +58,7 @@ def listen_thread():
         for i in range(len(events)):
             message_string = zmq_socket.recv_string()
             message = Message.from_string(message_string)
-            print("Received publish event: " + message.message_friendly_string())
+            # print("Received publish event: " + message.message_friendly_string())
 
 
 def test_ping():
@@ -151,9 +161,5 @@ print("Waiting for any further events...")
 sleep(5)
 
 print("Closing sockets...")
-
-continue_listening = False
-thread.join()
-zmq_socket.close()
-
+cleanup()
 print("Done.")

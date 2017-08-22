@@ -21,14 +21,15 @@ class PeripheralManager():
     _pulse_indicator_file_path = "/home/pi/.pulse"
     _i2s_config_file_path = "/etc/pi-top/.i2s-vol/hifiberry-alsactl.restore"
     _i2s_configured_file_path = "/etc/pi-top/.i2s-vol/configured"
+    _main_thread = Thread()
 
     def initialise(self, logger, callback_client):
 
         self._logger = logger
         self._callback_client = callback_client
 
-        self._main_thread = Thread(target=self._main_thread_loop)
         self._run_main_thread = False
+        self._main_thread = Thread(target=self._main_thread_loop)
 
         self._enabled_devices = []
         self._known_devices = []
@@ -65,7 +66,8 @@ class PeripheralManager():
 
     def stop(self):
         self._run_main_thread = False
-        self._main_thread.join()
+        if self._main_thread.is_alive():
+            self._main_thread.join()
 
     def is_initialised(self):
         return (self._main_thread is not None)
