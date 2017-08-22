@@ -166,7 +166,7 @@ class PeripheralManager():
                         self.enable_i2c(True)
 
                     if self._i2c_mode is False:
-                        self._logger.error("Unable to initialise I2C")
+                        self._logger.error("Unable to initialise I2C - updating HAT device state")
 
                     else:
                         if ptpulse_cfg.reset_device_state(enable):
@@ -247,7 +247,7 @@ class PeripheralManager():
                                     self.enable_i2c(True)
 
                                 if self._i2c_mode is False:
-                                    self._logger.error("Unable to initialise I2C")
+                                    self._logger.error("Unable to initialise I2C - updating addon device state")
 
                                 else:
                                     if ptspeaker_cfg.enable(mode):
@@ -318,11 +318,10 @@ class PeripheralManager():
             self.enable_i2c(True)
 
         if self._i2c_mode is False:
-            self._logger.error("Unable to initialise I2C")
+            self._logger.error("Unable to initialise I2C - getting connected device addresses")
 
         else:
-            output_lines = check_output(
-                ("/usr/sbin/i2cdetect", "-y", "1")).splitlines()[1:]
+            output_lines = check_output(["/usr/sbin/i2cdetect", "-y", "1"]).decode("utf-8").splitlines()[1:]
             for line in output_lines:
                 prefix, addresses_line = str(line).split(':')
 
@@ -620,25 +619,32 @@ class PeripheralManager():
         return temp_file_tuple[1]
 
     def determine_i2c_mode_from_system(self):
-        i2c_output = check_output(
-            ["/usr/bin/raspi-config", "nonint", "get_i2c"])
-        self._i2c_mode = (str(i2c_output) == "0\n")
+        try:
+            i2c_output = int(str(check_output(
+                ["/usr/bin/raspi-config", "nonint", "get_i2c"]).decode("utf-8")).rstrip())
 
-        if self._i2c_mode is False and (str(i2c_output) == "1\n"):
-            self._logger.error("Unable to verify I2C mode - assuming disabled")
+            self._i2c_mode = (i2c_output == 0)
+
+            if self._i2c_mode is False and i2c_output == 1:
+                self._logger.error("Unable to verify I2C mode - assuming disabled")
+        except Exception as e:
+            self._logger.error("Unable to verify I2C mode. " + str(e))
 
     def determine_i2s_mode_from_system(self):
         self._i2s_mode_current = False
         self._i2s_mode_next = False
 
-        i2s_output = check_output(["/usr/bin/pt-i2s"]).splitlines()
+        try:
+            i2s_output = check_output(["/usr/bin/pt-i2s"]).decode("utf-8").splitlines()
 
-        for line in i2s_output:
-            if 'I2S is currently enabled' in str(line):
-                self._i2s_mode_current = True
+            for line in i2s_output:
+                if 'I2S is currently enabled' in str(line):
+                    self._i2s_mode_current = True
 
-            elif 'I2S is due to be enabled on reboot' in str(line):
-                self._i2s_mode_next = True
+                elif 'I2S is due to be enabled on reboot' in str(line):
+                    self._i2s_mode_next = True
+        except Exception as e:
+            self._logger.error("Unable to verify I2S mode. " + str(e))
 
     ################################
     # EXPORTED FUNCTIONS           #
