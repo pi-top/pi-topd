@@ -57,7 +57,7 @@ class ShutdownManager:
         return self.device_id
 
     def device_is_pi_top(self):
-        return (get_device_id() == self.pi_top_device_id)
+        return (self.get_device_id() == self.pi_top_device_id)
 
     def battery_state_fully_defined(self):
         capacity_defined = (self._battery_state_mgr.battery_capacity is not None)
