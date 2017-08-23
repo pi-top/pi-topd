@@ -27,13 +27,21 @@ class Counter:
 
 class ShutdownManager:
     pi_top_device_id = 2
-    warning_battery_level = 5
-    critical_battery_level = 3
-    shutdown_warning_ctr = Counter(3)
-    shutdown_critical_ctr = Counter(3)
-    shown_shutdown_warning = False
 
-    def __init__(self):
+    warning_battery_level = 5
+    warning_battery_ctr = Counter(3)
+
+    critical_battery_level = 3
+    critical_battery_ctr = Counter(3)
+
+    shutdown_battery_level = 2
+    shutdown_battery_ctr = Counter(3)
+
+    shown_warning_battery_message = False
+    shown_critical_battery_message = False
+
+    def __init__(self, publish_server):
+        self._publish_server = publish_server
         self.battery_capacity = None
         self.battery_charging = None
         self.device_id = None
@@ -66,17 +74,21 @@ class ShutdownManager:
         return (capacity_defined and charging_defined)
 
     def reset_counters(self):
-        self.shutdown_warning_ctr.reset()
-        self.shutdown_critical_ctr.reset()
+        self.warning_battery_ctr.reset()
+        self.critical_battery_ctr.reset()
+        self.shutdown_battery_ctr.reset()
 
     def update_counters_from_battery_state(self):
+        under_shutdown_threshold = (self.battery_capacity <= self.shutdown_battery_level)
         under_critical_threshold = (self.battery_capacity <= self.critical_battery_level)
         under_warning_threshold = (self.battery_capacity <= self.warning_battery_level)
 
+        if under_shutdown_threshold:
+            self.shutdown_battery_ctr.increment()
         if under_critical_threshold:
-            self.shutdown_critical_ctr.increment()
+            self.critical_battery_ctr.increment()
         elif under_warning_threshold:
-            self.shutdown_warning_ctr.increment()
+            self.warning_battery_ctr.increment()
         else:
             self.reset_counters()
 
@@ -93,14 +105,18 @@ class ShutdownManager:
 
         if reset_ctrs:
             self.reset_counters()
-            self.shown_shutdown_warning = False  # Need to be able to send warning messages again once the battery state is determined to be safe again
+            # Need to be able to send warning messages again once the battery state is determined to be safe again
+            self.shown_warning_battery_message = False
+            self.shown_critical_battery_message = False
         else:
-            if self.shutdown_critical_ctr.maxed():
+            if self.shutdown_battery_ctr.maxed():
                 self.shutdown()
-            elif self.shutdown_warning_ctr.maxed() and not self.shown_shutdown_warning:
-                # show warning
-                print("WARNING")
-                self.shown_shutdown_warning = True
+            elif self.critical_battery_ctr.maxed() and not self.shown_critical_battery_message:
+                self._publish_server.publish_critical_battery_warning()
+                self.shown_critical_battery_message = True
+            elif self.warning_battery_ctr.maxed() and not self.shown_warning_battery_message:
+                self._publish_server.publish_low_battery_warning()
+                self.shown_warning_battery_message = True
 
     def shutdown(self):
         system("shutdown -h now")
