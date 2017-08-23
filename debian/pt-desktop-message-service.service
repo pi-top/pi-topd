@@ -3,7 +3,7 @@ Description=pi-top desktop message service
 
 [Service]
 Restart=always
-ExecStart=/usr/bin/pt-desktop-message-service
+ExecStart=ExecStart=/usr/lib/pt-device-manager/pt-desktop-message-service
 Environment="DISPLAY=:0.0"
 
 [Install]
