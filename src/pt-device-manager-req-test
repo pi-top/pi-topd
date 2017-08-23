@@ -123,7 +123,13 @@ def test_all_brightness():
 
 def test_device_id():
     print("*** Test getting device ID ***")
-    test_request("Get DeviceID", Message.REQ_GET_DEVICE_ID, [], Message.RSP_GET_DEVICE_ID, ["2"])
+    while False:
+        resp = input("Are you running on a pi-top (1) or a pi-topCEED (2)?")
+        if resp == "1" or resp == "2":
+            break
+
+    device_id = str(int(resp) + 1)
+    test_request("Get DeviceID", Message.REQ_GET_DEVICE_ID, [], Message.RSP_GET_DEVICE_ID, [device_id])
 
 
 def test_screen_blank_unblank():
