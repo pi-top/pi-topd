@@ -8,6 +8,10 @@ from subprocess import check_output
 from subprocess import Popen
 from subprocess import call
 from os import path
+from os import remove
+from os import remove
+from os import close
+from os import utime
 from time import sleep
 
 # Discovers which peripheral libraries are installed, and uses those to
@@ -108,7 +112,7 @@ class PeripheralManager():
             open(self._pulse_indicator_file_path, "a")
 
         elif (pulse_enabled is False and path.isfile(self._pulse_indicator_file_path) is True):
-            os.remove(self._pulse_indicator_file_path)
+            remove(self._pulse_indicator_file_path)
 
         speaker_enabled = self.get_status_of_device_by_name(
             "pi-topSPEAKER")['enabled']
@@ -117,7 +121,7 @@ class PeripheralManager():
             open(self._speaker_indicator_file_path, "a")
 
         elif (speaker_enabled is False and path.isfile(self._speaker_indicator_file_path) is True):
-            os.remove(self._speaker_indicator_file_path)
+            remove(self._speaker_indicator_file_path)
 
     def add_enabled_device(self, device):
 
@@ -608,7 +612,7 @@ class PeripheralManager():
 
     def create_temp_file(self):
         temp_file_tuple = mkstemp()
-        os.close(temp_file_tuple[0])
+        close(temp_file_tuple[0])
 
         return temp_file_tuple[1]
 
@@ -702,7 +706,7 @@ class PeripheralManager():
     def touch(self, fname, times=None):
 
         with open(fname, 'a'):
-            os.utime(fname, times)
+            utime(fname, times)
 
     def reboot_system(self):
 
