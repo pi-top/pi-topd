@@ -1,0 +1,11 @@
+[Unit]
+Description=pi-top desktop message service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/pt-desktop-message-service
+Environment="DISPLAY=:0.0"
+
+[Install]
+WantedBy=multi-user.target
+
