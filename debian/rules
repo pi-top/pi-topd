@@ -4,5 +4,5 @@
 
 	
 override_dh_installinit:
-	dh_installinit --name=pt-device-message
-	dh_installinit --name=pt-desktop-message-service
+	dh_installinit --noscripts --name=pt-device-message
+	dh_installinit --noscripts --name=pt-desktop-message-service
