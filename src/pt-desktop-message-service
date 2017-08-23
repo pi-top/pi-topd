@@ -3,6 +3,9 @@
 # Zenity message service
 #       Needs to be started with systemd. Probably belongs to another package - unsure how to 'from ptdm_message import Message' without being in same directory
 
+# Needs to be printing to systemd journal!
+# cleanup() errors on Ctrl+C cancel
+
 import zmq
 from time import sleep
 from threading import Thread
@@ -10,6 +13,9 @@ from ptdm_message import Message
 from signal import signal
 from signal import SIGINT
 from signal import SIGTERM
+from subprocess import Popen
+from os import devnull
+from os import environ
 
 
 def cleanup():
@@ -22,14 +28,25 @@ def cleanup():
     print("Done.")
 
 
-def display_low_battery_warning_message(self):
-    subprocess.Popen(["/usr/bin/zenity", "--info", "--text", "Your pi-top's battery level is low. Please plug in a charging cable to prevent your system from shutting down."],
-                     env=dict(os.environ, DISPLAY=":0.0", XAUTHORITY="/home/pi/.Xauthority"))
+def display_critical_battery_warning_message():
+    print("Displaying critical battery warning message")
+    text = "Your pi-top's battery level is critically low. System will shut down shortly unless a charging cable is plugged in."
+    with open(devnull, 'w') as null:
+        Popen(["/usr/bin/zenity", "--info", "--text", text], env=dict(environ, DISPLAY=":0.0", XAUTHORITY="/home/pi/.Xauthority"), stderr=null)
 
 
-def display_reboot_message(self):
-    subprocess.Popen(["/usr/bin/zenity", "--info", "--text", "The system settings have been modified to support a hardware change. Please reboot your system to complete the reconfiguration."],
-                     env=dict(os.environ, DISPLAY=":0.0", XAUTHORITY="/home/pi/.Xauthority"))
+def display_low_battery_warning_message():
+    print("Displaying low battery warning message")
+    text = "Your pi-top's battery level is low. Please plug in a charging cable to prevent your system from shutting down."
+    with open(devnull, 'w') as null:
+        Popen(["/usr/bin/zenity", "--info", "--text", text], env=dict(environ, DISPLAY=":0.0", XAUTHORITY="/home/pi/.Xauthority"), stderr=null)
+
+
+def display_reboot_message():
+    print("Displaying reboot message")
+    text = "Recently detected hardware requires a system settings modification.\nPlease reboot to enable hardware support."
+    with open(devnull, 'w') as null:
+        Popen(["/usr/bin/zenity", "--info", "--text", text], env=dict(environ, DISPLAY=":0.0", XAUTHORITY="/home/pi/.Xauthority"), stderr=null)
 
 
 def listen_thread():
@@ -51,12 +68,13 @@ def listen_thread():
         for i in range(len(events)):
             message_string = zmq_socket.recv_string()
             message = Message.from_string(message_string)
-            print("Received publish event: " + message.message_friendly_string())
 
             if (message.message_friendly_string() == "PUB_REBOOT_REQUIRED"):
                 display_reboot_message()
             elif (message.message_friendly_string() == "PUB_LOW_BATTERY_WARNING"):
                 display_low_battery_warning_message()
+            elif (message.message_friendly_string() == "PUB_CRITICAL_BATTERY_WARNING"):
+                display_critical_battery_warning_message()
 
 # Capture and handle interrupts
 signal(SIGINT, cleanup)
