@@ -22,9 +22,14 @@ def cleanup():
     print("Done.")
 
 
+def display_low_battery_warning_message(self):
+    subprocess.Popen(["/usr/bin/zenity", "--info", "--text", "Your pi-top's battery level is low. Please plug in a charging cable to prevent your system from shutting down."],
+                     env=dict(os.environ, DISPLAY=":0.0", XAUTHORITY="/home/pi/.Xauthority"))
+
+
 def display_reboot_message(self):
-        subprocess.Popen(["/usr/bin/zenity", "--info", "--text", "The system settings have been modified to support a hardware change. Please reboot your system to complete the reconfiguration."],
-                         env=dict(os.environ, DISPLAY=":0.0", XAUTHORITY="/home/pi/.Xauthority"))
+    subprocess.Popen(["/usr/bin/zenity", "--info", "--text", "The system settings have been modified to support a hardware change. Please reboot your system to complete the reconfiguration."],
+                     env=dict(os.environ, DISPLAY=":0.0", XAUTHORITY="/home/pi/.Xauthority"))
 
 
 def listen_thread():
@@ -50,6 +55,8 @@ def listen_thread():
 
             if (message.message_friendly_string() == "PUB_REBOOT_REQUIRED"):
                 display_reboot_message()
+            elif (message.message_friendly_string() == "PUB_LOW_BATTERY_WARNING"):
+                display_low_battery_warning_message()
 
 # Capture and handle interrupts
 signal(SIGINT, cleanup)

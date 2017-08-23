@@ -98,6 +98,12 @@ class PublishServer():
         self._logger.debug("Publishing device ID changed")
         self._send_message(Message.PUB_DEVICE_ID_CHANGED, [device_id_int])
 
+    def publish_low_battery_warning(self):
+        self._send_message(Message.PUB_LOW_BATTERY_WARNING, [])
+
+    def publish_critical_battery_warning(self):
+        self._send_message(Message.PUB_CRITICAL_BATTERY_WARNING, [])
+
     # Internal functions
 
     def _send_message(self, message_id, parameters):
