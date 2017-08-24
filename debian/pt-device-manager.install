@@ -1,9 +1,7 @@
 src/pt-device-manager                   /usr/lib/pt-device-manager/
-src/ptdm_common.py                      /usr/lib/pt-device-manager/
 src/ptdm_controller.py                  /usr/lib/pt-device-manager/
 src/ptdm_hub_manager.py                 /usr/lib/pt-device-manager/
 src/ptdm_logger.py                      /usr/lib/pt-device-manager/
-src/ptdm_message.py                     /usr/lib/pt-device-manager/
 src/ptdm_peripheral_manager.py          /usr/lib/pt-device-manager/
 src/ptdm_publish_server.py              /usr/lib/pt-device-manager/
 src/ptdm_request_server.py              /usr/lib/pt-device-manager/
