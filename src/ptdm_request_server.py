@@ -5,7 +5,7 @@
 import zmq
 import time
 from threading import Thread
-from ptdm_message import Message
+from ptdm_client import ptdm_message
 
 
 class RequestServer():
@@ -75,94 +75,94 @@ class RequestServer():
 
         try:
 
-            message = Message.from_string(request)
+            message = ptdm_message.Message.from_string(request)
 
             self._logger.info("Received request: " + message.message_friendly_string())
 
-            if (message.message_id() == Message.REQ_PING):
+            if (message.message_id() == ptdm_message.Message.REQ_PING):
 
                 message.validate_parameters([])
 
-                response = Message.from_parts(Message.RSP_PING, [])
+                response = ptdm_message.Message.from_parts(ptdm_message.Message.RSP_PING, [])
 
-            elif (message.message_id() == Message.REQ_TEST_PUB_EMITS):
+            elif (message.message_id() == ptdm_message.Message.REQ_TEST_PUB_EMITS):
 
                 message.validate_parameters([])
 
                 self._publish_server.test_all_publishes()
 
-                response = Message.from_parts(Message.RSP_DONE_TEST_PUB_EMITS, [])
+                response = ptdm_message.Message.from_parts(ptdm_message.Message.RSP_DONE_TEST_PUB_EMITS, [])
 
-            elif (message.message_id() == Message.REQ_GET_DEVICE_ID):
+            elif (message.message_id() == ptdm_message.Message.REQ_GET_DEVICE_ID):
 
                 message.validate_parameters([])
 
                 device_id = self._callback_client._on_request_get_device_id()
 
-                response = Message.from_parts(Message.RSP_GET_DEVICE_ID, [device_id.value])
+                response = ptdm_message.Message.from_parts(ptdm_message.Message.RSP_GET_DEVICE_ID, [device_id.value])
 
-            elif (message.message_id() == Message.REQ_GET_BRIGHTNESS):
+            elif (message.message_id() == ptdm_message.Message.REQ_GET_BRIGHTNESS):
 
                 message.validate_parameters([])
 
                 brightness = self._callback_client._on_request_get_brightness()
 
-                response = Message.from_parts(Message.RSP_GET_BRIGHTNESS, [brightness])
+                response = ptdm_message.Message.from_parts(ptdm_message.Message.RSP_GET_BRIGHTNESS, [brightness])
 
-            elif (message.message_id() == Message.REQ_SET_BRIGHTNESS):
+            elif (message.message_id() == ptdm_message.Message.REQ_SET_BRIGHTNESS):
 
                 message.validate_parameters([int])
 
                 self._callback_client._on_request_set_brightness(int(message.parameters()[0]))
 
-                response = Message.from_parts(Message.RSP_SET_BRIGHTNESS, [])
+                response = ptdm_message.Message.from_parts(ptdm_message.Message.RSP_SET_BRIGHTNESS, [])
 
-            elif (message.message_id() == Message.REQ_INCREMENT_BRIGHTNESS):
+            elif (message.message_id() == ptdm_message.Message.REQ_INCREMENT_BRIGHTNESS):
 
                 message.validate_parameters([])
 
                 self._callback_client._on_request_increment_brightness()
 
-                response = Message.from_parts(Message.RSP_INCREMENT_BRIGHTNESS, [])
+                response = ptdm_message.Message.from_parts(ptdm_message.Message.RSP_INCREMENT_BRIGHTNESS, [])
 
-            elif (message.message_id() == Message.REQ_DECREMENT_BRIGHTNESS):
+            elif (message.message_id() == ptdm_message.Message.REQ_DECREMENT_BRIGHTNESS):
 
                 message.validate_parameters([])
 
                 self._callback_client._on_request_decrement_brightness()
 
-                response = Message.from_parts(Message.RSP_DECREMENT_BRIGHTNESS, [])
+                response = ptdm_message.Message.from_parts(ptdm_message.Message.RSP_DECREMENT_BRIGHTNESS, [])
 
-            elif (message.message_id() == Message.REQ_BLANK_SCREEN):
+            elif (message.message_id() == ptdm_message.Message.REQ_BLANK_SCREEN):
 
                 message.validate_parameters([])
 
                 self._callback_client._on_request_blank_screen()
 
-                response = Message.from_parts(Message.RSP_BLANK_SCREEN, [])
+                response = ptdm_message.Message.from_parts(ptdm_message.Message.RSP_BLANK_SCREEN, [])
 
-            elif (message.message_id() == Message.REQ_UNBLANK_SCREEN):
+            elif (message.message_id() == ptdm_message.Message.REQ_UNBLANK_SCREEN):
 
                 message.validate_parameters([])
 
                 self._callback_client._on_request_unblank_screen()
 
-                response = Message.from_parts(Message.RSP_UNBLANK_SCREEN, [])
+                response = ptdm_message.Message.from_parts(ptdm_message.Message.RSP_UNBLANK_SCREEN, [])
 
             else:
 
                 self._logger.error("Unsupported request received: " + request)
-                response = Message.from_parts(Message.RSP_ERR_UNSUPPORTED, [])
+                response = ptdm_message.Message.from_parts(ptdm_message.Message.RSP_ERR_UNSUPPORTED, [])
 
         except ValueError as e:
 
             self._logger.error("Error processing message: " + str(e))
-            response = Message.from_parts(Message.RSP_ERR_MALFORMED, [])
+            response = ptdm_message.Message.from_parts(ptdm_message.Message.RSP_ERR_MALFORMED, [])
 
         except Exception as e:
 
             self._logger.error("Unknown error processing message: " + str(e))
-            response = Message.from_parts(Message.RSP_ERR_SERVER, [])
+            response = ptdm_message.Message.from_parts(ptdm_message.Message.RSP_ERR_SERVER, [])
 
         self._logger.info("Sending response: " + response.message_friendly_string())
 

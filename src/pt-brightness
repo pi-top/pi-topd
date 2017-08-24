@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
 # Probably needs to be in a package associated with the hub (pt-hub?)
-#   unsure how to 'from ptdm_message import Message' without being in same directory
 
 import zmq
-from ptdm_message import Message
+from ptdm_client import ptdm_message
 import argparse
 
 args = None
@@ -47,11 +46,11 @@ def connect_to_socket():
 
 def send_request(message_request_id, parameters):
 
-    message = Message.from_parts(message_request_id, parameters)
+    message = ptdm_message.Message.from_parts(message_request_id, parameters)
     zmq_socket.send_string(message.to_string())
 
     response_string = zmq_socket.recv_string()
-    response = Message.from_string(response_string)
+    response = ptdm_message.Message.from_string(response_string)
 
     return response.message_id()
 
@@ -60,19 +59,19 @@ def process_args():
     # No parameters - return current brightness
     if not args.brightness_value and not args.increment_brightness and not args.decrement_brightness:
         print("CURRENT BRIGHTNESS")
-        resp = send_request(Message.REQ_GET_BRIGHTNESS, [])
+        resp = send_request(ptdm_message.Message.REQ_GET_BRIGHTNESS, [])
         print("RESP: " + str(resp))
     elif args.brightness_value:
         print("SETTING BRIGHTNESS TO " + str(args.brightness_value))
-        resp = send_request(Message.REQ_SET_BRIGHTNESS, [str(args.brightness_value)])
+        resp = send_request(ptdm_message.Message.REQ_SET_BRIGHTNESS, [str(args.brightness_value)])
         print("RESP: " + str(resp))
     elif args.increment_brightness:
         print("INCREMENTING BRIGHTNESS")
-        resp = send_request(Message.REQ_INCREMENT_BRIGHTNESS, [])
+        resp = send_request(ptdm_message.Message.REQ_INCREMENT_BRIGHTNESS, [])
         print("RESP: " + str(resp))
     elif args.decrement_brightness:
         print("DECREMENTING BRIGHTNESS")
-        resp = send_request(Message.REQ_DECREMENT_BRIGHTNESS, [])
+        resp = send_request(ptdm_message.Message.REQ_DECREMENT_BRIGHTNESS, [])
         print("RESP: " + str(resp))
 
 
