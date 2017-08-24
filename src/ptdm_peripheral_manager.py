@@ -26,13 +26,10 @@ class PeripheralManager():
     _pulse_indicator_file_path = "/home/pi/.pulse"
     _i2s_config_file_path = "/etc/pi-top/.i2s-vol/hifiberry-alsactl.restore"
     _i2s_configured_file_path = "/etc/pi-top/.i2s-vol/configured"
-    _main_thread = Thread()
 
-    def __init__(self, publish_server):
-        self._publish_server = publish_server
-
-    def emit_reboot_message(self):
-        self._publish_server.publish_reboot_required()
+    def __init__(self):
+        self._logger = None
+        self._callback_client = None
 
     def initialise(self, logger, callback_client):
 
@@ -67,6 +64,9 @@ class PeripheralManager():
         self.configure_hifiberry_alsactl()
 
         self.update_device_indicator_files()
+
+    def emit_reboot_message(self):
+        self._callback_client._on_reboot_required()
 
     def start(self):
         if self.is_initialised():
