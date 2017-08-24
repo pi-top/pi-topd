@@ -1,4 +1,3 @@
-src/pt-desktop-message-service          /usr/lib/pt-device-manager/
 src/pt-device-manager                   /usr/lib/pt-device-manager/
 src/ptdm_common.py                      /usr/lib/pt-device-manager/
 src/ptdm_controller.py                  /usr/lib/pt-device-manager/
