@@ -1,5 +1,5 @@
 [Unit]
-Description=Turn off pt-hub-controller on shutdown
+Description=Turn off pt-hub on shutdown
 DefaultDependencies=no
 Before=umount.target
 After=multi-user.target
