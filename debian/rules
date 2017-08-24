@@ -2,6 +2,9 @@
 %:
 	dh $@ --with python3 --with=systemd
 
+override_dh_shlibdeps:
+	# Added because poweroff executable binary 
+	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info --exclude=lib --exclude=ld
 	
 override_dh_installinit:
 	dh_installinit --noscripts --name=pt-device-message
