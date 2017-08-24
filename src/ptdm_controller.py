@@ -141,15 +141,15 @@ class Controller():
     # Shutdown manager callback methods
     ###########################################
 
-    def _on_low_battery_warning():
+    def _on_low_battery_warning(self):
         self._publish_server.publish_low_battery_warning()
 
-    def _on_critical_battery_warning():
+    def _on_critical_battery_warning(self):
         self._publish_server.publish_critical_battery_warning()
 
     ###########################################
     # Request server callback methods
     ###########################################
 
-    def _on_test_all_published_messages():
+    def _on_test_all_published_messages(self):
         self._publish_server.test_all_publishes()
