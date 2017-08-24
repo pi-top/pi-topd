@@ -21,9 +21,6 @@ from time import sleep
 class PeripheralManager():
     _loop_delay_seconds = 1
     _boot_config_file_path = "/boot/config.txt"
-    _dashboard_visible_indicator_file_path = "/etc/pi-top/.dashboardVisible"
-    _speaker_indicator_file_path = "/home/pi/.speaker"
-    _pulse_indicator_file_path = "/home/pi/.pulse"
     _i2s_config_file_path = "/etc/pi-top/.i2s-vol/hifiberry-alsactl.restore"
     _i2s_configured_file_path = "/etc/pi-top/.i2s-vol/configured"
 
@@ -63,10 +60,17 @@ class PeripheralManager():
 
         self.configure_hifiberry_alsactl()
 
-        self.update_device_indicator_files()
+    def emit_peripheral_connected(self, device_id):
+        if (self._callback_client is not None):
+            self._callback_client._on_peripheral_connected(device_id)
+
+    def emit_peripheral_disconnected(self, device_id):
+        if (self._callback_client is not None):
+            self._callback_client._on_peripheral_disconnected(device_id)
 
     def emit_reboot_message(self):
-        self._callback_client._on_reboot_required()
+        if (self._callback_client is not None):
+            self._callback_client._on_reboot_required()
 
     def start(self):
         if self.is_initialised():
@@ -102,41 +106,19 @@ class PeripheralManager():
 
         self._known_devices.append(device)
 
-    def update_device_indicator_files(self):
-
-        self._logger.debug("Updating device indicator files...")
-
-        pulse_enabled = self.get_status_of_device_by_name("pi-topPULSE")['enabled']
-
-        if (pulse_enabled is True and path.isfile(self._pulse_indicator_file_path) is False):
-            open(self._pulse_indicator_file_path, "a")
-
-        elif (pulse_enabled is False and path.isfile(self._pulse_indicator_file_path) is True):
-            remove(self._pulse_indicator_file_path)
-
-        speaker_enabled = self.get_status_of_device_by_name(
-            "pi-topSPEAKER")['enabled']
-
-        if (speaker_enabled is True and path.isfile(self._speaker_indicator_file_path) is False):
-            open(self._speaker_indicator_file_path, "a")
-
-        elif (speaker_enabled is False and path.isfile(self._speaker_indicator_file_path) is True):
-            remove(self._speaker_indicator_file_path)
-
     def add_enabled_device(self, device):
 
         self._logger.debug("Adding enabled device: " + device['name'])
 
         self._enabled_devices.append(device)
-        self.update_device_indicator_files()
+        self.emit_peripheral_connected(device['id'])
 
     def remove_enabled_device(self, device):
 
-        self._logger.debug(
-            "Removing device from enabled devices: " + device['name'])
+        self._logger.debug("Removing device from enabled devices: " + device['name'])
 
         self._enabled_devices.remove(device)
-        self.update_device_indicator_files()
+        self.emit_peripheral_disconnected(device['id'])
 
     def initialise_known_device(self, device):
 
@@ -414,9 +396,9 @@ class PeripheralManager():
         fields = line_to_check.split("=")
         return fields[-1].replace("\n", "")
 
-    def strip_whitespace(self, str):
+    def strip_whitespace(self, line):
 
-        return str.translate(None, whitespace)
+        return "".join(line.split())
 
     def is_line_commented(self, line_to_check):
 
