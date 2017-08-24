@@ -11,8 +11,7 @@ from ptdm_message import Message
 class RequestServer():
     _thread = Thread()
 
-    def __init__(self, publish_server):
-        self._publish_server = publish_server
+    def __init__(self):
         self._thread = Thread(target=self._thread_method)
 
     def initialise(self, logger, callback_client):
@@ -89,7 +88,7 @@ class RequestServer():
 
                 message.validate_parameters([])
 
-                self._publish_server.test_all_publishes()
+                self._callback_client._on_test_all_published_messages()
 
                 response = Message.from_parts(Message.RSP_DONE_TEST_PUB_EMITS, [])
 
