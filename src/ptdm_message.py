@@ -71,6 +71,8 @@ class Message:
     PUB_DEVICE_ID_CHANGED               = 310
     PUB_LOW_BATTERY_WARNING             = 311
     PUB_CRITICAL_BATTERY_WARNING        = 312
+    PUB_LID_CLOSED                      = 313
+    PUB_LID_OPENED                      = 314
 
     _message_names[PUB_BRIGHTNESS_CHANGED] = "PUB_BRIGHTNESS_CHANGED"
     _message_names[PUB_PERIPHERAL_CONNECTED] = "PUB_PERIPHERAL_CONNECTED"
@@ -85,6 +87,8 @@ class Message:
     _message_names[PUB_DEVICE_ID_CHANGED] = "PUB_DEVICE_ID_CHANGED"
     _message_names[PUB_LOW_BATTERY_WARNING] = "PUB_LOW_BATTERY_WARNING"
     _message_names[PUB_CRITICAL_BATTERY_WARNING] = "PUB_CRITICAL_BATTERY_WARNING"
+    _message_names[PUB_LID_CLOSED] = "PUB_LID_CLOSED"
+    _message_names[PUB_LID_OPENED] = "PUB_LID_OPENED"
 
     @classmethod
     def from_string(cls, message_string):

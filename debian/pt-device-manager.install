@@ -9,3 +9,4 @@ src/ptdm_peripheral_manager.py          /usr/lib/pt-device-manager/
 src/ptdm_publish_server.py              /usr/lib/pt-device-manager/
 src/ptdm_request_server.py              /usr/lib/pt-device-manager/
 src/ptdm_shutdown_client.py             /usr/lib/pt-device-manager/
+bin/poweroff                            /usr/bin/

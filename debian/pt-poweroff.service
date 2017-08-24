@@ -1,0 +1,12 @@
+[Unit]
+Description=Turn off pt-hub-controller on shutdown
+DefaultDependencies=no
+Before=umount.target
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/poweroff
+
+[Install]
+WantedBy=halt.target poweroff.target

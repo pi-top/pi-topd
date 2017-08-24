@@ -104,6 +104,12 @@ class PublishServer():
     def publish_critical_battery_warning(self):
         self._send_message(Message.PUB_CRITICAL_BATTERY_WARNING, [])
 
+    def publish_lid_state_changed(self, lid_open_int):
+        if (lid_open_int == 1):
+            self._send_message(Message.PUB_LID_OPENED, [])
+        else:
+            self._send_message(Message.PUB_LID_CLOSED, [])
+
     # Internal functions
 
     def _send_message(self, message_id, parameters):
