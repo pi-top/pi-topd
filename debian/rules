@@ -14,4 +14,4 @@ override_dh_shlibdeps:
 override_dh_installinit:
 	dh_installinit --noscripts --name=pt-device-message
 	dh_installinit --noscripts --name=pt-desktop-message-service
-	dh_installinit --noscripts --name=pt-poweroff
+	dh_installinit --noscripts --no-start --name=pt-poweroff
