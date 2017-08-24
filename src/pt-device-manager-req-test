@@ -123,7 +123,8 @@ def test_all_brightness():
 
 def test_device_id():
     print("*** Test getting device ID ***")
-    while False:
+
+    while True:
         resp = input("Are you running on a pi-top (1) or a pi-topCEED (2)?")
         if resp == "1" or resp == "2":
             break
