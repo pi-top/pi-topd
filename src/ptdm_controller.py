@@ -6,7 +6,7 @@ from ptdm_hub_manager import HubManager
 from ptdm_peripheral_manager import PeripheralManager
 from ptdm_publish_server import PublishServer
 from ptdm_request_server import RequestServer
-from ptdm_shutdown_client import ShutdownManager
+from ptdm_shutdown_manager import ShutdownManager
 import time
 import sys
 import logging
@@ -23,13 +23,14 @@ class Controller():
         # Create classes
 
         self._publish_server = PublishServer()
-        self._shutdown_mgr = ShutdownManager(self._publish_server)
+        self._shutdown_manager = ShutdownManager()
         self._hub_manager = HubManager()
-        self._peripheral_manager = PeripheralManager(self._publish_server)
-        self._request_server = RequestServer(self._publish_server)
+        self._peripheral_manager = PeripheralManager()
+        self._request_server = RequestServer()
 
         # Initialise
 
+        self._shutdown_manager.initialise(self._logger, self)
         self._hub_manager.initialise(self._logger, self)
         self._peripheral_manager.initialise(self._logger, self)
         self._publish_server.initialise(self._logger)
@@ -105,13 +106,13 @@ class Controller():
     def _on_hub_battery_charging_state_changed(self, new_value):
         self._publish_server.publish_battery_charging_state_changed(new_value)
         # self._publish_server.publish_battery_capacity_changed(new_value)
-        self._shutdown_mgr.set_battery_charging_state(new_value)
-        self._shutdown_mgr.process_battery_state()
+        self._shutdown_manager.set_battery_charging_state(new_value)
+        self._shutdown_manager.process_battery_state()
 
     def _on_hub_battery_capacity_changed(self, new_value):
         self._publish_server.publish_battery_capacity_changed(new_value)
-        self._shutdown_mgr.set_battery_capacity(new_value)
-        self._shutdown_mgr.process_battery_state()
+        self._shutdown_manager.set_battery_capacity(new_value)
+        self._shutdown_manager.process_battery_state()
 
     def _on_hub_battery_time_remaining_changed(self, new_value):
         self._publish_server.publish_battery_time_remaining_changed(new_value)
@@ -124,7 +125,7 @@ class Controller():
 
     def _on_device_id_changed(self, device_id_int):
         self._publish_server.publish_device_id_changed(device_id_int)
-        self._shutdown_mgr.set_device_id(device_id_int)
+        self._shutdown_manager.set_device_id(device_id_int)
 
     ###########################################
     # Peripheral Manager callback methods
@@ -135,3 +136,20 @@ class Controller():
 
     def _on_peripheral_disconnected(self, peripheral_id_int):
         self._publish_server.publish_peripheral_disconnected(peripheral_id_int)
+
+    ###########################################
+    # Shutdown manager callback methods
+    ###########################################
+
+    def _on_low_battery_warning():
+        self._publish_server.publish_low_battery_warning()
+
+    def _on_critical_battery_warning():
+        self._publish_server.publish_critical_battery_warning()
+
+    ###########################################
+    # Request server callback methods
+    ###########################################
+
+    def _on_test_all_published_messages():
+        self._publish_server.test_all_publishes()
