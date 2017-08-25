@@ -156,6 +156,16 @@ class RequestServer():
 
                 response = ptdm_message.Message.from_parts(ptdm_message.Message.RSP_GET_BATTERY_CHARGING_STATE, [charging_state])
 
+            elif (message.message_id() == ptdm_message.Message.REQ_GET_PERIPHERAL_ENABLED):
+
+                message.validate_parameters([int])
+
+                enabled_bool = self._callback_client._on_request_get_peripheral_enabled(int(message.parameters()[0]))
+
+                enabled_int = int(enabled_bool is True)
+
+                response = ptdm_message.Message.from_parts(ptdm_message.Message.RSP_GET_PERIPHERAL_ENABLED, [enabled_int])
+
             else:
 
                 self._logger.error("Unsupported request received: " + request)
