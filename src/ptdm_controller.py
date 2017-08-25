@@ -69,6 +69,9 @@ class Controller():
     # Request server callback methods
     ###########################################
 
+    def _on_test_all_published_messages(self):
+        self._publish_server.test_all_publishes()
+
     def _on_request_get_brightness(self):
         return self._hub_manager.get_brightness()
 
@@ -90,6 +93,9 @@ class Controller():
     def _on_request_unblank_screen(self):
         self._hub_manager.unblank_screen()
 
+    def _on_request_battery_charging_state(self):
+        return self._hub_manager.get_battery_charging_state()
+
     ###########################################
     # Hub Manager callback methods
     ###########################################
@@ -105,8 +111,7 @@ class Controller():
 
     def _on_hub_battery_charging_state_changed(self, new_value):
         self._publish_server.publish_battery_charging_state_changed(new_value)
-        # self._publish_server.publish_battery_capacity_changed(new_value)
-        self._shutdown_manager.set_battery_charging_state(new_value)
+        self._shutdown_manager.set_battery_charging(new_value)
         self._shutdown_manager.process_battery_state()
 
     def _on_hub_battery_capacity_changed(self, new_value):
@@ -146,10 +151,3 @@ class Controller():
 
     def _on_critical_battery_warning(self):
         self._publish_server.publish_critical_battery_warning()
-
-    ###########################################
-    # Request server callback methods
-    ###########################################
-
-    def _on_test_all_published_messages(self):
-        self._publish_server.test_all_publishes()

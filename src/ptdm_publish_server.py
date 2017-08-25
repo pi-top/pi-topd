@@ -115,11 +115,10 @@ class PublishServer():
     def _send_message(self, message_id, parameters):
 
         message = ptdm_message.Message.from_parts(message_id, parameters)
-        self._logger.info("Publishing message: " +
-                          message.message_friendly_string())
 
         try:
             self._zmq_socket.send_string(message.to_string())
+            self._logger.info("Published message: " + message.message_friendly_string())
 
         except zmq.error.ZMQError as e:
             self._logger.error(

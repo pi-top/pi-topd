@@ -217,8 +217,7 @@ class PeripheralManager():
 
                 if self._i2s_mode_current is True:
                     if self._i2s_mode_next is True:
-                        self._logger.debug(
-                            "I2S appears to be enabled - disabling...")
+                        self._logger.debug("I2S appears to be enabled - disabling...")
                         self.enable_i2s(False)
 
                         # Also ensure that HDMI is correctly configured, so we

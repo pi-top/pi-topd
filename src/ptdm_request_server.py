@@ -148,6 +148,14 @@ class RequestServer():
 
                 response = ptdm_message.Message.from_parts(ptdm_message.Message.RSP_UNBLANK_SCREEN, [])
 
+            elif (message.message_id() == ptdm_message.Message.REQ_GET_BATTERY_CHARGING_STATE):
+
+                message.validate_parameters([])
+
+                charging_state = self._callback_client._on_request_battery_charging_state()
+
+                response = ptdm_message.Message.from_parts(ptdm_message.Message.RSP_GET_BATTERY_CHARGING_STATE, [charging_state])
+
             else:
 
                 self._logger.error("Unsupported request received: " + request)
