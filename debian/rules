@@ -10,10 +10,7 @@ override_dh_strip:
 # Added because poweroff executable binary 
 override_dh_shlibdeps:
 	dh_shlibdeps -Xpoweroff
-
+	
 override_dh_installinit:
-	dh_installinit --noscripts
-
-override_dh_systemd_start:
-	dh_systemd_start pt-device-manager
-	dh_systemd_start --no-start pt-poweroff
+	dh_installinit --noscripts --name=pt-device-message
+	dh_installinit --noscripts --name=pt-poweroff
