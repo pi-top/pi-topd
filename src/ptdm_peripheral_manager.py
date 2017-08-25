@@ -124,6 +124,14 @@ class PeripheralManager():
 
         self.add_known_device(device)
 
+    def get_device_by_id(self, device_id):
+
+        for device in self._known_devices:
+            if device['id'] == device_id:
+                return device
+
+        return None
+
     def get_device_by_address(self, addr):
 
         for device in self._known_devices:
@@ -348,27 +356,6 @@ class PeripheralManager():
 
         return detected_device_names
 
-    def get_status_of_device_by_name(self, current_device_name):
-
-        self._logger.debug("Getting status of " + current_device_name)
-
-        status = {}
-        status['detected'] = False
-        status['enabled'] = False
-
-        for detected_device in self.get_connected_device_names():
-            if current_device_name in detected_device:
-                status['detected'] = True
-
-        for enabled_device in self._enabled_devices:
-            if current_device_name in enabled_device['name']:
-                status['enabled'] = True
-
-        self._logger.debug("  Detected:" + str(status['detected']))
-        self._logger.debug("  Enabled:" + str(status['enabled']))
-
-        return status
-
     def enable_i2c(self, enable):
 
         if enable:
@@ -416,8 +403,7 @@ class PeripheralManager():
 
     def set_hdmi_drive_in_boot_config(self):
 
-        self._logger.debug("Checking hdmi_drive setting in " +
-                           self._boot_config_file_path + "...")
+        self._logger.debug("Checking hdmi_drive setting in " + self._boot_config_file_path + "...")
 
         setting_updated = False
         setting_found = False
@@ -699,3 +685,12 @@ class PeripheralManager():
             call(("/usr/sbin/alsactl", "-f", self._i2s_config_file_path, "restore"))
             self.touch(self._i2s_configured_file_path)
             self.reboot_system()
+
+    def get_peripheral_enabled(self, peripheral_id):
+
+        device = self.get_device_by_id(peripheral_id)
+        if (device is not None):
+            if (device in self._enabled_devices):
+                return True
+
+        return False

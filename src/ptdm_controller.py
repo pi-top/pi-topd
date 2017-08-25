@@ -96,6 +96,9 @@ class Controller():
     def _on_request_battery_charging_state(self):
         return self._hub_manager.get_battery_charging_state()
 
+    def _on_request_get_peripheral_enabled(self, peripheral_id):
+        return self._peripheral_manager.get_peripheral_enabled(peripheral_id)
+
     ###########################################
     # Hub Manager callback methods
     ###########################################
