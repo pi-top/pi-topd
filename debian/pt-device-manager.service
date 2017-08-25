@@ -8,4 +8,3 @@ Environment="DISPLAY=:0.0"
 
 [Install]
 WantedBy=multi-user.target
-
