@@ -39,7 +39,10 @@ class Controller():
     def start(self):
         self._logger.info("Starting device manager")
 
-        self._hub_manager.connect_to_hub()
+        if (self._hub_manager.connect_to_hub() is False):
+            self._logger.error("No pi-top hub detected. Exiting...")
+            return
+
         self._hub_manager.register_client(self)
         self._hub_manager.start()
 
@@ -125,11 +128,17 @@ class Controller():
     def _on_hub_battery_time_remaining_changed(self, new_value):
         self._publish_server.publish_battery_time_remaining_changed(new_value)
 
-    def _on_screen_blank_state_changed(self, blanked_bool):
-        self._publish_server.publish_screen_blank_state_changed(blanked_bool)
+    def _on_screen_blanked(self):
+        self._publish_server.publish_screen_blanked()
 
-    def _on_lid_state_changed(self, lid_open_int):
-        self._publish_server.publish_lid_state_changed(lid_open_int)
+    def _on_screen_unblanked(self):
+        self._publish_server.publish_screen_unblanked()
+
+    def _on_lid_opened(self):
+        self._publish_server.publish_lid_opened()
+
+    def _on_lid_closed(self):
+        self._publish_server.publish_lid_closed()
 
     def _on_device_id_changed(self, device_id_int):
         self._publish_server.publish_device_id_changed(device_id_int)

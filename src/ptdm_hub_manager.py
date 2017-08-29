@@ -18,13 +18,12 @@ class HubManager():
             if (self._module_hub_v1.initialise(self._logger) is True):
                 self._active_hub_module = self._module_hub_v1
                 self._logger.info("Connected to hub v1")
-                return
+                return True
             else:
                 self._logger.warning("Could not initialise v1 hub")
 
         except Exception as e:
             self._logger.info("Failed to connect to a v1 hub. " + str(e))
-            raise e
 
         try:
             self._module_hub_v2 = self._import_module("pthub2.pthub2")
@@ -32,7 +31,7 @@ class HubManager():
             if (self._module_hub_v2.initialise(self._logger) is True):
                 self._active_hub_module = self._module_hub_v2
                 self._logger.info("Connected to hub v2")
-                return
+                return True
             else:
                 self._logger.warning("Could not initialise v2 hub")
 
@@ -40,6 +39,7 @@ class HubManager():
             self._logger.info("Failed to connect to a v2 hub. " + str(e))
 
         self._logger.error("Could not connect to a hub!")
+        return False
 
     def start(self):
         if (self._hub_connected()):
@@ -53,8 +53,10 @@ class HubManager():
         if (self._hub_connected()):
             self._active_hub_module.register_client(
                 client._on_hub_brightness_changed,
-                client._on_screen_blank_state_changed,
-                client._on_lid_state_changed,
+                client._on_screen_blanked,
+                client._on_screen_unblanked,
+                client._on_lid_opened,
+                client._on_lid_closed,
                 client._on_hub_shutdown_requested,
                 client._on_device_id_changed,
                 client._on_hub_battery_charging_state_changed,
