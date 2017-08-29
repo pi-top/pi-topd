@@ -14,7 +14,6 @@ class PublishServer():
     test_battery_charging_state_vals = [1, 0]
     test_battery_capacity_vals = [95, 50]
     test_battery_time_remaining_vals = [300, 250]
-    test_screen_blank_vals = [True, False]
 
     def initialise(self, logger):
         self._logger = logger
@@ -58,9 +57,8 @@ class PublishServer():
         for val in self.test_battery_time_remaining_vals:
             self.publish_battery_time_remaining_changed(val)
 
-        for val in self.test_screen_blank_vals:
-            self.publish_screen_blank_state_changed(val)
-
+        self.publish_screen_blanked()
+        self.publish_screen_unblanked()
         self.publish_shutdown_requested()
         self.publish_reboot_required()
 
@@ -88,11 +86,11 @@ class PublishServer():
     def publish_battery_time_remaining_changed(self, new_time):
         self._send_message(ptdm_message.Message.PUB_BATTERY_TIME_REMAINING_CHANGED, [new_time])
 
-    def publish_screen_blank_state_changed(self, blanked_bool):
-        if blanked_bool is True:
-            self._send_message(ptdm_message.Message.PUB_SCREEN_BLANKED, [])
-        else:
-            self._send_message(ptdm_message.Message.PUB_SCREEN_UNBLANKED, [])
+    def publish_screen_blanked(self):
+        self._send_message(ptdm_message.Message.PUB_SCREEN_BLANKED, [])
+
+    def publish_screen_unblanked(self):
+        self._send_message(ptdm_message.Message.PUB_SCREEN_UNBLANKED, [])
 
     def publish_device_id_changed(self, device_id_int):
         self._logger.debug("Publishing device ID changed")
@@ -104,11 +102,11 @@ class PublishServer():
     def publish_critical_battery_warning(self):
         self._send_message(ptdm_message.Message.PUB_CRITICAL_BATTERY_WARNING, [])
 
-    def publish_lid_state_changed(self, lid_open_int):
-        if (lid_open_int == 1):
-            self._send_message(ptdm_message.Message.PUB_LID_OPENED, [])
-        else:
-            self._send_message(ptdm_message.Message.PUB_LID_CLOSED, [])
+    def publish_lid_opened(self):
+        self._send_message(ptdm_message.Message.PUB_LID_OPENED, [])
+
+    def publish_lid_closed(self):
+        self._send_message(ptdm_message.Message.PUB_LID_CLOSED, [])
 
     # Internal functions
 
