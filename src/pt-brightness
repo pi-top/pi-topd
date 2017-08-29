@@ -24,6 +24,7 @@ def parse_args():
     parser.add_argument("-b", "--brightness_value", help="Set brightness level [0-10] on pi-topHUB", type=int, choices=range(11))
     parser.add_argument("-i", "--increment_brightness", help="Increment brightness level on pi-topHUB", action="store_true")
     parser.add_argument("-d", "--decrement_brightness", help="Decrement brightness level on pi-topHUB", action="store_true")
+    parser.add_argument("-l", "--backlight", help="Turn on the backlight", action="store_true")
 
     args = parser.parse_args()
 
@@ -57,7 +58,7 @@ def send_request(message_request_id, parameters):
 
 def process_args():
     # No parameters - return current brightness
-    if not args.brightness_value and not args.increment_brightness and not args.decrement_brightness:
+    if not args.brightness_value and not args.increment_brightness and not args.decrement_brightness and not args.backlight:
         print("CURRENT BRIGHTNESS")
         resp = send_request(ptdm_message.Message.REQ_GET_BRIGHTNESS, [])
         print("RESP: " + str(resp))
@@ -72,6 +73,10 @@ def process_args():
     elif args.decrement_brightness:
         print("DECREMENTING BRIGHTNESS")
         resp = send_request(ptdm_message.Message.REQ_DECREMENT_BRIGHTNESS, [])
+        print("RESP: " + str(resp))
+    elif args.backlight:
+        print("TURNING ON BACKLIGHT")
+        resp = send_request(ptdm_message.Message.REQ_UNBLANK_SCREEN, [])
         print("RESP: " + str(resp))
 
 
