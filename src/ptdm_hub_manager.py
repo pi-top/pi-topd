@@ -27,7 +27,7 @@ class HubManager():
             raise e
 
         try:
-            self._module_hub_v2 = self._import_module("pthubv2")
+            self._module_hub_v2 = self._import_module("pthub2.pthub2")
 
             if (self._module_hub_v2.initialise(self._logger) is True):
                 self._active_hub_module = self._module_hub_v2
