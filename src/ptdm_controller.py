@@ -3,6 +3,7 @@
 
 from ptdm_logger import Logger
 from ptdm_hub_manager import HubManager
+from ptdm_idle_monitor import IdleMonitor
 from ptdm_peripheral_manager import PeripheralManager
 from ptdm_publish_server import PublishServer
 from ptdm_request_server import RequestServer
@@ -25,6 +26,7 @@ class Controller():
         self._publish_server = PublishServer()
         self._shutdown_manager = ShutdownManager()
         self._hub_manager = HubManager()
+        self._idle_monitor = IdleMonitor()
         self._peripheral_manager = PeripheralManager()
         self._request_server = RequestServer()
 
@@ -32,6 +34,7 @@ class Controller():
 
         self._shutdown_manager.initialise(self._logger, self)
         self._hub_manager.initialise(self._logger, self)
+        self._idle_monitor.initialise(self._logger, self)
         self._peripheral_manager.initialise(self._logger, self)
         self._publish_server.initialise(self._logger)
         self._request_server.initialise(self._logger, self)
@@ -101,6 +104,16 @@ class Controller():
 
     def _on_request_get_peripheral_enabled(self, peripheral_id):
         return self._peripheral_manager.get_peripheral_enabled(peripheral_id)
+
+    ###########################################
+    # Idle Monitor callback methods
+    ###########################################
+
+    def _on_idletime_threshold_exceeded(self):
+        self._hub_manager.blank_screen()
+
+    def _on_exceeded_idletime_reset(self):
+        self._hub_manager.unblank_screen()
 
     ###########################################
     # Hub Manager callback methods
