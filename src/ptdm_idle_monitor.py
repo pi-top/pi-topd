@@ -6,7 +6,7 @@ import threading
 class IdleMonitor():
 
     DEFAULT_CYCLE_SLEEP_TIME = 5
-    SENSITIVE_CYCLE_SLEEP_TIME = 5
+    SENSITIVE_CYCLE_SLEEP_TIME = 0.2
 
     def __init__(self):
         pass
@@ -45,17 +45,23 @@ class IdleMonitor():
         while self._run_main_thread:
             time_since_idle = idletime.get_idle_time()
 
-            timeout_expired = (time_since_idle > self.idle_timeout_ms)
-            idletime_reset = (time_since_idle < self.previous_idletime)
+            if (time_since_idle != -1):
 
-            timeout_already_expired = (self.previous_idletime > self.idle_timeout_ms)
+                timeout_expired = (time_since_idle > self.idle_timeout_ms)
+                idletime_reset = (time_since_idle < self.previous_idletime)
 
-            if timeout_expired and not timeout_already_expired:
-                self.emit_idletime_threshold_exceeded()
-                self._cycle_sleep_time = self.SENSITIVE_CYCLE_SLEEP_TIME
-            elif idletime_reset and timeout_already_expired:
-                self.emit_exceeded_idletime_reset()
-                self._cycle_sleep_time = self.DEFAULT_CYCLE_SLEEP_TIME
+                timeout_already_expired = (self.previous_idletime > self.idle_timeout_ms)
 
-            self.previous_idletime = time_since_idle
+                if timeout_expired and not timeout_already_expired:
+                    self.emit_idletime_threshold_exceeded()
+                    self._cycle_sleep_time = self.SENSITIVE_CYCLE_SLEEP_TIME
+                elif idletime_reset and timeout_already_expired:
+                    self.emit_exceeded_idletime_reset()
+                    self._cycle_sleep_time = self.DEFAULT_CYCLE_SLEEP_TIME
+
+                self.previous_idletime = time_since_idle
+
+            else:
+                self._logger.warning("pt-idletime.get_idle_time() returned -1. Check the configuration of xhost.")
+
             time.sleep(self._cycle_sleep_time)
