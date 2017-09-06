@@ -34,16 +34,17 @@ class IdleMonitor():
 
     def emit_idletime_threshold_exceeded(self):
         if (self._callback_client is not None):
+            self._logger.info("Idletime threshold exceeded")
             self._callback_client._on_idletime_threshold_exceeded()
 
     def emit_exceeded_idletime_reset(self):
         if (self._callback_client is not None):
+            self._logger.info("Idletime reset")
             self._callback_client._on_exceeded_idletime_reset()
 
     def _main_thread_loop(self):
         while self._run_main_thread:
             time_since_idle = idletime.get_idle_time()
-            print("Idletime: " + str(time_since_idle))
 
             timeout_expired = (time_since_idle > self.idle_timeout_ms)
             idletime_reset = (time_since_idle < self.previous_idletime)
