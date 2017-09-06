@@ -5,6 +5,9 @@ import threading
 
 class IdleMonitor():
 
+    DEFAULT_CYCLE_SLEEP_TIME = 5
+    SENSITIVE_CYCLE_SLEEP_TIME = 5
+
     def __init__(self):
         pass
 
@@ -14,12 +17,8 @@ class IdleMonitor():
         self._callback_client = callback_client
         self._main_thread = None
         self._run_main_thread = False
-        self.set_idle_timeout_ms(timeout_ms)
-
-    def set_idle_timeout_ms(self, timeout_ms):
         self.idle_timeout_ms = timeout_ms
-        timeout_s = float(self.idle_timeout_ms / 1000)
-        self._cycle_sleep_time = min(5, float(timeout_s / 10))
+        self._cycle_sleep_time = self.DEFAULT_CYCLE_SLEEP_TIME
 
     def start(self):
         if self._main_thread is None:
@@ -52,9 +51,11 @@ class IdleMonitor():
             timeout_already_expired = (self.previous_idletime > self.idle_timeout_ms)
 
             if timeout_expired and not timeout_already_expired:
-                emit_idletime_threshold_exceeded()
+                self.emit_idletime_threshold_exceeded()
+                self._cycle_sleep_time = self.SENSITIVE_CYCLE_SLEEP_TIME
             elif idletime_reset and timeout_already_expired:
-                emit_exceeded_idletime_reset()
+                self.emit_exceeded_idletime_reset()
+                self._cycle_sleep_time = self.DEFAULT_CYCLE_SLEEP_TIME
 
             self.previous_idletime = time_since_idle
             time.sleep(self._cycle_sleep_time)
