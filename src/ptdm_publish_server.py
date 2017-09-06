@@ -40,30 +40,6 @@ class PublishServer():
         self._zmq_context.destroy()
         self._logger.debug("Done.")
 
-    def test_all_publishes(self):
-        for val in self.test_device_id_vals:
-            self.publish_device_id_changed(val)
-
-        for val in self.test_brightness_vals:
-            self.publish_brightness_changed(val)
-
-        self.publish_peripheral_connected(self.test_peripheral_id)
-        self.publish_peripheral_disconnected(self.test_peripheral_id)
-
-        for val in self.test_battery_charging_state_vals:
-            self.publish_battery_charging_state_changed(val)
-
-        for val in self.test_battery_capacity_vals:
-            self.publish_battery_capacity_changed(val)
-
-        for val in self.test_battery_time_remaining_vals:
-            self.publish_battery_time_remaining_changed(val)
-
-        self.publish_screen_blanked()
-        self.publish_screen_unblanked()
-        self.publish_shutdown_requested()
-        self.publish_reboot_required()
-
     def publish_brightness_changed(self, new_brightness: int):
         self._check_type(new_brightness, int)
         self._send_message(ptdm_message.Message.PUB_BRIGHTNESS_CHANGED, [new_brightness])
@@ -82,17 +58,12 @@ class PublishServer():
     def publish_reboot_required(self):
         self._send_message(ptdm_message.Message.PUB_REBOOT_REQUIRED, [])
 
-    def publish_battery_charging_state_changed(self, connected: int):
+    def publish_battery_state_changed(self, connected: int, new_capacity: int, new_time: int, new_wattage: int):
         self._check_type(connected, int)
-        self._send_message(ptdm_message.Message.PUB_BATTERY_CHARGING_STATE_CHANGED, [connected])
-
-    def publish_battery_capacity_changed(self, new_capacity: int):
         self._check_type(new_capacity, int)
-        self._send_message(ptdm_message.Message.PUB_BATTERY_CAPACITY_CHANGED, [new_capacity])
-
-    def publish_battery_time_remaining_changed(self, new_time: int):
         self._check_type(new_time, int)
-        self._send_message(ptdm_message.Message.PUB_BATTERY_TIME_REMAINING_CHANGED, [new_time])
+        self._check_type(new_wattage, int)
+        self._send_message(ptdm_message.Message.PUB_BATTERY_STATE_CHANGED, [connected, new_capacity, new_time, new_wattage])
 
     def publish_screen_blanked(self):
         self._send_message(ptdm_message.Message.PUB_SCREEN_BLANKED, [])
