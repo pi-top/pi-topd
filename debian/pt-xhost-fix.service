@@ -1,0 +1,10 @@
+[Unit]
+Description=pi-top xhost fix
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/sudo -u pi /usr/bin/xhost local:root
+Environment="DISPLAY=:0.0"
+
+[Install]
+WantedBy=multi-user.target
