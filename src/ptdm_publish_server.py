@@ -64,13 +64,16 @@ class PublishServer():
         self.publish_shutdown_requested()
         self.publish_reboot_required()
 
-    def publish_brightness_changed(self, new_brightness):
+    def publish_brightness_changed(self, new_brightness: int):
+        self._check_type(new_brightness, int)
         self._send_message(ptdm_message.Message.PUB_BRIGHTNESS_CHANGED, [new_brightness])
 
-    def publish_peripheral_connected(self, peripheral_id):
+    def publish_peripheral_connected(self, peripheral_id: int):
+        self._check_type(peripheral_id, int)
         self._send_message(ptdm_message.Message.PUB_PERIPHERAL_CONNECTED, [peripheral_id])
 
-    def publish_peripheral_disconnected(self, peripheral_id):
+    def publish_peripheral_disconnected(self, peripheral_id: int):
+        self._check_type(peripheral_id, int)
         self._send_message(ptdm_message.Message.PUB_PERIPHERAL_DISCONNECTED, [peripheral_id])
 
     def publish_shutdown_requested(self):
@@ -79,13 +82,16 @@ class PublishServer():
     def publish_reboot_required(self):
         self._send_message(ptdm_message.Message.PUB_REBOOT_REQUIRED, [])
 
-    def publish_battery_charging_state_changed(self, connected_int):
-        self._send_message(ptdm_message.Message.PUB_BATTERY_CHARGING_STATE_CHANGED, [connected_int])
+    def publish_battery_charging_state_changed(self, connected: int):
+        self._check_type(connected, int)
+        self._send_message(ptdm_message.Message.PUB_BATTERY_CHARGING_STATE_CHANGED, [connected])
 
-    def publish_battery_capacity_changed(self, new_capacity):
+    def publish_battery_capacity_changed(self, new_capacity: int):
+        self._check_type(new_capacity, int)
         self._send_message(ptdm_message.Message.PUB_BATTERY_CAPACITY_CHANGED, [new_capacity])
 
-    def publish_battery_time_remaining_changed(self, new_time):
+    def publish_battery_time_remaining_changed(self, new_time: int):
+        self._check_type(new_time, int)
         self._send_message(ptdm_message.Message.PUB_BATTERY_TIME_REMAINING_CHANGED, [new_time])
 
     def publish_screen_blanked(self):
@@ -94,9 +100,9 @@ class PublishServer():
     def publish_screen_unblanked(self):
         self._send_message(ptdm_message.Message.PUB_SCREEN_UNBLANKED, [])
 
-    def publish_device_id_changed(self, device_id_int):
-        self._logger.debug("Publishing device ID changed")
-        self._send_message(ptdm_message.Message.PUB_DEVICE_ID_CHANGED, [device_id_int])
+    def publish_device_id_changed(self, device_id: int):
+        self._check_type(device_id, int)
+        self._send_message(ptdm_message.Message.PUB_DEVICE_ID_CHANGED, [device_id])
 
     def publish_low_battery_warning(self):
         self._send_message(ptdm_message.Message.PUB_LOW_BATTERY_WARNING, [])
@@ -123,3 +129,8 @@ class PublishServer():
         except zmq.error.ZMQError as e:
             self._logger.error("Communication error in publish server: " + str(e))
             self._logger.info(traceback.format_exc())
+
+    def _check_type(self, var, type):
+
+        if (isinstance(var, type) is False):
+            raise TypeError("Wrong type to be sent in message")
