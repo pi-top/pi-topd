@@ -67,9 +67,7 @@ class HubManager():
                 client._on_lid_closed,
                 client._on_hub_shutdown_requested,
                 client._on_device_id_changed,
-                client._on_hub_battery_charging_state_changed,
-                client._on_hub_battery_time_remaining_changed,
-                client._on_hub_battery_capacity_changed)
+                client._on_hub_battery_state_changed)
 
     def set_speed(self, no_of_polls_per_second):
         if (self._hub_connected()):

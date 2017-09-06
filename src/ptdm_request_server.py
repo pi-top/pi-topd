@@ -86,14 +86,6 @@ class RequestServer():
 
                 response = ptdm_message.Message.from_parts(ptdm_message.Message.RSP_PING, [])
 
-            elif (message.message_id() == ptdm_message.Message.REQ_TEST_PUB_EMITS):
-
-                message.validate_parameters([])
-
-                self._callback_client._on_test_all_published_messages()
-
-                response = ptdm_message.Message.from_parts(ptdm_message.Message.RSP_DONE_TEST_PUB_EMITS, [])
-
             elif (message.message_id() == ptdm_message.Message.REQ_GET_DEVICE_ID):
 
                 message.validate_parameters([])
