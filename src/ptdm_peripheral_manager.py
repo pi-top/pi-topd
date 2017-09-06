@@ -1,5 +1,6 @@
 from ptdm_client import ptdm_common
 
+import traceback
 from tempfile import mkstemp
 from importlib import import_module
 from string import whitespace
@@ -100,7 +101,7 @@ class PeripheralManager():
             self._custom_imported_modules[module_name] = i
 
         except ImportError:
-            self._logger.info("COULD NOT IMPORT " + cfg_module_str)
+            self._logger.info("Could not import " + cfg_module_str)
 
     def add_known_device(self, device):
 
@@ -265,8 +266,9 @@ class PeripheralManager():
                                         self._logger.debug(
                                             "Error initialising speaker")
 
-                            except:
-                                self._logger.error("Failed to configure pi-topSPEAKER")
+                            except Exception as e:
+                                self._logger.error("Failed to configure pi-topSPEAKER. Error: " + str(e))
+                                self._logger.info(traceback.format_exc())
 
                         else:
                             self._logger.error("Failed to configure HDMI output")
@@ -594,6 +596,7 @@ class PeripheralManager():
                 self._logger.error("Unable to verify I2C mode - assuming disabled")
         except Exception as e:
             self._logger.error("Unable to verify I2C mode. " + str(e))
+            self._logger.info(traceback.format_exc())
 
     def determine_i2s_mode_from_system(self):
         self._i2s_mode_current = False
@@ -610,6 +613,7 @@ class PeripheralManager():
                     self._i2s_mode_next = True
         except Exception as e:
             self._logger.error("Unable to verify I2S mode. " + str(e))
+            self._logger.info(traceback.format_exc())
 
     ################################
     # EXPORTED FUNCTIONS           #

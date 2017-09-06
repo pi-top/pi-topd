@@ -1,4 +1,5 @@
 from importlib import import_module
+import traceback
 
 # Discovers which hub libraries are installed, and uses those to
 # determine the type of hub in use and communicate with it
@@ -12,6 +13,9 @@ class HubManager():
         self._active_hub_module = None
 
     def connect_to_hub(self):
+
+        self._logger.info("Attempting to find pi-topHUB v1...")
+
         try:
             self._module_hub_v1 = self._import_module("pthub.pthub")
 
@@ -23,7 +27,10 @@ class HubManager():
                 self._logger.warning("Could not initialise v1 hub")
 
         except Exception as e:
-            self._logger.info("Failed to connect to a v1 hub. " + str(e))
+            self._logger.warning("Failed to connect to a v1 hub. " + str(e))
+            self._logger.info(traceback.format_exc())
+
+        self._logger.info("Attempting to find pi-topHUB v2...")
 
         try:
             self._module_hub_v2 = self._import_module("pthub2.pthub2")
@@ -36,7 +43,8 @@ class HubManager():
                 self._logger.warning("Could not initialise v2 hub")
 
         except Exception as e:
-            self._logger.info("Failed to connect to a v2 hub. " + str(e))
+            self._logger.warning("Failed to connect to a v2 hub. " + str(e))
+            self._logger.info(traceback.format_exc())
 
         self._logger.error("Could not connect to a hub!")
         return False

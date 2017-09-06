@@ -6,6 +6,7 @@ import zmq
 import time
 from threading import Thread
 from ptdm_client import ptdm_message
+import traceback
 
 
 class RequestServer():
@@ -29,6 +30,7 @@ class RequestServer():
 
         except zmq.error.ZMQError as e:
             self._logger.error("Error starting the request server: " + str(e))
+            self._logger.info(traceback.format_exc())
             return
 
         time.sleep(0.5)
@@ -98,7 +100,7 @@ class RequestServer():
 
                 device_id = self._callback_client._on_request_get_device_id()
 
-                response = ptdm_message.Message.from_parts(ptdm_message.Message.RSP_GET_DEVICE_ID, [device_id.value])
+                response = ptdm_message.Message.from_parts(ptdm_message.Message.RSP_GET_DEVICE_ID, [device_id])
 
             elif (message.message_id() == ptdm_message.Message.REQ_GET_BRIGHTNESS):
 
@@ -174,11 +176,13 @@ class RequestServer():
         except ValueError as e:
 
             self._logger.error("Error processing message: " + str(e))
+            self._logger.info(traceback.format_exc())
             response = ptdm_message.Message.from_parts(ptdm_message.Message.RSP_ERR_MALFORMED, [])
 
         except Exception as e:
 
             self._logger.error("Unknown error processing message: " + str(e))
+            self._logger.info(traceback.format_exc())
             response = ptdm_message.Message.from_parts(ptdm_message.Message.RSP_ERR_SERVER, [])
 
         self._logger.info("Sending response: " + response.message_friendly_string())

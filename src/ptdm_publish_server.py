@@ -5,6 +5,7 @@
 import zmq
 import time
 from ptdm_client import ptdm_message
+import traceback
 
 
 class PublishServer():
@@ -29,6 +30,7 @@ class PublishServer():
 
         except zmq.error.ZMQError as e:
             self._logger.error("Error starting the publish server: " + str(e))
+            self._logger.info(traceback.format_exc())
             return
 
     def stop_listening(self):
@@ -119,5 +121,5 @@ class PublishServer():
             self._logger.info("Published message: " + message.message_friendly_string())
 
         except zmq.error.ZMQError as e:
-            self._logger.error(
-                "Communication error in publish server: " + str(e))
+            self._logger.error("Communication error in publish server: " + str(e))
+            self._logger.info(traceback.format_exc())
