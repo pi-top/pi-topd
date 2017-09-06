@@ -3,14 +3,18 @@ import time
 import threading
 
 
-class IdleMonitor(self):
+class IdleMonitor():
+
+    def __init__(self):
+        pass
+
     def initialise(self, logger, callback_client, timeout_ms=300000):
         self.previous_idletime = 0
         self._logger = logger
         self._callback_client = callback_client
         self._main_thread = None
         self._run_main_thread = False
-        set_idle_timeout_ms(timeout_ms)
+        self.set_idle_timeout_ms(timeout_ms)
 
     def set_idle_timeout_ms(self, timeout_ms):
         self.idle_timeout_ms = timeout_ms
@@ -39,6 +43,7 @@ class IdleMonitor(self):
     def _main_thread_loop(self):
         while self._run_main_thread:
             time_since_idle = idletime.get_idle_time()
+            print("Idletime: " + str(time_since_idle))
 
             timeout_expired = (time_since_idle > self.idle_timeout_ms)
             idletime_reset = (time_since_idle < self.previous_idletime)
@@ -51,4 +56,4 @@ class IdleMonitor(self):
                 emit_exceeded_idletime_reset()
 
             self.previous_idletime = time_since_idle
-            sleep(_cycle_sleep_time)
+            time.sleep(self._cycle_sleep_time)
