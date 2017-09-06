@@ -100,8 +100,8 @@ class Controller():
     def _on_request_unblank_screen(self):
         self._hub_manager.unblank_screen()
 
-    def _on_request_battery_charging_state(self):
-        return self._hub_manager.get_battery_charging_state()
+    def _on_request_battery_state(self):
+        return self._hub_manager.get_battery_state()
 
     def _on_request_get_peripheral_enabled(self, peripheral_id):
         return self._peripheral_manager.get_peripheral_enabled(peripheral_id)

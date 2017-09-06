@@ -97,9 +97,9 @@ class HubManager():
         if (self._hub_connected()):
             return self._active_hub_module.get_battery_time_state()
 
-    def get_battery_capacity_state(self):
+    def get_battery_state(self):
         if (self._hub_connected()):
-            return self._active_hub_module.get_battery_capacity_state()
+            return self._active_hub_module.get_battery_state()
 
     def set_brightness(self, brightness):
         if (self._hub_connected()):
