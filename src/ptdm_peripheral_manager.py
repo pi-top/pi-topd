@@ -1,5 +1,4 @@
 from ptdm_client import ptdm_common
-
 import traceback
 from tempfile import mkstemp
 from importlib import import_module
