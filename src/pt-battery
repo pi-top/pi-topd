@@ -1,0 +1,63 @@
+#!/usr/bin/env python3
+
+import zmq
+from ptdm_client import ptdm_message
+
+zmq_socket = None
+
+
+def main():
+    connect_to_socket()
+
+    message = get_battery_state_message()
+    print_battery_state_message(message)
+
+    cleanup()
+
+
+def connect_to_socket():
+    global zmq_socket
+
+    print("Connecting to request server...")
+    zmq_context_send = zmq.Context()
+    zmq_socket = zmq_context_send.socket(zmq.REQ)
+    zmq_socket.connect("tcp://127.0.0.1:3782")
+    print("Connected to request server.")
+
+
+def send_request(message_request_id, parameters):
+
+    message = ptdm_message.Message.from_parts(message_request_id, parameters)
+    zmq_socket.send_string(message.to_string())
+
+    response_string = zmq_socket.recv_string()
+    return ptdm_message.Message.from_string(response_string)
+
+
+def get_battery_state_message():
+    message = ptdm_message.Message.from_parts(ptdm_message.Message.REQ_GET_BATTERY_STATE, [])
+    zmq_socket.send_string(message.to_string())
+
+    response_string = zmq_socket.recv_string()
+    return ptdm_message.Message.from_string(response_string)
+
+
+def print_battery_state_message(message):
+    if message.message_id() == ptdm_message.Message.RESP_GET_BATTERY_STATE:
+        if message.validate_parameters([int, int, int, int]):
+            charging_state, capacity, time_remaining, wattage = message.parameters()
+            print("Charging State: " + charging_state)
+            print("Capacity: " + capacity)
+            print("Time Remaining: " + time_remaining)
+            print("Wattage: " + wattage)
+
+
+def cleanup():
+    print("Closing sockets...")
+    zmq_socket.close()
+
+    print("Done.")
+
+
+if __name__ == "__main__":
+    main()
