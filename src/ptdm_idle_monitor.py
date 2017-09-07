@@ -21,6 +21,7 @@ class IdleMonitor():
         self._cycle_sleep_time = self.DEFAULT_CYCLE_SLEEP_TIME
 
     def start(self):
+        self._logger.info("Starting idle time monitor...")
         if self._main_thread is None:
             self._main_thread = threading.Thread(target=self._main_thread_loop)
 
@@ -28,8 +29,10 @@ class IdleMonitor():
         self._main_thread.start()
 
     def stop(self):
+        self._logger.info("Stopping idle time monitor...")
         self._run_main_thread = False
         self._main_thread.join()
+        self._logger.debug("Done.")
 
     def emit_idletime_threshold_exceeded(self):
         if (self._callback_client is not None):
@@ -64,4 +67,8 @@ class IdleMonitor():
             else:
                 self._logger.warning("pt-idletime.get_idle_time() returned -1. Check the configuration of xhost.")
 
-            time.sleep(self._cycle_sleep_time)
+            for i in range(5):
+                time.sleep(self._cycle_sleep_time / 5)
+
+                if (self._run_main_thread is False):
+                    break

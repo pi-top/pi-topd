@@ -6,6 +6,7 @@ import zmq
 import time
 from ptdm_client import ptdm_message
 import traceback
+from threading import Lock
 
 
 class PublishServer():
@@ -18,11 +19,15 @@ class PublishServer():
 
     def initialise(self, logger):
         self._logger = logger
+        self._socket_lock = Lock()
+        self._shutting_down = False
 
     def start_listening(self):
         self._logger.debug("Opening publisher socket...")
 
         try:
+            self._socket_lock.acquire()
+
             self._zmq_context = zmq.Context()
             self._zmq_socket = self._zmq_context.socket(zmq.PUB)
             self._zmq_socket.bind("tcp://*:3781")
@@ -33,12 +38,27 @@ class PublishServer():
             self._logger.info(traceback.format_exc())
             return
 
-    def stop_listening(self):
-        self._logger.debug("Closing publisher socket...")
+        finally:
+            self._socket_lock.release()
 
-        self._zmq_socket.close()
-        self._zmq_context.destroy()
-        self._logger.debug("Done.")
+    def stop_listening(self):
+        self._logger.info("Closing publisher socket...")
+
+        try:
+            self._socket_lock.acquire()
+
+            self._shutting_down = True
+
+            self._zmq_socket.close()
+            self._zmq_context.destroy()
+            self._logger.debug("Done.")
+
+        except zmq.error.ZMQError as e:
+            self._logger.error("Error starting the publish server: " + str(e))
+            self._logger.info(traceback.format_exc())
+
+        finally:
+            self._socket_lock.release()
 
     def publish_brightness_changed(self, new_brightness: int):
         self._check_type(new_brightness, int)
@@ -94,12 +114,20 @@ class PublishServer():
         message = ptdm_message.Message.from_parts(message_id, parameters)
 
         try:
+            self._socket_lock.acquire()
+
+            if (self._shutting_down is True):
+                return
+
             self._zmq_socket.send_string(message.to_string())
             self._logger.info("Published message: " + message.message_friendly_string())
 
         except zmq.error.ZMQError as e:
             self._logger.error("Communication error in publish server: " + str(e))
             self._logger.info(traceback.format_exc())
+
+        finally:
+            self._socket_lock.release()
 
     def _check_type(self, var, type):
 

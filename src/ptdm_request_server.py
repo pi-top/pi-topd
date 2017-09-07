@@ -40,7 +40,7 @@ class RequestServer():
 
     def stop_listening(self):
 
-        self._logger.debug("Closing responder socket...")
+        self._logger.info("Closing responder socket...")
 
         self._continue = False
         if self._thread.is_alive():
