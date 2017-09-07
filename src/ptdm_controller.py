@@ -106,6 +106,12 @@ class Controller():
     def _on_request_get_peripheral_enabled(self, peripheral_id):
         return self._peripheral_manager.get_peripheral_enabled(peripheral_id)
 
+    def _on_request_get_screen_blanking_timeout(self):
+        return self._idle_monitor.get_configured_timeout()
+
+    def _on_request_set_screen_blanking_timeout(self, timeout):
+        return self._idle_monitor.set_configured_timeout(timeout)
+
     ###########################################
     # Idle Monitor callback methods
     ###########################################
