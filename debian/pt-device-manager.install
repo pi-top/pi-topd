@@ -3,6 +3,7 @@ src/i2s/hifiberry-alsactl.restore       /etc/pi-top/.i2s-vol/
 src/pt-device-manager                   /usr/lib/pt-device-manager/
 src/ptdm_controller.py                  /usr/lib/pt-device-manager/
 src/ptdm_hub_manager.py                 /usr/lib/pt-device-manager/
+src/ptdm_idle_monitor.py                 /usr/lib/pt-device-manager/
 src/ptdm_logger.py                      /usr/lib/pt-device-manager/
 src/ptdm_peripheral_manager.py          /usr/lib/pt-device-manager/
 src/ptdm_publish_server.py              /usr/lib/pt-device-manager/
