@@ -132,6 +132,7 @@ class Controller():
     def _on_hub_battery_state_changed(self, charging_state, capacity, time_remaining, wattage):
         self._publish_server.publish_battery_state_changed(charging_state, capacity, time_remaining, wattage)
 
+        self._shutdown_manager.set_battery_capacity(capacity)
         self._shutdown_manager.set_battery_charging(charging_state)
         self._shutdown_manager.process_battery_state()
 

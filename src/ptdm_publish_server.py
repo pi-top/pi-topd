@@ -120,7 +120,7 @@ class PublishServer():
                 return
 
             self._zmq_socket.send_string(message.to_string())
-            self._logger.info("Published message: " + message.message_friendly_string())
+            self._logger.debug("Published message: " + message.message_friendly_string())
 
         except zmq.error.ZMQError as e:
             self._logger.error("Communication error in publish server: " + str(e))
