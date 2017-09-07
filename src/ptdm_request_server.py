@@ -160,6 +160,22 @@ class RequestServer():
 
                 response = ptdm_message.Message.from_parts(ptdm_message.Message.RSP_GET_PERIPHERAL_ENABLED, [enabled_int])
 
+            elif (message.message_id() == ptdm_message.Message.REQ_GET_SCREEN_BLANKING_TIMEOUT):
+
+                message.validate_parameters([])
+
+                timeout = self._callback_client._on_request_get_screen_blanking_timeout()
+
+                response = ptdm_message.Message.from_parts(ptdm_message.Message.RSP_GET_SCREEN_BLANKING_TIMEOUT, [timeout])
+
+            elif (message.message_id() == ptdm_message.Message.REQ_SET_SCREEN_BLANKING_TIMEOUT):
+
+                message.validate_parameters([int])
+
+                self._callback_client._on_request_set_screen_blanking_timeout(int(message.parameters()[0]))
+
+                response = ptdm_message.Message.from_parts(ptdm_message.Message.RSP_SET_SCREEN_BLANKING_TIMEOUT, [])
+
             else:
 
                 self._logger.error("Unsupported request received: " + request)

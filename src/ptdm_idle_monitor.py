@@ -1,24 +1,34 @@
 import idletime
 import time
 import threading
+from os import makedirs
+from os import path
+from os import remove
 
 
 class IdleMonitor():
 
     DEFAULT_CYCLE_SLEEP_TIME = 5
     SENSITIVE_CYCLE_SLEEP_TIME = 0.2
+    CONFIG_FILE_DIR = "/etc/pi-top/pt-device-manager/"
+    CONFIG_FILE = CONFIG_FILE_DIR + "screen-timeout"
 
     def __init__(self):
         pass
 
-    def initialise(self, logger, callback_client, timeout_ms=300000):
+    def initialise(self, logger, callback_client):
         self.previous_idletime = 0
         self._logger = logger
         self._callback_client = callback_client
         self._main_thread = None
         self._run_main_thread = False
-        self.idle_timeout_ms = timeout_ms
+        self._idle_timeout_s = 300
         self._cycle_sleep_time = self.DEFAULT_CYCLE_SLEEP_TIME
+
+        if not path.exists(self.CONFIG_FILE_DIR):
+            makedirs(self.CONFIG_FILE_DIR)
+
+        self._get_timeout_from_file()
 
     def start(self):
         self._logger.info("Starting idle time monitor...")
@@ -34,15 +44,42 @@ class IdleMonitor():
         self._main_thread.join()
         self._logger.debug("Done.")
 
-    def emit_idletime_threshold_exceeded(self):
+    def get_configured_timeout(self):
+        return self._idle_timeout_s
+
+    def set_configured_timeout(self, timeout):
+        self._idle_timeout_s = timeout
+        self._set_timeout_in_file()
+
+    # Internal methods
+
+    def _emit_idletime_threshold_exceeded(self):
         if (self._callback_client is not None):
             self._logger.info("Idletime threshold exceeded")
             self._callback_client._on_idletime_threshold_exceeded()
 
-    def emit_exceeded_idletime_reset(self):
+    def _emit_exceeded_idletime_reset(self):
         if (self._callback_client is not None):
             self._logger.info("Idletime reset")
             self._callback_client._on_exceeded_idletime_reset()
+
+    def _get_timeout_from_file(self):
+        if path.exists(self.CONFIG_FILE):
+            file = open(self.CONFIG_FILE, 'r+')
+            self._idle_timeout_s = int(file.read().strip())
+            file.close()
+
+        self._logger.info("Idletime retrieved from config: " + str(self._idle_timeout_s))
+
+    def _set_timeout_in_file(self):
+        if path.exists(self.CONFIG_FILE):
+            remove(self.CONFIG_FILE)
+
+        file = open(self.CONFIG_FILE, 'w')
+        file.write(str(self._idle_timeout_s) + "\n")
+        file.close()
+
+        self._logger.info("Idletime set in config: " + str(self._idle_timeout_s))
 
     def _main_thread_loop(self):
         while self._run_main_thread:
@@ -50,16 +87,16 @@ class IdleMonitor():
 
             if (time_since_idle != -1):
 
-                timeout_expired = (time_since_idle > self.idle_timeout_ms)
+                timeout_expired = (time_since_idle > (self._idle_timeout_s * 1000))
                 idletime_reset = (time_since_idle < self.previous_idletime)
 
-                timeout_already_expired = (self.previous_idletime > self.idle_timeout_ms)
+                timeout_already_expired = (self.previous_idletime > (self._idle_timeout_s * 1000))
 
                 if timeout_expired and not timeout_already_expired:
-                    self.emit_idletime_threshold_exceeded()
+                    self._emit_idletime_threshold_exceeded()
                     self._cycle_sleep_time = self.SENSITIVE_CYCLE_SLEEP_TIME
                 elif idletime_reset and timeout_already_expired:
-                    self.emit_exceeded_idletime_reset()
+                    self._emit_exceeded_idletime_reset()
                     self._cycle_sleep_time = self.DEFAULT_CYCLE_SLEEP_TIME
 
                 self.previous_idletime = time_since_idle
