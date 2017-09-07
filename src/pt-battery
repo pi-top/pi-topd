@@ -50,6 +50,8 @@ def print_battery_state_message(message):
             print("Capacity: " + capacity)
             print("Time Remaining: " + time_remaining)
             print("Wattage: " + wattage)
+        else:
+            print("Unable to get valid battery information.")
 
 
 def cleanup():
