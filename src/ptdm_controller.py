@@ -128,6 +128,8 @@ class Controller():
 
     def _on_hub_shutdown_requested(self):
         self._publish_server.publish_shutdown_requested()
+        self._hub_manager.shutdown()
+        self._shutdown_manager.shutdown()
 
     def _on_reboot_required(self):
         self._publish_server.publish_reboot_required()
