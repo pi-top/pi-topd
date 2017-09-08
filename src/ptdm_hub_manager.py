@@ -121,6 +121,10 @@ class HubManager():
         if (self._hub_connected()):
             self._active_hub_module.unblank_screen()
 
+    def shutdown(self):
+        if (self._hub_connected()):
+            self._active_hub_module.shutdown()
+
     def _hub_connected(self):
         return (self._active_hub_module is not None)
 
