@@ -1,6 +1,7 @@
 
 # Handles safe shutdown when the hub is communicating that its battery capacity is below a threshold set by ptdm_controller
 
+from ptdm_client import ptdm_common
 from os import system
 
 
@@ -26,8 +27,6 @@ class Counter:
 
 
 class ShutdownManager:
-    pi_top_device_id = 2
-
     warning_battery_level = 5
     warning_battery_ctr = Counter(3)
 
@@ -69,8 +68,9 @@ class ShutdownManager:
     def get_device_id(self):
         return self._device_id
 
-    def device_is_pi_top(self):
-        return (self.get_device_id() == self.pi_top_device_id)
+    def device_has_battery(self):
+        return (self.get_device_id() == ptdm_common.DeviceID.pi_top.value or
+                self.get_device_id() == ptdm_common.DeviceID.pi_top_v2.value)
 
     def battery_state_fully_defined(self):
         capacity_defined = (self._battery_capacity is not None)
@@ -99,12 +99,10 @@ class ShutdownManager:
 
     def process_battery_state(self):
         reset_ctrs = True
-        # Is this necessary? Non-'pi-top' device would not be emitting battery events
-        if self.device_is_pi_top():
-            if self.battery_state_fully_defined():
 
-                discharging = (self._battery_charging != "charging")
-                if discharging:
+        if self.device_has_battery():
+            if self.battery_state_fully_defined():
+                if self._battery_charging == 0:
                     self.update_counters_from_battery_state()
                     reset_ctrs = False
 
@@ -116,10 +114,10 @@ class ShutdownManager:
         else:
             if self.shutdown_battery_ctr.maxed():
                 self.shutdown()
-            elif self.critical_battery_ctr.maxed() and not s.shown_critical_battery_message:
+            elif self.critical_battery_ctr.maxed() and not self.shown_critical_battery_message:
                 self._callback._on_critical_battery_warning()
                 self.shown_critical_battery_message = True
-            elif self.warning_battery_ctr.maxed() and n.shown_warning_battery_message:
+            elif self.warning_battery_ctr.maxed() and self.shown_warning_battery_message:
                 self._callback._on_low_battery_warning()
                 self.shown_warning_battery_message = True
 
