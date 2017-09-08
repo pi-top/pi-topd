@@ -1,0 +1,13 @@
+#!/bin/bash -e
+
+echo "Disabling xscreensaver"
+xscreensaverConfigs=()
+for D in $(find /home -type d); do
+    if [[ -f "$D/.xscreensaver" ]]; then
+        xscreensaverConfigs+=("$D/.xscreensaver")
+    fi
+done
+
+for xscreensaverConfig in "${xscreensaverConfigs[@]}"; do
+    sed -i "s/.*mode:.*/mode:\t\toff/g" /home/<USER>/
+done
