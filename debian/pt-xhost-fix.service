@@ -3,6 +3,7 @@ Description=pi-top xhost fix
 
 [Service]
 Type=oneshot
+ExecStartPre=/bin/sleep 20
 ExecStart=/usr/bin/sudo -u pi /usr/bin/xhost local:root
 Environment="DISPLAY=:0.0"
 
