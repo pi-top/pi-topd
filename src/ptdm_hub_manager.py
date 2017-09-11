@@ -109,7 +109,7 @@ class HubManager():
             return self._active_hub_module.get_battery_state()
 
     def set_brightness(self, brightness):
-        self._logger.info("Setting brightness to " + _str(brightness))
+        self._logger.info("Setting brightness to " + str(brightness))
         if (self._hub_connected()):
             self._active_hub_module.set_brightness(brightness)
 
