@@ -16,6 +16,7 @@ import signal
 from ptdm_controller import Controller
 import logging
 import sys
+import os
 
 controller = Controller()
 
@@ -38,6 +39,8 @@ if (len(sys.argv) > 1):
     log_level = int(sys.argv[1])
 
 print("Log level set to " + str(log_level))
+
+os.environ["DISPLAY"] = ":0.0"
 
 # Start the controller
 
