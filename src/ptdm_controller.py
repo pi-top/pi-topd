@@ -47,12 +47,10 @@ class Controller():
             return
 
         self._hub_manager.register_client(self)
+
         self._hub_manager.start()
-
         self._peripheral_manager.start()
-
         self._idle_monitor.start()
-
         self._publish_server.start_listening()
         self._request_server.start_listening()
 
@@ -62,11 +60,8 @@ class Controller():
 
         self._request_server.stop_listening()
         self._publish_server.stop_listening()
-
         self._idle_monitor.stop()
-
         self._peripheral_manager.stop()
-
         self._hub_manager.stop()
 
         sys.exit(0)
