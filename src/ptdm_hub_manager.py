@@ -54,6 +54,13 @@ class HubManager():
             self._active_hub_module.start()
 
     def stop(self):
+
+        # When stopping, we unblank the screen and set the brightness to full
+        # to prevent restarting with no display
+
+        self.unblank_screen()
+        self.set_brightness(10)
+
         if (self._hub_connected()):
             self._active_hub_module.stop()
 
@@ -102,26 +109,32 @@ class HubManager():
             return self._active_hub_module.get_battery_state()
 
     def set_brightness(self, brightness):
+        self._logger.info("Setting brightness to " + _str(brightness))
         if (self._hub_connected()):
             self._active_hub_module.set_brightness(brightness)
 
     def increment_brightness(self):
+        self._logger.info("Incrementing brightness")
         if (self._hub_connected()):
             self._active_hub_module.increment_brightness()
 
     def decrement_brightness(self):
+        self._logger.info("Decrementing brightness")
         if (self._hub_connected()):
             self._active_hub_module.decrement_brightness()
 
     def blank_screen(self):
+        self._logger.info("Blanking screen")
         if (self._hub_connected()):
             self._active_hub_module.blank_screen()
 
     def unblank_screen(self):
+        self._logger.info("Unblanking screen")
         if (self._hub_connected()):
             self._active_hub_module.unblank_screen()
 
     def shutdown(self):
+        self._logger.info("Shutting down")
         if (self._hub_connected()):
             self._active_hub_module.shutdown()
 
