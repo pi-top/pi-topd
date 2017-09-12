@@ -59,7 +59,6 @@ class HubManager():
         # to prevent restarting with no display
 
         self.unblank_screen()
-        self.set_brightness(10)
 
         if (self._hub_connected()):
             self._active_hub_module.stop()
