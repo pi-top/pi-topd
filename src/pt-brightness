@@ -9,10 +9,16 @@ zmq_socket = None
 
 
 def main():
-    parse_args()
-    connect_to_socket()
-    transceive()
-    cleanup()
+    try:
+        parse_args()
+        connect_to_socket()
+        transceive()
+
+    except Exception as e:
+        print("Error configuring brightness: " + str(e))
+
+    finally:
+        cleanup()
 
 
 def debug_print(text, required_verbosity_lvl=1):
@@ -50,6 +56,8 @@ def connect_to_socket():
     debug_print("Connecting to request server...", 2)
     zmq_context_send = zmq.Context()
     zmq_socket = zmq_context_send.socket(zmq.REQ)
+    zmq_socket.sndtimeo = 1000
+    zmq_socket.rcvtimeo = 1000
     zmq_socket.connect("tcp://127.0.0.1:3782")
     debug_print("Connected to request server.", 2)
 
@@ -110,7 +118,8 @@ def transceive():
 
 def cleanup():
     debug_print("Closing sockets...", 2)
-    zmq_socket.close()
+    if (zmq_socket is not None):
+        zmq_socket.close(0)
 
     debug_print("Done.", 2)
 
