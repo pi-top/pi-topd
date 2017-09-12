@@ -7,22 +7,27 @@ zmq_socket = None
 
 
 def main():
-    connect_to_socket()
+    try:
+        connect_to_socket()
+        message = get_battery_state_message()
+        print_battery_state_message(message)
+        cleanup()
 
-    message = get_battery_state_message()
-    print_battery_state_message(message)
+    except Exception as e:
+        print("Error getting battery info: " + str(e))
 
-    cleanup()
+    finally:
+        cleanup()
 
 
 def connect_to_socket():
     global zmq_socket
 
-    print("Connecting to request server...")
     zmq_context_send = zmq.Context()
     zmq_socket = zmq_context_send.socket(zmq.REQ)
+    zmq_socket.sndtimeo = 1000
+    zmq_socket.rcvtimeo = 1000
     zmq_socket.connect("tcp://127.0.0.1:3782")
-    print("Connected to request server.")
 
 
 def send_request(message_request_id, parameters):
@@ -43,7 +48,7 @@ def get_battery_state_message():
 
 
 def print_battery_state_message(message):
-    if message.message_id() == ptdm_message.Message.RESP_GET_BATTERY_STATE:
+    if message.message_id() == ptdm_message.Message.RSP_GET_BATTERY_STATE:
         if message.validate_parameters([int, int, int, int]):
             charging_state, capacity, time_remaining, wattage = message.parameters()
             print("Charging State: " + charging_state)
@@ -55,10 +60,8 @@ def print_battery_state_message(message):
 
 
 def cleanup():
-    print("Closing sockets...")
-    zmq_socket.close()
-
-    print("Done.")
+    if (zmq_socket is not None):
+        zmq_socket.close(0)
 
 
 if __name__ == "__main__":
