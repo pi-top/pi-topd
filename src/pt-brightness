@@ -15,7 +15,7 @@ def main():
     cleanup()
 
 
-def debug_print(text, required_verbosity_lvl):
+def debug_print(text, required_verbosity_lvl=1):
     if args.verbose is not None and args.verbose >= required_verbosity_lvl:
         print(text)
 
@@ -54,7 +54,7 @@ def connect_to_socket():
     debug_print("Connected to request server.", 2)
 
 
-def send_request(message_request_id, parameters):
+def send_request(message_request_id, parameters, required_verbosity_lvl=1):
 
     message = ptdm_message.Message.from_parts(message_request_id, parameters)
     zmq_socket.send_string(message.to_string())
@@ -62,8 +62,13 @@ def send_request(message_request_id, parameters):
     response_string = zmq_socket.recv_string()
     response = ptdm_message.Message.from_string(response_string)
 
-    debug_print("RESP:\t" + str(response.message_friendly_string()), 1)
-    return response.message_id()
+    msg = ""
+    if (required_verbosity_lvl > 0):
+        msg += "RESP:\t"
+    msg += str(response.message_friendly_string())
+
+    debug_print(msg, required_verbosity_lvl)
+    return response
 
 
 def transceive():
@@ -74,18 +79,26 @@ def transceive():
     decrement_brightness_set = (args.decrement_brightness)
 
     # No parameters - return current brightness
-    if not brightness_val_set and increment_brightness_set and decrement_brightness_set and backlight_state_set:
+    if not brightness_val_set and not increment_brightness_set and not decrement_brightness_set and not backlight_state_set:
         debug_print("REQ:\tCURRENT BRIGHTNESS", 1)
-        resp = send_request(ptdm_message.Message.REQ_GET_BRIGHTNESS, [])
+        resp = send_request(ptdm_message.Message.REQ_GET_BRIGHTNESS, [], 1)
+        if resp.message_id() == ptdm_message.Message.RSP_GET_BRIGHTNESS and len(resp.parameters()) > 0:
+            print(str(resp.parameters()[0]))
+        else:
+            raise Exception("Error - unable to get brightness")
+
     elif brightness_val_set:
         debug_print("REQ:\tSETTING BRIGHTNESS TO " + str(args.brightness_value), 1)
         resp = send_request(ptdm_message.Message.REQ_SET_BRIGHTNESS, [str(args.brightness_value)])
+
     elif increment_brightness_set:
         debug_print("REQ:\tINCREMENTING BRIGHTNESS", 1)
         resp = send_request(ptdm_message.Message.REQ_INCREMENT_BRIGHTNESS, [])
+
     elif decrement_brightness_set:
         debug_print("REQ:\tDECREMENTING BRIGHTNESS", 1)
         resp = send_request(ptdm_message.Message.REQ_DECREMENT_BRIGHTNESS, [])
+
     elif backlight_state_set:
         if args.backlight == 1:
             debug_print("REQ:\tTURNING ON BACKLIGHT", 1)

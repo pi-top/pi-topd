@@ -58,10 +58,9 @@ class HubManager():
         # When stopping, we unblank the screen and set the brightness to full
         # to prevent restarting with no display
 
-        self.unblank_screen()
-
         if (self._hub_connected()):
             self._active_hub_module.stop()
+            self.unblank_screen()
 
     def register_client(self, client):
         if (self._hub_connected()):
