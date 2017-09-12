@@ -15,6 +15,11 @@ def main():
     cleanup()
 
 
+def debug_print(text, required_verbosity_lvl):
+    if args.verbose is not None and args.verbose >= required_verbosity_lvl:
+        print(text)
+
+
 def parse_args():
     global args
 
@@ -22,9 +27,15 @@ def parse_args():
     parser.add_argument("-b", "--brightness_value", help="Set brightness level [0-10] on pi-topHUB", type=int, choices=range(11))
     parser.add_argument("-i", "--increment_brightness", help="Increment brightness level on pi-topHUB", action="store_true")
     parser.add_argument("-d", "--decrement_brightness", help="Decrement brightness level on pi-topHUB", action="store_true")
-    parser.add_argument("-l", "--backlight", help="Turn on the backlight", action="store_true")
+    parser.add_argument("-l", "--backlight", help="Set the backlight state [0-1] on pi-topHUB", type=int, choices=range(2))
+    parser.add_argument("-v", "--verbose", action="count")
 
     args = parser.parse_args()
+
+    try:
+        print("Verbosity level: " + args.verbose)
+    except:
+        pass
 
     # Handle invalid command line parameter combinations
     if args.brightness_value and (args.increment_brightness or args.decrement_brightness):
@@ -36,11 +47,11 @@ def parse_args():
 def connect_to_socket():
     global zmq_socket
 
-    print("Connecting to request server...")
+    debug_print("Connecting to request server...", 2)
     zmq_context_send = zmq.Context()
     zmq_socket = zmq_context_send.socket(zmq.REQ)
     zmq_socket.connect("tcp://127.0.0.1:3782")
-    print("Connected to request server.")
+    debug_print("Connected to request server.", 2)
 
 
 def send_request(message_request_id, parameters):
@@ -51,38 +62,44 @@ def send_request(message_request_id, parameters):
     response_string = zmq_socket.recv_string()
     response = ptdm_message.Message.from_string(response_string)
 
+    debug_print("RESP:\t" + str(response.message_friendly_string()), 1)
     return response.message_id()
 
 
 def transceive():
+    brightness_val_set = (args.brightness_value is not None)
+    backlight_state_set = (args.backlight is not None)
+
+    increment_brightness_set = (args.increment_brightness)
+    decrement_brightness_set = (args.decrement_brightness)
+
     # No parameters - return current brightness
-    if not args.brightness_value and not args.increment_brightness and not args.decrement_brightness and not args.backlight:
-        print("CURRENT BRIGHTNESS")
+    if not brightness_val_set and increment_brightness_set and decrement_brightness_set and backlight_state_set:
+        debug_print("REQ:\tCURRENT BRIGHTNESS", 1)
         resp = send_request(ptdm_message.Message.REQ_GET_BRIGHTNESS, [])
-        print("RESP: " + str(resp))
-    elif args.brightness_value:
-        print("SETTING BRIGHTNESS TO " + str(args.brightness_value))
+    elif brightness_val_set:
+        debug_print("REQ:\tSETTING BRIGHTNESS TO " + str(args.brightness_value), 1)
         resp = send_request(ptdm_message.Message.REQ_SET_BRIGHTNESS, [str(args.brightness_value)])
-        print("RESP: " + str(resp))
-    elif args.increment_brightness:
-        print("INCREMENTING BRIGHTNESS")
+    elif increment_brightness_set:
+        debug_print("REQ:\tINCREMENTING BRIGHTNESS", 1)
         resp = send_request(ptdm_message.Message.REQ_INCREMENT_BRIGHTNESS, [])
-        print("RESP: " + str(resp))
-    elif args.decrement_brightness:
-        print("DECREMENTING BRIGHTNESS")
+    elif decrement_brightness_set:
+        debug_print("REQ:\tDECREMENTING BRIGHTNESS", 1)
         resp = send_request(ptdm_message.Message.REQ_DECREMENT_BRIGHTNESS, [])
-        print("RESP: " + str(resp))
-    elif args.backlight:
-        print("TURNING ON BACKLIGHT")
-        resp = send_request(ptdm_message.Message.REQ_UNBLANK_SCREEN, [])
-        print("RESP: " + str(resp))
+    elif backlight_state_set:
+        if args.backlight == 1:
+            debug_print("REQ:\tTURNING ON BACKLIGHT", 1)
+            resp = send_request(ptdm_message.Message.REQ_UNBLANK_SCREEN, [])
+        else:
+            debug_print("REQ:\tTURNING OFF BACKLIGHT", 1)
+            resp = send_request(ptdm_message.Message.REQ_BLANK_SCREEN, [])
 
 
 def cleanup():
-    print("Closing sockets...")
+    debug_print("Closing sockets...", 2)
     zmq_socket.close()
 
-    print("Done.")
+    debug_print("Done.", 2)
 
 
 if __name__ == "__main__":
