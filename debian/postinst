@@ -9,5 +9,5 @@ for D in $(find /home -type d); do
 done
 
 for xscreensaverConfig in "${xscreensaverConfigs[@]}"; do
-    sed -i "s/.*mode:.*/mode:\t\toff/g" /home/<USER>/
+    sed -i "s/.*mode:.*/mode:\t\toff/g" "$xscreensaverConfig"
 done
