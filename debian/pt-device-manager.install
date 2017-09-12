@@ -12,3 +12,4 @@ src/ptdm_shutdown_manager.py            /usr/lib/pt-device-manager/
 bin/poweroff                            /usr/bin/
 src/pt-brightness                       /usr/bin/
 src/pt-battery                          /usr/bin/
+src/pt-poweroff-v2.py                   /usr/lib/pt-device-manager/

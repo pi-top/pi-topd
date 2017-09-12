@@ -7,6 +7,7 @@ After=multi-user.target
 [Service]
 Type=oneshot
 ExecStart=/usr/bin/poweroff
+ExecStart=/usr/bin/python3 /usr/lib/pt-device-manager/poweroff-v2.py
 
 [Install]
 WantedBy=halt.target poweroff.target
