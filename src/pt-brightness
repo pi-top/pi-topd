@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import zmq
-from ptdm_client import ptdm_message
+from ptcommon import ptdm_message
 import argparse
 
 args = None

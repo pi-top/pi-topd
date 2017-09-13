@@ -8,7 +8,7 @@
 import zmq
 from time import sleep
 from threading import Thread
-from ptdm_client import ptdm_message
+from ptcommon import ptdm_message
 
 
 def send_request(message_request_id, parameters):
