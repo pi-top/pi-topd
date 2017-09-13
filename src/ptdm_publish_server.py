@@ -4,7 +4,7 @@
 
 import zmq
 import time
-from ptdm_client import ptdm_message
+from ptcommon import ptdm_message
 import traceback
 from threading import Lock
 

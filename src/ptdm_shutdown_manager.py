@@ -1,7 +1,7 @@
 
 # Handles safe shutdown when the hub is communicating that its battery capacity is below a threshold set by ptdm_controller
 
-from ptdm_client import ptdm_common
+from ptcommon import common_ids
 from os import system
 
 
@@ -69,8 +69,8 @@ class ShutdownManager:
         return self._device_id
 
     def device_has_battery(self):
-        return (self.get_device_id() == ptdm_common.DeviceID.pi_top.value or
-                self.get_device_id() == ptdm_common.DeviceID.pi_top_v2.value)
+        return (self.get_device_id() == common_ids.DeviceID.pi_top or
+                self.get_device_id() == common_ids.DeviceID.pi_top_v2)
 
     def battery_state_fully_defined(self):
         capacity_defined = (self._battery_capacity is not None)
