@@ -27,3 +27,6 @@ override_dh_installinit:
 	dh_systemd_enable reboot --name=pt-capture-reboot
 	dh_installinit reboot --no-start --noscripts
 	dh_systemd_start reboot --no-start --no-restart-on-upgrade pt-capture-reboot
+
+override_dh_systemd_start:
+    echo "Not running dh_systemd_start"
