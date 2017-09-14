@@ -18,7 +18,7 @@ override_dh_systemd_enable:
 	dh_systemd_enable --name=pt-capture-reboot
 
 override_dh_installinit:
-    dh_installinit --noscripts
+	dh_installinit --noscripts
 
 override_dh_systemd_start:
 	dh_systemd_start pt-device-manager
