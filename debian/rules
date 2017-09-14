@@ -10,23 +10,3 @@ override_dh_strip:
 # Added because poweroff executable binary 
 override_dh_shlibdeps:
 	dh_shlibdeps -Xpoweroff
-	
-override_dh_installinit:
-	dh_systemd_enable --name=pt-device-manager
-	dh_installinit --no-start --noscripts
-	dh_systemd_start --no-restart-on-upgrade pt-device-manager
-
-	dh_systemd_enable --name=pt-poweroff
-	dh_installinit --no-start --noscripts
-	dh_systemd_start --no-start --no-restart-on-upgrade pt-poweroff
-
-	dh_systemd_enable fix --name=pt-xhost-fix
-	dh_installinit fix --no-start --noscripts
-	dh_systemd_start fix --no-restart-on-upgrade pt-xhost-fix
-
-	dh_systemd_enable reboot --name=pt-capture-reboot
-	dh_installinit reboot --no-start --noscripts
-	dh_systemd_start reboot --no-start --no-restart-on-upgrade pt-capture-reboot
-
-override_dh_systemd_start:
-	echo "Not running dh_systemd_start"
