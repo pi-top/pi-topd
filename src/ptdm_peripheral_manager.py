@@ -4,6 +4,7 @@ from tempfile import mkstemp
 from importlib import import_module
 from string import whitespace
 from threading import Thread
+from shutil import copy
 from subprocess import check_output
 from subprocess import Popen
 from subprocess import call
