@@ -2,7 +2,7 @@ Source: pt-device-manager
 Section: utils
 Priority: optional
 Maintainer: pi-top <deb-maintainers@pi-top.com>
-Build-Depends: debhelper (>= 7), dh-python, dh-systemd (>= 1.5)
+Build-Depends: debhelper (>= 10), dh-python, dh-systemd (>= 1.5)
 Standards-Version: 3.8.4
 Homepage: https://pi-top.com/
 
