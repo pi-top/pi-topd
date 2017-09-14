@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 %:
-	dh $@ --with python3 --with=systemd
+	dh $@ --with python3 --with systemd
 
 
 # Added because poweroff executable binary 
