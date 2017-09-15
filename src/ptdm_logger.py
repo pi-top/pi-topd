@@ -12,6 +12,7 @@ class Logger:
 
         self._logging_level = logging_level
         self._journal_log = logging.getLogger("pt-device-manager")
+        self._journal_log.propagate = False
 
         self._journal_log.addHandler(JournalHandler())
         self._journal_log.setLevel(self._logging_level)
