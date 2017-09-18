@@ -54,6 +54,7 @@ class PeripheralManager():
         self.initialise_known_device({'id': 1, 'compatible_ids': [2, 3], 'name': 'pi-topSPEAKER-Left', 'type': 'addon', 'addr': 0x71})
         self.initialise_known_device({'id': 2, 'compatible_ids': [1, 3], 'name': 'pi-topSPEAKER-Mono', 'type': 'addon', 'addr': 0x73})
         self.initialise_known_device({'id': 3, 'compatible_ids': [1, 2], 'name': 'pi-topSPEAKER-Right', 'type': 'addon', 'addr': 0x72})
+        self.initialise_known_device({'id': 4, 'compatible_ids': [None], 'name': 'pi-topSPEAKER-v2', 'type': 'addon', 'addr': 0x43})
 
         # Get the initial state of the system configuration
         self.determine_i2s_mode_from_system()
@@ -253,18 +254,29 @@ class PeripheralManager():
                                     self._logger.error("Unable to initialise I2C - updating addon device state")
 
                                 else:
-                                    if ptspeaker_cfg.enable(mode):
+                                    if 'pi-topSPEAKER-v2' in device['name']:
+
+                                        # V2 speaker requires no initialisation, so just add the device
+                                        # to the enabled list and check hdmi is enabled
+
                                         self.add_enabled_device(device)
 
                                         if (self.set_hdmi_drive_in_boot_config() is True):
                                             self.emit_reboot_message()
 
-                                        self._logger.debug("OK.")
-                                        return True
-
                                     else:
-                                        self._logger.debug(
-                                            "Error initialising speaker")
+                                        if ptspeaker_cfg.enable(mode):
+                                            self.add_enabled_device(device)
+
+                                            if (self.set_hdmi_drive_in_boot_config() is True):
+                                                self.emit_reboot_message()
+
+                                            self._logger.debug("OK.")
+                                            return True
+
+                                        else:
+                                            self._logger.debug(
+                                                "Error initialising speaker")
 
                             except Exception as e:
                                 self._logger.error("Failed to configure pi-topSPEAKER. Error: " + str(e))
