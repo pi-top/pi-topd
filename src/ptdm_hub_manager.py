@@ -14,21 +14,10 @@ class HubManager():
 
     def connect_to_hub(self):
 
-        self._logger.info("Attempting to find pi-topHUB v1...")
-
-        try:
-            self._module_hub_v1 = self._import_module("pthub.pthub")
-
-            if (self._module_hub_v1.initialise(self._logger) is True):
-                self._active_hub_module = self._module_hub_v1
-                self._logger.info("Connected to hub v1")
-                return True
-            else:
-                self._logger.warning("Could not initialise v1 hub")
-
-        except Exception as e:
-            self._logger.warning("Failed to connect to a v1 hub. " + str(e))
-            self._logger.info(traceback.format_exc())
+        # Attempt to connect to a v2 hub first. This is because we can
+        # positively identify v2 on i2c. We can also positively identify
+        # a v1 pi-top, however we cannot do this for a CEED. Hence this
+        # is the fall-through case.
 
         self._logger.info("Attempting to find pi-topHUB v2...")
 
@@ -44,6 +33,22 @@ class HubManager():
 
         except Exception as e:
             self._logger.warning("Failed to connect to a v2 hub. " + str(e))
+            self._logger.info(traceback.format_exc())
+
+        self._logger.info("Attempting to find pi-topHUB v1...")
+
+        try:
+            self._module_hub_v1 = self._import_module("pthub.pthub")
+
+            if (self._module_hub_v1.initialise(self._logger) is True):
+                self._active_hub_module = self._module_hub_v1
+                self._logger.info("Connected to hub v1")
+                return True
+            else:
+                self._logger.warning("Could not initialise v1 hub")
+
+        except Exception as e:
+            self._logger.warning("Failed to connect to a v1 hub. " + str(e))
             self._logger.info(traceback.format_exc())
 
         self._logger.error("Could not connect to a hub!")
