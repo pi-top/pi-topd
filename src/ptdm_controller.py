@@ -1,7 +1,7 @@
 
 # Instantiates and coordinates between the other classes
 
-from ptdm_logger import Logger
+from ptcommon import logger
 from ptdm_hub_manager import HubManager
 from ptdm_idle_monitor import IdleMonitor
 from ptdm_peripheral_manager import PeripheralManager
@@ -19,7 +19,7 @@ class Controller():
 
         self._continue_running = True
 
-        self._logger = Logger(log_level, log_to_journal)
+        self._logger = logger.Logger(log_level, log_to_journal)
         self._logger.info("Initialising device manager...")
 
         # Create classes
