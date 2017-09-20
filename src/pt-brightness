@@ -22,7 +22,11 @@ def main():
 
 
 def debug_print(text, required_verbosity_lvl=1):
-    if args.verbose is not None and args.verbose >= required_verbosity_lvl:
+    try:
+        verbose = args.verbose
+    except AttributeError:
+        verbose = None
+    if verbose is not None and verbose >= required_verbosity_lvl:
         print(text)
 
 
