@@ -17,32 +17,29 @@ from ptdm_controller import Controller
 import logging
 import sys
 import os
+import argparse
 
+# Set the display env var
+os.environ["DISPLAY"] = ":0.0"
+
+# Create the controller
 controller = Controller()
 
 
 def signal_handler(signal, frame):
     controller.stop()
 
-
 # Capture and handle interrupts
-
 signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
-
-# Get any custom log level
-
-log_level = logging.INFO
-
-if (len(sys.argv) > 1):
-    log_level = int(sys.argv[1])
-
-print("Log level set to " + str(log_level))
-
-os.environ["DISPLAY"] = ":0.0"
+# Process command line
+parser = argparse.ArgumentParser(description="pi-top hardware manager")
+parser.add_argument("--no-journal", help="output to stdout not the journal", action="store_true")
+parser.add_argument("--log-level", type=int, help="set the logging level from 10 (more verbose) to 50 (less verbose)", default=20)
+args = parser.parse_args()
 
 # Start the controller
 
-controller.initialise(log_level)
+controller.initialise(args.log_level, args.no_journal is False)
 controller.start()
