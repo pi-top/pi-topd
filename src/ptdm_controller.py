@@ -15,11 +15,12 @@ import logging
 
 class Controller():
 
-    def initialise(self, log_level):
-        self._continue_running = True
-        self._logger = Logger(log_level)
+    def initialise(self, log_level, log_to_journal):
 
-        self._logger.info("Initialising device manager")
+        self._continue_running = True
+
+        self._logger = Logger(log_level, log_to_journal)
+        self._logger.info("Initialising device manager...")
 
         # Create classes
 
@@ -40,7 +41,7 @@ class Controller():
         self._request_server.initialise(self._logger, self)
 
     def start(self):
-        self._logger.info("Starting device manager")
+        self._logger.info("Starting device manager...")
 
         if (self._hub_manager.connect_to_hub() is False):
             self._logger.error("No pi-top hub detected. Exiting...")
@@ -64,10 +65,12 @@ class Controller():
         self._peripheral_manager.stop()
         self._hub_manager.stop()
 
+        self._logger.info("Exiting...")
+
         sys.exit(0)
 
     def stop(self):
-        self._logger.info("Stopping device manager")
+        self._logger.info("Stopping device manager...")
         self._continue_running = False
 
     ###########################################
