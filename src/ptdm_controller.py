@@ -2,6 +2,7 @@
 # Instantiates and coordinates between the other classes
 
 from ptcommon import logger
+from ptcommon import common_ids
 from ptdm_hub_manager import HubManager
 from ptdm_idle_monitor import IdleMonitor
 from ptdm_peripheral_manager import PeripheralManager
@@ -47,23 +48,34 @@ class Controller():
             self._logger.error("No pi-top hub detected. Exiting...")
             return
 
-        self._hub_manager.register_client(self)
+        # Start the hub manager
 
+        self._publish_server.start_listening()
         self._hub_manager.start()
+
+        # Wait until we have established what device we're running on
+
+        self._hub_manager.wait_for_device_id()
+        device_id = self._hub_manager.get_device_id()
+
+        # Now we have a device id, pass it to the other services
+
+        self._peripheral_manager.set_device_id(device_id)
+        self._shutdown_manager.set_device_id(device_id)
+
         self._peripheral_manager.start()
         self._idle_monitor.start()
-        self._publish_server.start_listening()
         self._request_server.start_listening()
 
-        while (self._continue_running):
-
+        while (self._continue_running is True):
             time.sleep(0.5)
 
+        # Stop the other classes
         self._request_server.stop_listening()
-        self._publish_server.stop_listening()
         self._idle_monitor.stop()
         self._peripheral_manager.stop()
         self._hub_manager.stop()
+        self._publish_server.stop_listening()
 
         self._logger.info("Exiting...")
 
@@ -126,7 +138,13 @@ class Controller():
 
     def _on_hub_shutdown_requested(self):
         self._publish_server.publish_shutdown_requested()
+
+        # First tell the hub to shutdown
+
         self._hub_manager.shutdown()
+
+        # Then trigger the OS shutdown
+
         self._shutdown_manager.shutdown()
 
     def _on_reboot_required(self):
@@ -137,6 +155,9 @@ class Controller():
 
     def _on_hub_battery_state_changed(self, charging_state, capacity, time_remaining, wattage):
         self._publish_server.publish_battery_state_changed(charging_state, capacity, time_remaining, wattage)
+
+        # Let the shutdown manager know about the state of the battery
+        # so it can trigger warnings or safe-shutdown as necessary
 
         self._shutdown_manager.set_battery_capacity(capacity)
         self._shutdown_manager.set_battery_charging(charging_state)
@@ -155,7 +176,10 @@ class Controller():
         self._publish_server.publish_lid_closed()
 
     def _on_device_id_changed(self, device_id_int):
-        self._publish_server.publish_device_id_changed(device_id_int)
+
+        # Inform the shutdown manager that the device id has changed.
+        # This will trigger a reboot if required
+
         self._shutdown_manager.set_device_id(device_id_int)
 
     ###########################################
