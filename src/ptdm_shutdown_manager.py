@@ -43,8 +43,9 @@ class ShutdownManager:
         self._callback = None
         self._battery_capacity = None
         self._battery_charging = None
-        self._device_id = None
         self._logger = None
+
+        self._device_id = common_ids.DeviceID.not_yet_known
 
     def initialise(self, logger, callback):
         self._logger = logger
@@ -57,7 +58,16 @@ class ShutdownManager:
         self._battery_charging = new_value
 
     def set_device_id(self, new_value):
-        self._device_id = new_value
+
+        device_id_established = (self._device_id != common_ids.DeviceID.not_yet_known and self._device_id != common_ids.DeviceID.unknown)
+        device_id_changing = (self._device_id != new_value)
+
+        if (device_id_established is False):
+            self._device_id = new_value
+
+        elif (device_id_changing is True):
+            self._logger.warning("The device id has changed! This is likely due to moving an SD card between different devices. Rebooting to re-initialise...")
+            self.reboot()
 
     def get_battery_capacity(self):
         return self._battery_capacity
@@ -65,12 +75,9 @@ class ShutdownManager:
     def get_battery_charging(self):
         return self._battery_charging
 
-    def get_device_id(self):
-        return self._device_id
-
     def device_has_battery(self):
-        return (self.get_device_id() == common_ids.DeviceID.pi_top or
-                self.get_device_id() == common_ids.DeviceID.pi_top_v2)
+        return (self._device_id == common_ids.DeviceID.pi_top or
+                self._device_id == common_ids.DeviceID.pi_top_v2)
 
     def battery_state_fully_defined(self):
         capacity_defined = (self._battery_capacity is not None)
@@ -123,3 +130,6 @@ class ShutdownManager:
 
     def shutdown(self):
         system("shutdown -h now")
+
+    def reboot(self):
+        system("reboot")

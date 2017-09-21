@@ -74,6 +74,9 @@ class PeripheralManager():
         if (self._callback_client is not None):
             self._callback_client._on_reboot_required()
 
+    def set_device_id(self, device_id):
+        pass
+
     def start(self):
         if self.is_initialised():
             self._run_main_thread = True
@@ -82,6 +85,7 @@ class PeripheralManager():
             self._logger.error("Unable to start pi-top peripheral management - run initialise() first!")
 
     def stop(self):
+        self._logger.info("Stopping peripheral manager...")
         self._run_main_thread = False
         if self._main_thread.is_alive():
             self._main_thread.join()

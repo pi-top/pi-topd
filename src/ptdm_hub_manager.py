@@ -1,5 +1,7 @@
 from importlib import import_module
 import traceback
+from ptcommon import common_ids
+from time import sleep
 
 # Discovers which hub libraries are installed, and uses those to
 # determine the type of hub in use and communicate with it
@@ -27,6 +29,7 @@ class HubManager():
             if (self._module_hub_v2.initialise(self._logger) is True):
                 self._active_hub_module = self._module_hub_v2
                 self._logger.info("Connected to hub v2")
+                self._register_client()
                 return True
             else:
                 self._logger.warning("Could not initialise v2 hub")
@@ -43,6 +46,7 @@ class HubManager():
             if (self._module_hub_v1.initialise(self._logger) is True):
                 self._active_hub_module = self._module_hub_v1
                 self._logger.info("Connected to hub v1")
+                self._register_client()
                 return True
             else:
                 self._logger.warning("Could not initialise v1 hub")
@@ -63,25 +67,32 @@ class HubManager():
         # When stopping, we unblank the screen and set the brightness to full
         # to prevent restarting with no display
 
+        self._logger.info("Stopping hub manager...")
+
         if (self._hub_connected()):
             self._active_hub_module.stop()
             self.unblank_screen()
 
-    def register_client(self, client):
-        if (self._hub_connected()):
-            self._active_hub_module.register_client(
-                client._on_hub_brightness_changed,
-                client._on_screen_blanked,
-                client._on_screen_unblanked,
-                client._on_lid_opened,
-                client._on_lid_closed,
-                client._on_hub_shutdown_requested,
-                client._on_device_id_changed,
-                client._on_hub_battery_state_changed)
+    def wait_for_device_id(self):
 
-    def set_speed(self, no_of_polls_per_second):
+        self._logger.info("Waiting for device id to be established...")
+        time_waited = 0
+        while (time_waited < 5):
+
+            device_id = self._active_hub_module.get_device_id()
+            if (device_id != common_ids.DeviceID.not_yet_known):
+
+                self._logger.info("Got device id (" + str(self._active_hub_module.get_device_id()) + "). Waited " + str(time_waited) + " seconds")
+                return
+            else:
+                sleep(0.25)
+                time_waited += 0.25
+
+        self._logger.info("Timed out waiting for device id.")
+
+    def get_device_id(self):
         if (self._hub_connected()):
-            self._active_hub_module.set_speed(no_of_polls_per_second)
+            return self._active_hub_module.get_device_id()
 
     def get_brightness(self):
         if (self._hub_connected()):
@@ -151,3 +162,15 @@ class HubManager():
         except ImportError as e:
             print("Failed to import " + module_name + ". Error: " + str(e))
             raise e
+
+    def _register_client(self):
+        if (self._hub_connected()):
+            self._active_hub_module.register_client(
+                self._callback_client._on_hub_brightness_changed,
+                self._callback_client._on_screen_blanked,
+                self._callback_client._on_screen_unblanked,
+                self._callback_client._on_lid_opened,
+                self._callback_client._on_lid_closed,
+                self._callback_client._on_hub_shutdown_requested,
+                self._callback_client._on_device_id_changed,
+                self._callback_client._on_hub_battery_state_changed)

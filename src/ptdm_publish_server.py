@@ -10,12 +10,6 @@ from threading import Lock
 
 
 class PublishServer():
-    test_device_id_vals = [0, 1, 2, 3]
-    test_brightness_vals = [3, 6, 10]
-    test_peripheral_id = 1
-    test_battery_charging_state_vals = [1, 0]
-    test_battery_capacity_vals = [95, 50]
-    test_battery_time_remaining_vals = [300, 250]
 
     def initialise(self, logger):
         self._logger = logger
@@ -90,10 +84,6 @@ class PublishServer():
 
     def publish_screen_unblanked(self):
         self._send_message(ptdm_message.Message.PUB_SCREEN_UNBLANKED, [])
-
-    def publish_device_id_changed(self, device_id: int):
-        self._check_type(device_id, int)
-        self._send_message(ptdm_message.Message.PUB_DEVICE_ID_CHANGED, [device_id])
 
     def publish_low_battery_warning(self):
         self._send_message(ptdm_message.Message.PUB_LOW_BATTERY_WARNING, [])
