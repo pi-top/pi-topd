@@ -196,14 +196,14 @@ class HubManager():
     def _register_client(self):
         if (self._hub_connected()):
             self._active_hub_module.register_client(
-                self._callback_client._on_hub_brightness_changed,
-                self._callback_client._on_screen_blanked,
-                self._callback_client._on_screen_unblanked,
-                self._callback_client._on_lid_opened,
-                self._callback_client._on_lid_closed,
-                self._callback_client._on_hub_shutdown_requested,
-                self._callback_client._on_device_id_changed,
-                self._callback_client._on_hub_battery_state_changed)
+                self._on_hub_brightness_changed,
+                self._on_screen_blanked,
+                self._on_screen_unblanked,
+                self._on_lid_opened,
+                self._on_lid_closed,
+                self._on_hub_shutdown_requested,
+                self._on_device_id_changed,
+                self._on_hub_battery_state_changed)
 
     def _write_device_id_to_file(self, device_id):
 
@@ -256,3 +256,36 @@ class HubManager():
                 pass
 
         return device_id
+
+    # Hub callbacks
+
+    def _on_hub_shutdown_requested(self):
+        self._callback_client._on_hub_shutdown_requested()
+
+    def _on_hub_brightness_changed(self, new_value):
+        self._callback_client._on_hub_brightness_changed(new_value)
+
+    def _on_hub_battery_state_changed(self, charging_state, capacity, time_remaining, wattage):
+        self._callback_client._on_hub_battery_state_changed(charging_state, capacity, time_remaining, wattage)
+
+    def _on_screen_blanked(self):
+        self._callback_client._on_screen_blanked()
+
+    def _on_screen_unblanked(self):
+        self._callback_client._on_screen_unblanked()
+
+    def _on_lid_opened(self):
+        self._callback_client._on_lid_opened()
+
+    def _on_lid_closed(self):
+        self._callback_client._on_lid_closed()
+
+    def _on_device_id_changed(self, device_id_int):
+
+        # The device id has changed, this may have happened a short time
+        # after starting up, once the v1 hub has had time to communicate
+        # Update the device id file with this value
+
+        self._write_device_id_to_file(device_id_int)
+
+        self._callback_client._on_device_id_changed(device_id_int)

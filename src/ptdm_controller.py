@@ -151,9 +151,6 @@ class Controller():
 
         self._shutdown_manager.shutdown()
 
-    def _on_reboot_required(self):
-        self._publish_server.publish_reboot_required()
-
     def _on_hub_brightness_changed(self, new_value):
         self._publish_server.publish_brightness_changed(new_value)
 
@@ -195,6 +192,9 @@ class Controller():
 
     def _on_peripheral_disconnected(self, peripheral_id_int):
         self._publish_server.publish_peripheral_disconnected(peripheral_id_int)
+
+    def _on_reboot_required(self):
+        self._publish_server.publish_reboot_required()
 
     ###########################################
     # Shutdown manager callback methods
