@@ -59,10 +59,10 @@ class ShutdownManager:
 
     def set_device_id(self, new_value):
 
-        device_id_established = (self._device_id != common_ids.DeviceID.not_yet_known and self._device_id != common_ids.DeviceID.unknown)
+        device_id_already_established = (self._device_id != common_ids.DeviceID.not_yet_known and self._device_id != common_ids.DeviceID.unknown)
         device_id_changing = (self._device_id != new_value)
 
-        if (device_id_established is False):
+        if (device_id_already_established is False):
             self._device_id = new_value
 
         elif (device_id_changing is True):
@@ -129,9 +129,9 @@ class ShutdownManager:
                 self.shown_warning_battery_message = True
 
     def shutdown(self):
-        self._logger.info("Shutting down (shutdown manager)")
+        self._logger.info("Shutting down OS")
         system("shutdown -h now")
 
     def reboot(self):
-        self._logger.info("Rebooting (shutdown manager)")
+        self._logger.info("Rebooting OS")
         system("reboot")
