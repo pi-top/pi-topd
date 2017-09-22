@@ -129,7 +129,9 @@ class ShutdownManager:
                 self.shown_warning_battery_message = True
 
     def shutdown(self):
+        self._logger.info("Shutting down (shutdown manager)")
         system("shutdown -h now")
 
     def reboot(self):
+        self._logger.info("Rebooting (shutdown manager)")
         system("reboot")

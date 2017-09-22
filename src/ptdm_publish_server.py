@@ -27,10 +27,13 @@ class PublishServer():
             self._zmq_socket.bind("tcp://*:3781")
             self._logger.info("Publish server ready...")
 
+            return True
+
         except zmq.error.ZMQError as e:
             self._logger.error("Error starting the publish server: " + str(e))
             self._logger.info(traceback.format_exc())
-            return
+
+            return False
 
         finally:
             self._socket_lock.release()
