@@ -50,7 +50,9 @@ class Controller():
 
         # Start the hub manager
 
-        self._publish_server.start_listening()
+        if (self._publish_server.start_listening() is False):
+            return
+
         self._hub_manager.start()
 
         # Wait until we have established what device we're running on
@@ -65,7 +67,9 @@ class Controller():
 
         self._peripheral_manager.start()
         self._idle_monitor.start()
-        self._request_server.start_listening()
+
+        if (self._request_server.start_listening() is False):
+            return
 
         while (self._continue_running is True):
             time.sleep(0.5)

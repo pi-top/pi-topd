@@ -2,6 +2,8 @@ from importlib import import_module
 import traceback
 from ptcommon import common_ids
 from time import sleep
+from os import makedirs
+from os import path
 
 # Discovers which hub libraries are installed, and uses those to
 # determine the type of hub in use and communicate with it
@@ -9,7 +11,14 @@ from time import sleep
 
 class HubManager():
 
+    HUB_CONFIG_DIR = '/etc/pi-top/pt-hub'
+    DEVICE_ID_FILE_PATH = '/etc/pi-top/device_id'
+
     def initialise(self, logger, callback_client):
+
+        if not path.exists(self.HUB_CONFIG_DIR):
+            makedirs(self.HUB_CONFIG_DIR)
+
         self._logger = logger
         self._callback_client = callback_client
         self._active_hub_module = None
@@ -28,7 +37,7 @@ class HubManager():
 
             if (self._module_hub_v2.initialise(self._logger) is True):
                 self._active_hub_module = self._module_hub_v2
-                self._logger.info("Connected to hub v2")
+                self._logger.info("Connected to pi-topHUB v2")
                 self._register_client()
                 return True
             else:
@@ -45,7 +54,7 @@ class HubManager():
 
             if (self._module_hub_v1.initialise(self._logger) is True):
                 self._active_hub_module = self._module_hub_v1
-                self._logger.info("Connected to hub v1")
+                self._logger.info("Connected to pi-topHUB v1")
                 self._register_client()
                 return True
             else:
@@ -76,13 +85,14 @@ class HubManager():
     def wait_for_device_id(self):
 
         self._logger.info("Waiting for device id to be established...")
+
         time_waited = 0
         while (time_waited < 5):
 
-            device_id = self._active_hub_module.get_device_id()
+            device_id = self.get_device_id()
             if (device_id != common_ids.DeviceID.not_yet_known):
 
-                self._logger.info("Got device id (" + str(self._active_hub_module.get_device_id()) + "). Waited " + str(time_waited) + " seconds")
+                self._logger.info("Got device id (" + str(device_id) + "). Waited " + str(time_waited) + " seconds")
                 return
             else:
                 sleep(0.25)
@@ -91,8 +101,32 @@ class HubManager():
         self._logger.info("Timed out waiting for device id.")
 
     def get_device_id(self):
-        if (self._hub_connected()):
-            return self._active_hub_module.get_device_id()
+
+        # Get the device Id from the file
+
+        device_id_from_file = self._attempt_get_device_id_from_file()
+
+        if (device_id_from_file != common_ids.DeviceID.unknown):
+
+            self._logger.debug("Got device id from file: " + str(device_id_from_file))
+
+            return device_id_from_file
+
+        # No file was found, query the device
+
+        device_id_from_device = self._attempt_get_device_id_from_device()
+
+        if (device_id_from_device != common_ids.DeviceID.not_yet_known and device_id_from_device != common_ids.DeviceID.unknown):
+
+            self._logger.debug("Got device id from device: " + str(device_id_from_device))
+            self._write_device_id_to_file(device_id_from_device)
+
+            return device_id_from_device
+
+        # Otherwise we don't know
+
+        self._logger.info("Could not determine device!")
+        return common_ids.DeviceID.unknown
 
     def get_brightness(self):
         if (self._hub_connected()):
@@ -105,10 +139,6 @@ class HubManager():
     def get_shutdown_state(self):
         if (self._hub_connected()):
             return self._active_hub_module.get_shutdown_state()
-
-    def get_device_id(self):
-        if (self._hub_connected()):
-            return self._active_hub_module.get_device_id()
 
     def get_battery_charging_state(self):
         if (self._hub_connected()):
@@ -148,7 +178,7 @@ class HubManager():
             self._active_hub_module.unblank_screen()
 
     def shutdown(self):
-        self._logger.info("Shutting down")
+        self._logger.info("Shutting down the hub")
         if (self._hub_connected()):
             self._active_hub_module.shutdown()
 
@@ -174,3 +204,55 @@ class HubManager():
                 self._callback_client._on_hub_shutdown_requested,
                 self._callback_client._on_device_id_changed,
                 self._callback_client._on_hub_battery_state_changed)
+
+    def _write_device_id_to_file(self, device_id):
+
+        self._logger.info("Writing device ID to file: " + str(device_id))
+
+        f = open(self.DEVICE_ID_FILE_PATH, 'w')
+        f.write(str(device_id) + "\n")
+        f.close()
+
+    def _upgrade_legacy_device_id_file(self):
+
+        if path.isfile(self.DEVICE_ID_FILE_PATH):
+
+            f = open(self.DEVICE_ID_FILE_PATH, 'r+')
+            device_id_file_str = f.read().strip()
+            f.close()
+
+            if device_id_file_str == "pi-top":
+                self._logger.info("Found legacy device id file (pi-top). Upgrading...")
+                _write_device_id_to_file(common_ids.DeviceID.pi_top)
+            elif device_id_file_str == "pi-topCEED":
+                self._logger.info("Found legacy device id file (pi-topCEED). Upgrading...")
+                _write_device_id_to_file(common_ids.DeviceID.pi_top_ceed)
+
+    def _attempt_get_device_id_from_device(self):
+
+        device_id = common_ids.DeviceID.not_yet_known
+
+        if (self._hub_connected()):
+            device_id = self._active_hub_module.get_device_id()
+
+        return device_id
+
+    def _attempt_get_device_id_from_file(self):
+
+        device_id = common_ids.DeviceID.unknown
+
+        self._upgrade_legacy_device_id_file()
+
+        if path.isfile(self.DEVICE_ID_FILE_PATH):
+            f = open(self.DEVICE_ID_FILE_PATH, 'r')
+            device_id_file_str = f.read().strip()
+            f.close()
+
+            try:
+                device_id = int(device_id_file_str)
+                _logger.info("Got device ID from file: " + str(device_id))
+
+            except:
+                pass
+
+        return device_id

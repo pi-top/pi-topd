@@ -31,12 +31,15 @@ class RequestServer():
         except zmq.error.ZMQError as e:
             self._logger.error("Error starting the request server: " + str(e))
             self._logger.info(traceback.format_exc())
-            return
+
+            return False
 
         time.sleep(0.5)
 
         self._continue = True
         self._thread.start()
+
+        return True
 
     def stop_listening(self):
 
