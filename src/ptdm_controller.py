@@ -143,9 +143,10 @@ class Controller():
     def _on_hub_shutdown_requested(self):
         self._publish_server.publish_shutdown_requested()
 
-        # Only trigger the OS shutdown, and allow the systemd shutdown command
-        # to do the rest (both for v1 and v2 hubs)
+        # Let the hub modules handle any logic required to shutdown
+        self._hub_manager.shutdown()
 
+        # Now trigger the OS shutdown
         self._shutdown_manager.shutdown()
 
     def _on_hub_brightness_changed(self, new_value):
