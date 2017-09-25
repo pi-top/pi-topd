@@ -184,6 +184,16 @@ class HubManager():
         if (self._hub_connected()):
             self._active_hub_module.shutdown()
 
+    def enable_hdmi_audio(self):
+        self._logger.info("Enabling hdmi audio")
+        if (self._hub_connected()):
+            self._active_hub_module.enable_hdmi_audio()
+
+    def disable_hdmi_audio(self):
+        self._logger.info("Disabling hdmi audio")
+        if (self._hub_connected()):
+            self._active_hub_module.disable_hdmi_audio()
+
     def _hub_connected(self):
         return (self._active_hub_module is not None)
 
