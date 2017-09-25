@@ -80,6 +80,8 @@ class HubManager():
 
         if (self._hub_connected()):
             self.unblank_screen()
+
+            self._logger.info("Stopping hub module...")
             self._active_hub_module.stop()
 
     def wait_for_device_id(self):
