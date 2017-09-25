@@ -143,11 +143,8 @@ class Controller():
     def _on_hub_shutdown_requested(self):
         self._publish_server.publish_shutdown_requested()
 
-        # First tell the hub to shutdown
-
-        self._hub_manager.shutdown()
-
-        # Then trigger the OS shutdown
+        # Only trigger the OS shutdown, and allow the systemd shutdown command
+        # to do the rest (both for v1 and v2 hubs)
 
         self._shutdown_manager.shutdown()
 
