@@ -11,3 +11,6 @@ done
 for xscreensaverConfig in "${xscreensaverConfigs[@]}"; do
     sed -i "s/.*mode:.*/mode:\t\toff/g" "$xscreensaverConfig"
 done
+
+# Create the journal log directory, so that systemd logs are persisted
+mkdir -p /var/log/journal
