@@ -60,13 +60,13 @@ class PeripheralManager():
     def initialise_device_id(self, device_id):
         self._device_id = device_id
 
-    def emit_enable_hdmi_audio(self):
+    def emit_enable_hdmi_to_i2s_audio(self):
         if (self._callback_client is not None):
-            self._callback_client._on_enable_hdmi_audio()
+            self._callback_client._on_enable_hdmi_to_i2s_audio()
 
-    def emit_disable_hdmi_audio(self):
+    def emit_disable_hdmi_to_i2s_audio(self):
         if (self._callback_client is not None):
-            self._callback_client._on_disable_hdmi_audio()
+            self._callback_client._on_disable_hdmi_to_i2s_audio()
 
     def emit_peripheral_connected(self, device_id):
         if (self._callback_client is not None):
@@ -224,9 +224,9 @@ class PeripheralManager():
 
         if (enabled is True):
             if (v2_hub_hdmi_to_i2s_required is True):
-                self.emit_enable_hdmi_audio()
+                self.emit_enable_hdmi_to_i2s_audio()
             else:
-                self.emit_disable_hdmi_audio()
+                self.emit_disable_hdmi_to_i2s_audio()
 
         if (reboot_required is True):
             self.emit_reboot_message()
