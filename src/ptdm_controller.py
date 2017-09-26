@@ -62,10 +62,12 @@ class Controller():
 
         # Now we have a device id, pass it to the other services
 
-        self._peripheral_manager.set_device_id(device_id)
+        self._peripheral_manager.initialise_device_id(device_id)
         self._shutdown_manager.set_device_id(device_id)
 
-        self._peripheral_manager.start()
+        if (self._peripheral_manager.start() is False):
+            return
+
         self._idle_monitor.start()
 
         if (self._request_server.start_listening() is False):
