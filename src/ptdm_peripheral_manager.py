@@ -157,7 +157,7 @@ class PeripheralManager():
 
     def enable_v1_hub_v1_speaker(self, device):
         ptspeaker_cfg = self._custom_imported_modules['ptspeaker']
-        enabled, reboot_required = ptspeaker_cfg.initialise(self._device_id, device['name'], self._logger)
+        enabled, reboot_required, v2_hub_hdmi_to_i2s_required = ptspeaker_cfg.initialise(self._device_id, device['name'], self._logger)
 
         if enabled or reboot_required:
             # Mark as enabled even if a reboot is required
@@ -174,7 +174,7 @@ class PeripheralManager():
             self._logger.info("I2S is already enabled")
 
             # NEEDS TO DO AS PULSE...
-            # enabled, reboot_required = ptspeaker_cfg.initialise(self._device_id)
+            # enabled, reboot_required, v2_hub_hdmi_to_i2s_required = ptspeaker_cfg.initialise(self._device_id)
             # if ptspeaker_cfg.initialise(enable):
             #     if enable:
             #         self.add_enabled_device(device)
@@ -236,18 +236,22 @@ class PeripheralManager():
     def configure_v2_hub_pulse(self, enable):
         ptpulse_cfg = self._custom_imported_modules['ptpulse']
 
-        enabled, reboot_required = ptpulse_cfg.initialise(self._device_id)
+        enabled, reboot_required, v2_hub_hdmi_to_i2s_required = ptpulse_cfg.initialise(self._device_id)
         if enabled or reboot_required:
             # Mark as enabled even if a reboot is required
             # to prevent subsequent attempts to enable
             self.add_enabled_device(device)
 
+        if enabled:
+            if v2_hub_hdmi_to_i2s_required:
+                # SET MUX ACCORDINGLY
+                pass
+            else:
+                # SET MUX ACCORDINGLY
+                pass
+
         if reboot_required:
             self.emit_reboot_message()
-
-        # MULTIPLEXER CONFIG
-
-        pass
 
     def show_speaker_install_package_message(self):
         self._logger.info("pi-topSPEAKER initialisation not available - please install 'python3-pt-speaker' package via apt-get")
