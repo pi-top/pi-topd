@@ -157,7 +157,7 @@ class PeripheralManager():
 
     def enable_v1_hub_v1_speaker(self, device):
         ptspeaker_cfg = self._custom_imported_modules['ptspeaker']
-        enabled, reboot_required = ptspeaker_cfg.initialise(self._device_id)
+        enabled, reboot_required = ptspeaker_cfg.initialise(self._device_id, device['name'])
 
         if enabled or reboot_required:
             # Mark as enabled even if a reboot is required
