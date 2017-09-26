@@ -62,10 +62,12 @@ class Controller():
 
         # Now we have a device id, pass it to the other services
 
-        self._peripheral_manager.set_device_id(device_id)
+        self._peripheral_manager.initialise_device_id(device_id)
         self._shutdown_manager.set_device_id(device_id)
 
-        self._peripheral_manager.start()
+        if (self._peripheral_manager.start() is False):
+            return
+
         self._idle_monitor.start()
 
         if (self._request_server.start_listening() is False):
@@ -194,11 +196,11 @@ class Controller():
     def _on_reboot_required(self):
         self._publish_server.publish_reboot_required()
 
-    def _on_enable_hdmi_audio(self):
-        self._hub_manager.enable_hdmi_audio()
+    def _on_enable_hdmi_to_i2s_audio(self):
+        self._hub_manager.enable_hdmi_to_i2s_audio()
 
-    def _on_disable_hdmi_audio(self):
-        self._hub_manager.disable_hdmi_audio()
+    def _on_disable_hdmi_to_i2s_audio(self):
+        self._hub_manager.disable_hdmi_to_i2s_audio()
 
     ###########################################
     # Shutdown manager callback methods
