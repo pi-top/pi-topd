@@ -196,65 +196,39 @@ class PeripheralManager():
 
     def configure_v1_hub_pulse(self, device, enable):
         ptpulse_cfg = self._custom_imported_modules['ptpulse']
-        if self.sys_cfg_I2S.get_current_state() is True:
-            self._logger.info("I2S is already enabled")
-
-            if enable:
-                self._logger.debug("Enabling " + device['name'])
-            else:
-                self._logger.debug("Disabling " + device['name'])
-
-            if ptpulse_cfg.reset_device_state(enable):
-                if enable:
-                    self.add_enabled_device(device)
-                else:
-                    self.remove_enabled_device(device)
-            else:
-                self._logger.error("Unable to verify state of " + str(device['name']))
-        else:
-            i2s_mode_next = self.sys_cfg_I2S.get_next_state()
-            if i2s_mode_next is False:
-                self._logger.debug("I2S appears to be disabled - enabling...")
-                self.sys_cfg_I2S.set_state(enable)
-
-            # Add to enabled devices to prevent further scans
-            # attempting to initialise device
-            self.add_enabled_device(device)
-
-        if self.sys_cfg_UART.baud_rate_correctly_configured(expected_clock_val=1627604, expected_baud_val=460800, expected_enabled_val=1) is True:
-            self._logger.debug("Baud rate is already configured for ptpulse")
-        else:
-            self.sys_cfg_UART.configure_in_boot_config(init_uart_clock=1627604, init_uart_baud=460800, enable_uart=1)
-
-        self.sys_cfg_UART.remove_serial_from_cmdline()
-
-        i2s_mode_current, i2s_mode_next = self.sys_cfg_I2S.get_states()
-        if (i2s_mode_current != i2s_mode_next):
-            self.emit_reboot_message()
-
-    def enable_v2_hub_v2_speaker(self, device):
-        pass
-
-    def configure_v2_hub_pulse(self, enable):
-        ptpulse_cfg = self._custom_imported_modules['ptpulse']
         ptpulse_cfg.initialise(self._device_id, device['name'], self._logger)
 
-        enabled, reboot_required, v2_hub_hdmi_to_i2s_required = ptpulse_cfg.enable()
+        enabled, reboot_required, v2_hub_hdmi_to_i2s_required = ptpulse_cfg.enable_device()
 
         if enabled or reboot_required:
             # Mark as enabled even if a reboot is required
             # to prevent subsequent attempts to enable
             self.add_enabled_device(device)
 
-        if enabled:
-            if v2_hub_hdmi_to_i2s_required:
-                # SET MUX ACCORDINGLY
-                pass
-            else:
-                # SET MUX ACCORDINGLY
-                pass
+        if (reboot_required is True):
+            self.emit_reboot_message()
 
-        if reboot_required:
+    def enable_v2_hub_v2_speaker(self, device):
+        pass
+
+    def configure_v2_hub_pulse(self, device, enable):
+        ptpulse_cfg = self._custom_imported_modules['ptpulse']
+        ptpulse_cfg.initialise(self._device_id, device['name'], self._logger)
+
+        enabled, reboot_required, v2_hub_hdmi_to_i2s_required = ptpulse_cfg.enable_device()
+
+        if (enabled is True or reboot_required is True):
+            # Mark as enabled even if a reboot is required
+            # to prevent subsequent attempts to enable
+            self.add_enabled_device(device)
+
+        if (enabled is True):
+            if (v2_hub_hdmi_to_i2s_required is True):
+                self.emit_enable_hdmi_audio()
+            else:
+                self.emit_disable_hdmi_audio()
+
+        if (reboot_required is True):
             self.emit_reboot_message()
 
     def show_speaker_install_package_message(self):
@@ -279,7 +253,7 @@ class PeripheralManager():
                     is_v1_hub = (self._device_id == common_ids.DeviceID.pi_top) or (self._device_id == common_ids.DeviceID.pi_top_ceed)
 
                     if self._device_id == common_ids.DeviceID.pi_top_v2:
-                        self.configure_v2_hub_pulse(enable)
+                        self.configure_v2_hub_pulse(device, enable)
                     elif is_v1_hub or self._device_id == common_ids.DeviceID.unknown:
                         self.configure_v1_hub_pulse(device, enable)
                     else:
