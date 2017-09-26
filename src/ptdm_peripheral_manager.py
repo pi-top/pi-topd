@@ -157,7 +157,9 @@ class PeripheralManager():
 
     def enable_v1_hub_v1_speaker(self, device):
         ptspeaker_cfg = self._custom_imported_modules['ptspeaker']
-        enabled, reboot_required, v2_hub_hdmi_to_i2s_required = ptspeaker_cfg.initialise(self._device_id, device['name'], self._logger)
+        ptspeaker_cfg.initialise(self._device_id, device['name'], self._logger)
+
+        enabled, reboot_required, v2_hub_hdmi_to_i2s_required = ptspeaker_cfg.enable()
 
         if enabled or reboot_required:
             # Mark as enabled even if a reboot is required
@@ -235,8 +237,10 @@ class PeripheralManager():
 
     def configure_v2_hub_pulse(self, enable):
         ptpulse_cfg = self._custom_imported_modules['ptpulse']
+        ptpulse_cfg.initialise(self._device_id, device['name'], self._logger)
 
-        enabled, reboot_required, v2_hub_hdmi_to_i2s_required = ptpulse_cfg.initialise(self._device_id)
+        enabled, reboot_required, v2_hub_hdmi_to_i2s_required = ptpulse_cfg.enable()
+
         if enabled or reboot_required:
             # Mark as enabled even if a reboot is required
             # to prevent subsequent attempts to enable
