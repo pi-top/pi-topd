@@ -196,11 +196,11 @@ class Controller():
     def _on_reboot_required(self):
         self._publish_server.publish_reboot_required()
 
-    def _on_enable_hdmi_audio(self):
-        self._hub_manager.enable_hdmi_audio()
+    def _on_enable_hdmi_to_i2s_audio(self):
+        self._hub_manager.enable_hdmi_to_i2s_audio()
 
-    def _on_disable_hdmi_audio(self):
-        self._hub_manager.disable_hdmi_audio()
+    def _on_disable_hdmi_to_i2s_audio(self):
+        self._hub_manager.disable_hdmi_to_i2s_audio()
 
     ###########################################
     # Shutdown manager callback methods
