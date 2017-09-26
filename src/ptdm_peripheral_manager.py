@@ -159,7 +159,7 @@ class PeripheralManager():
         ptspeaker_cfg = self._custom_imported_modules['ptspeaker']
         ptspeaker_cfg.initialise(self._device_id, device['name'], self._logger)
 
-        enabled, reboot_required, v2_hub_hdmi_to_i2s_required = ptspeaker_cfg.enable()
+        enabled, reboot_required, v2_hub_hdmi_to_i2s_required = ptspeaker_cfg.enable_device()
 
         if enabled or reboot_required:
             # Mark as enabled even if a reboot is required
@@ -171,28 +171,17 @@ class PeripheralManager():
 
     def enable_v1_hub_v2_speaker(self, device):
         ptspeaker_cfg = self._custom_imported_modules['ptspeaker']
-        self._logger.debug("Enabling pi-topSPEAKER-v2 on v1 hub")
-        if self.sys_cfg_I2S.get_current_state() is True:
-            self._logger.info("I2S is already enabled")
+        ptspeaker_cfg.initialise(self._device_id, device['name'], self._logger)
 
-            # NEEDS TO DO AS PULSE...
-            # enabled, reboot_required, v2_hub_hdmi_to_i2s_required = ptspeaker_cfg.initialise(self._device_id)
-            # if ptspeaker_cfg.initialise(enable):
-            #     if enable:
-            #         self.add_enabled_device(device)
-            #     else:
-            #         self.remove_enabled_device(device)
-            # else:
-            #     self._logger.error("Unable to verify state of " + str(device['name']))
-        else:
-            i2s_mode_next = self.sys_cfg_I2S.get_next_state()
-            if i2s_mode_next is False:
-                self._logger.debug("I2S appears to be disabled - enabling...")
-                self.sys_cfg_I2S.set_state(enable)
+        enabled, reboot_required, v2_hub_hdmi_to_i2s_required = ptspeaker_cfg.enable_device()
 
-            # Add to enabled devices to prevent further scans
-            # attempting to initialise device
+        if enabled or reboot_required:
+            # Mark as enabled even if a reboot is required
+            # to prevent subsequent attempts to enable
             self.add_enabled_device(device)
+
+        if reboot_required:
+            self.emit_reboot_message()
 
     def configure_v1_hub_pulse(self, device, enable):
         ptpulse_cfg = self._custom_imported_modules['ptpulse']
@@ -276,8 +265,8 @@ class PeripheralManager():
                                 self.enable_v1_hub_v2_speaker(device)
                             else:
                                 self.enable_v1_hub_v1_speaker(device)
-                        # else:
-                            # Do nothing - unable to deactivate speaker
+                        else:
+                            self.remove_enabled_device(device)
                     else:
                         print("NOT A VALID CONFIGURATION")
                 else:
