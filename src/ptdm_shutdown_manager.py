@@ -2,39 +2,19 @@
 # Handles safe shutdown when the hub is communicating that its battery capacity is below a threshold set by ptdm_controller
 
 from ptcommon import common_ids
+from ptcommon import counter as c
 from os import system
-
-
-class Counter:
-    """A simple counter class"""
-
-    def __init__(self, max, current=0):
-        self._current = current
-        self._max = max
-
-    def increment(self):
-        if self._current < self._max:
-            self._current += 1
-            return True
-        else:
-            return False
-
-    def reset(self):
-        self._current = 0
-
-    def maxed(self):
-        return (self._current == self._max)
 
 
 class ShutdownManager:
     warning_battery_level = 5
-    warning_battery_ctr = Counter(3)
+    warning_battery_ctr = c.Counter(3)
 
     critical_battery_level = 3
-    critical_battery_ctr = Counter(3)
+    critical_battery_ctr = c.Counter(3)
 
     shutdown_battery_level = 2
-    shutdown_battery_ctr = Counter(3)
+    shutdown_battery_ctr = c.Counter(3)
 
     shown_warning_battery_message = False
     shown_critical_battery_message = False
