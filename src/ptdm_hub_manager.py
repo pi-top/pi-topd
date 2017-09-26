@@ -184,15 +184,15 @@ class HubManager():
         if (self._hub_connected()):
             self._active_hub_module.shutdown()
 
-    def enable_hdmi_audio(self):
-        self._logger.info("Enabling hdmi audio")
+    def enable_hdmi_to_i2s_audio(self):
+        self._logger.info("Switching HDMI to I2S mux on")
         if (self._hub_connected()):
-            self._active_hub_module.enable_hdmi_audio()
+            self._active_hub_module.enable_hdmi_to_i2s_audio()
 
-    def disable_hdmi_audio(self):
-        self._logger.info("Disabling hdmi audio")
+    def disable_hdmi_to_i2s_audio(self):
+        self._logger.info("Switching HDMI to I2S mux off")
         if (self._hub_connected()):
-            self._active_hub_module.disable_hdmi_audio()
+            self._active_hub_module.disable_hdmi_to_i2s_audio()
 
     def _hub_connected(self):
         return (self._active_hub_module is not None)
