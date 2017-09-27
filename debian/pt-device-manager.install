@@ -2,7 +2,7 @@ src/i2s/hifiberry-alsactl.restore       /etc/pi-top/.i2s-vol/
 src/i2s/pt-i2s                          /usr/bin/
 src/pt-battery                          /usr/bin/
 src/pt-brightness                       /usr/bin/
-bin/poweroff                            /usr/lib/pt-device-manager/
+bin/poweroff-v1                         /usr/lib/pt-device-manager/
 src/poweroff-v2                         /usr/lib/pt-device-manager/
 src/pt-device-manager                   /usr/lib/pt-device-manager/
 src/ptdm_controller.py                  /usr/lib/pt-device-manager/
