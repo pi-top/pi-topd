@@ -1,7 +1,7 @@
 
 # Instantiates and coordinates between the other classes
 
-from ptcommon import logger
+from ptcommon.logger import PTLogger
 from ptcommon import common_ids
 from ptdm_hub_manager import HubManager
 from ptdm_idle_monitor import IdleMonitor
@@ -16,12 +16,9 @@ import logging
 
 class Controller():
 
-    def initialise(self, log_level, log_to_journal):
+    def initialise(self):
 
         self._continue_running = True
-
-        self._logger = logger.Logger(log_level, log_to_journal)
-        self._logger.info("Initialising device manager...")
 
         # Create classes
 
@@ -34,18 +31,18 @@ class Controller():
 
         # Initialise
 
-        self._shutdown_manager.initialise(self._logger, self)
-        self._hub_manager.initialise(self._logger, self)
-        self._idle_monitor.initialise(self._logger, self)
-        self._peripheral_manager.initialise(self._logger, self)
-        self._publish_server.initialise(self._logger)
-        self._request_server.initialise(self._logger, self)
+        self._shutdown_manager.initialise(self)
+        self._hub_manager.initialise(self)
+        self._idle_monitor.initialise(self)
+        self._peripheral_manager.initialise(self)
+        self._publish_server.initialise()
+        self._request_server.initialise(self)
 
     def start(self):
-        self._logger.info("Starting device manager...")
+        PTLogger.info("Starting device manager...")
 
         if (self._hub_manager.connect_to_hub() is False):
-            self._logger.error("No pi-top hub detected. Exiting...")
+            PTLogger.error("No pi-top hub detected. Exiting...")
             return
 
         # Start the hub manager
@@ -83,12 +80,12 @@ class Controller():
         self._hub_manager.stop()
         self._publish_server.stop_listening()
 
-        self._logger.info("Exiting...")
+        PTLogger.info("Exiting...")
 
         sys.exit(0)
 
     def stop(self):
-        self._logger.info("Stopping device manager...")
+        PTLogger.info("Stopping device manager...")
         self._continue_running = False
 
     ###########################################
