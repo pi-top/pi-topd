@@ -2,6 +2,7 @@
 # Creates a server for clients to connect to,
 # and publishes state change messages to these clients
 
+from ptcommon.logger import PTLogger
 import zmq
 import time
 from ptcommon import ptdm_message
@@ -11,13 +12,12 @@ from threading import Lock
 
 class PublishServer():
 
-    def initialise(self, logger):
-        self._logger = logger
+    def initialise(self):
         self._socket_lock = Lock()
         self._shutting_down = False
 
     def start_listening(self):
-        self._logger.debug("Opening publisher socket...")
+        PTLogger.debug("Opening publisher socket...")
 
         try:
             self._socket_lock.acquire()
@@ -25,13 +25,13 @@ class PublishServer():
             self._zmq_context = zmq.Context()
             self._zmq_socket = self._zmq_context.socket(zmq.PUB)
             self._zmq_socket.bind("tcp://*:3781")
-            self._logger.info("Publish server ready...")
+            PTLogger.info("Publish server ready...")
 
             return True
 
         except zmq.error.ZMQError as e:
-            self._logger.error("Error starting the publish server: " + str(e))
-            self._logger.info(traceback.format_exc())
+            PTLogger.error("Error starting the publish server: " + str(e))
+            PTLogger.info(traceback.format_exc())
 
             return False
 
@@ -39,7 +39,7 @@ class PublishServer():
             self._socket_lock.release()
 
     def stop_listening(self):
-        self._logger.info("Closing publisher socket...")
+        PTLogger.info("Closing publisher socket...")
 
         try:
             self._socket_lock.acquire()
@@ -48,11 +48,11 @@ class PublishServer():
 
             self._zmq_socket.close()
             self._zmq_context.destroy()
-            self._logger.debug("Done.")
+            PTLogger.debug("Done.")
 
         except zmq.error.ZMQError as e:
-            self._logger.error("Error starting the publish server: " + str(e))
-            self._logger.info(traceback.format_exc())
+            PTLogger.error("Error starting the publish server: " + str(e))
+            PTLogger.info(traceback.format_exc())
 
         finally:
             self._socket_lock.release()
@@ -113,11 +113,11 @@ class PublishServer():
                 return
 
             self._zmq_socket.send_string(message.to_string())
-            self._logger.debug("Published message: " + message.message_friendly_string())
+            PTLogger.debug("Published message: " + message.message_friendly_string())
 
         except zmq.error.ZMQError as e:
-            self._logger.error("Communication error in publish server: " + str(e))
-            self._logger.info(traceback.format_exc())
+            PTLogger.error("Communication error in publish server: " + str(e))
+            PTLogger.info(traceback.format_exc())
 
         finally:
             self._socket_lock.release()

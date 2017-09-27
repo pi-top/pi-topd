@@ -2,6 +2,7 @@
 # Creates a server for clients to connect to, and then responds to
 # queries from these clients for device-related debugrmation.
 
+from ptcommon.logger import PTLogger
 import zmq
 import time
 from threading import Thread
@@ -15,22 +16,21 @@ class RequestServer():
     def __init__(self):
         self._thread = Thread(target=self._thread_method)
 
-    def initialise(self, logger, callback_client):
-        self._logger = logger
+    def initialise(self, callback_client):
         self._callback_client = callback_client
 
     def start_listening(self):
-        self._logger.debug("Opening request socket...")
+        PTLogger.debug("Opening request socket...")
 
         try:
             self._zmq_context = zmq.Context()
             self._zmq_socket = self._zmq_context.socket(zmq.REP)
             self._zmq_socket.bind("tcp://*:3782")
-            self._logger.info("Responder server ready.")
+            PTLogger.info("Responder server ready.")
 
         except zmq.error.ZMQError as e:
-            self._logger.error("Error starting the request server: " + str(e))
-            self._logger.info(traceback.format_exc())
+            PTLogger.error("Error starting the request server: " + str(e))
+            PTLogger.info(traceback.format_exc())
 
             return False
 
@@ -43,7 +43,7 @@ class RequestServer():
 
     def stop_listening(self):
 
-        self._logger.info("Closing responder socket...")
+        PTLogger.info("Closing responder socket...")
 
         self._continue = False
         if self._thread.is_alive():
@@ -52,11 +52,11 @@ class RequestServer():
         self._zmq_socket.close()
         self._zmq_context.destroy()
 
-        self._logger.debug("Done.")
+        PTLogger.debug("Done.")
 
     def _thread_method(self):
 
-        self._logger.info("Listening for requests...")
+        PTLogger.info("Listening for requests...")
 
         while self._continue:
 
@@ -68,11 +68,11 @@ class RequestServer():
             if (len(events) > 0):
 
                 request = self._zmq_socket.recv_string()
-                self._logger.debug("Request received: " + request)
+                PTLogger.debug("Request received: " + request)
 
                 response = self._process_request(request)
 
-                self._logger.debug("Sending response: " + response)
+                PTLogger.debug("Sending response: " + response)
                 self._zmq_socket.send_string(response)
 
     def _process_request(self, request):
@@ -81,7 +81,7 @@ class RequestServer():
 
             message = ptdm_message.Message.from_string(request)
 
-            self._logger.info("Received request: " + message.message_friendly_string())
+            PTLogger.info("Received request: " + message.message_friendly_string())
 
             if (message.message_id() == ptdm_message.Message.REQ_PING):
 
@@ -181,21 +181,21 @@ class RequestServer():
 
             else:
 
-                self._logger.error("Unsupported request received: " + request)
+                PTLogger.error("Unsupported request received: " + request)
                 response = ptdm_message.Message.from_parts(ptdm_message.Message.RSP_ERR_UNSUPPORTED, [])
 
         except ValueError as e:
 
-            self._logger.error("Error processing message: " + str(e))
-            self._logger.info(traceback.format_exc())
+            PTLogger.error("Error processing message: " + str(e))
+            PTLogger.info(traceback.format_exc())
             response = ptdm_message.Message.from_parts(ptdm_message.Message.RSP_ERR_MALFORMED, [])
 
         except Exception as e:
 
-            self._logger.error("Unknown error processing message: " + str(e))
-            self._logger.info(traceback.format_exc())
+            PTLogger.error("Unknown error processing message: " + str(e))
+            PTLogger.info(traceback.format_exc())
             response = ptdm_message.Message.from_parts(ptdm_message.Message.RSP_ERR_SERVER, [])
 
-        self._logger.info("Sending response: " + response.message_friendly_string())
+        PTLogger.info("Sending response: " + response.message_friendly_string())
 
         return response.to_string()

@@ -13,6 +13,7 @@
 # NOTSET    0
 
 import signal
+from ptcommon.logger import PTLogger
 from ptdm_controller import Controller
 import logging
 import sys
@@ -39,7 +40,9 @@ parser.add_argument("--no-journal", help="output to stdout not the journal", act
 parser.add_argument("--log-level", type=int, help="set the logging level from 10 (more verbose) to 50 (less verbose)", default=20)
 args = parser.parse_args()
 
+PTLogger.setup_logging("pt-device-manager", args.log_level, args.no_journal is False)
+
 # Start the controller
 
-controller.initialise(args.log_level, args.no_journal is False)
+controller.initialise()
 controller.start()

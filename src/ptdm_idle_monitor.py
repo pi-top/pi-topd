@@ -1,3 +1,4 @@
+from ptcommon.logger import PTLogger
 import idletime
 import time
 import threading
@@ -16,9 +17,8 @@ class IdleMonitor():
     def __init__(self):
         pass
 
-    def initialise(self, logger, callback_client):
+    def initialise(self, callback_client):
         self.previous_idletime = 0
-        self._logger = logger
         self._callback_client = callback_client
         self._main_thread = None
         self._run_main_thread = False
@@ -31,7 +31,7 @@ class IdleMonitor():
         self._get_timeout_from_file()
 
     def start(self):
-        self._logger.info("Starting idle time monitor...")
+        PTLogger.info("Starting idle time monitor...")
         if self._main_thread is None:
             self._main_thread = threading.Thread(target=self._main_thread_loop)
 
@@ -39,10 +39,10 @@ class IdleMonitor():
         self._main_thread.start()
 
     def stop(self):
-        self._logger.info("Stopping idle time monitor...")
+        PTLogger.info("Stopping idle time monitor...")
         self._run_main_thread = False
         self._main_thread.join()
-        self._logger.debug("Done.")
+        PTLogger.debug("Done.")
 
     def get_configured_timeout(self):
         return self._idle_timeout_s
@@ -55,12 +55,12 @@ class IdleMonitor():
 
     def _emit_idletime_threshold_exceeded(self):
         if (self._callback_client is not None):
-            self._logger.info("Idletime threshold exceeded")
+            PTLogger.info("Idletime threshold exceeded")
             self._callback_client._on_idletime_threshold_exceeded()
 
     def _emit_exceeded_idletime_reset(self):
         if (self._callback_client is not None):
-            self._logger.info("Idletime reset")
+            PTLogger.info("Idletime reset")
             self._callback_client._on_exceeded_idletime_reset()
 
     def _get_timeout_from_file(self):
@@ -69,7 +69,7 @@ class IdleMonitor():
             self._idle_timeout_s = int(file.read().strip())
             file.close()
 
-        self._logger.info("Idletime retrieved from config: " + str(self._idle_timeout_s))
+        PTLogger.info("Idletime retrieved from config: " + str(self._idle_timeout_s))
 
     def _set_timeout_in_file(self):
         if path.exists(self.CONFIG_FILE):
@@ -79,7 +79,7 @@ class IdleMonitor():
         file.write(str(self._idle_timeout_s) + "\n")
         file.close()
 
-        self._logger.info("Idletime set in config: " + str(self._idle_timeout_s))
+        PTLogger.info("Idletime set in config: " + str(self._idle_timeout_s))
 
     def _main_thread_loop(self):
         while self._run_main_thread:
@@ -104,7 +104,7 @@ class IdleMonitor():
                     self.previous_idletime = time_since_idle
 
             else:
-                self._logger.warning("pt-idletime.get_idle_time() returned -1. Check the configuration of xhost.")
+                PTLogger.warning("pt-idletime.get_idle_time() returned -1. Check the configuration of xhost.")
 
             for i in range(5):
                 time.sleep(self._cycle_sleep_time / 5)

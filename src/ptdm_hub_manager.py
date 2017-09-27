@@ -1,3 +1,4 @@
+from ptcommon.logger import PTLogger
 from importlib import import_module
 import traceback
 from ptcommon import common_ids
@@ -14,12 +15,11 @@ class HubManager():
     HUB_CONFIG_DIR = '/etc/pi-top/pt-hub'
     DEVICE_ID_FILE_PATH = '/etc/pi-top/device_id'
 
-    def initialise(self, logger, callback_client):
+    def initialise(self, callback_client):
 
         if not path.exists(self.HUB_CONFIG_DIR):
             makedirs(self.HUB_CONFIG_DIR)
 
-        self._logger = logger
         self._callback_client = callback_client
         self._active_hub_module = None
 
@@ -30,41 +30,41 @@ class HubManager():
         # a v1 pi-top, however we cannot do this for a CEED. Hence this
         # is the fall-through case.
 
-        self._logger.info("Attempting to find pi-topHUB v2...")
+        PTLogger.info("Attempting to find pi-topHUB v2...")
 
         try:
             self._module_hub_v2 = self._import_module("pthub2.pthub2")
 
-            if (self._module_hub_v2.initialise(self._logger) is True):
+            if (self._module_hub_v2.initialise() is True):
                 self._active_hub_module = self._module_hub_v2
-                self._logger.info("Connected to pi-topHUB v2")
+                PTLogger.info("Connected to pi-topHUB v2")
                 self._register_client()
                 return True
             else:
-                self._logger.warning("Could not initialise v2 hub")
+                PTLogger.warning("Could not initialise v2 hub")
 
         except Exception as e:
-            self._logger.warning("Failed to connect to a v2 hub. " + str(e))
-            self._logger.info(traceback.format_exc())
+            PTLogger.warning("Failed to connect to a v2 hub. " + str(e))
+            PTLogger.info(traceback.format_exc())
 
-        self._logger.info("Attempting to find pi-topHUB v1...")
+        PTLogger.info("Attempting to find pi-topHUB v1...")
 
         try:
             self._module_hub_v1 = self._import_module("pthub.pthub")
 
-            if (self._module_hub_v1.initialise(self._logger) is True):
+            if (self._module_hub_v1.initialise() is True):
                 self._active_hub_module = self._module_hub_v1
-                self._logger.info("Connected to pi-topHUB v1")
+                PTLogger.info("Connected to pi-topHUB v1")
                 self._register_client()
                 return True
             else:
-                self._logger.warning("Could not initialise v1 hub")
+                PTLogger.warning("Could not initialise v1 hub")
 
         except Exception as e:
-            self._logger.warning("Failed to connect to a v1 hub. " + str(e))
-            self._logger.info(traceback.format_exc())
+            PTLogger.warning("Failed to connect to a v1 hub. " + str(e))
+            PTLogger.info(traceback.format_exc())
 
-        self._logger.error("Could not connect to a hub!")
+        PTLogger.error("Could not connect to a hub!")
         return False
 
     def start(self):
@@ -76,17 +76,17 @@ class HubManager():
         # When stopping, we unblank the screen and set the brightness to full
         # to prevent restarting with no display
 
-        self._logger.info("Stopping hub manager...")
+        PTLogger.info("Stopping hub manager...")
 
         if (self._hub_connected()):
             self.unblank_screen()
 
-            self._logger.info("Stopping hub module...")
+            PTLogger.info("Stopping hub module...")
             self._active_hub_module.stop()
 
     def wait_for_device_id(self):
 
-        self._logger.info("Waiting for device id to be established...")
+        PTLogger.info("Waiting for device id to be established...")
 
         time_waited = 0
         while (time_waited < 5):
@@ -94,13 +94,13 @@ class HubManager():
             device_id = self.get_device_id()
             if (device_id != common_ids.DeviceID.not_yet_known):
 
-                self._logger.info("Got device id (" + str(device_id) + "). Waited " + str(time_waited) + " seconds")
+                PTLogger.info("Got device id (" + str(device_id) + "). Waited " + str(time_waited) + " seconds")
                 return
             else:
                 sleep(0.25)
                 time_waited += 0.25
 
-        self._logger.info("Timed out waiting for device id.")
+        PTLogger.info("Timed out waiting for device id.")
 
     def get_device_id(self):
 
@@ -110,7 +110,7 @@ class HubManager():
 
         if (device_id_from_file != common_ids.DeviceID.unknown):
 
-            self._logger.debug("Got device id from file: " + str(device_id_from_file))
+            PTLogger.debug("Got device id from file: " + str(device_id_from_file))
 
             return device_id_from_file
 
@@ -120,14 +120,14 @@ class HubManager():
 
         if (device_id_from_device != common_ids.DeviceID.not_yet_known and device_id_from_device != common_ids.DeviceID.unknown):
 
-            self._logger.debug("Got device id from device: " + str(device_id_from_device))
+            PTLogger.debug("Got device id from device: " + str(device_id_from_device))
             self._write_device_id_to_file(device_id_from_device)
 
             return device_id_from_device
 
         # Otherwise we don't know
 
-        self._logger.info("Could not determine device!")
+        PTLogger.info("Could not determine device!")
         return common_ids.DeviceID.unknown
 
     def get_brightness(self):
@@ -155,42 +155,42 @@ class HubManager():
             return self._active_hub_module.get_battery_state()
 
     def set_brightness(self, brightness):
-        self._logger.info("Setting brightness to " + str(brightness))
+        PTLogger.info("Setting brightness to " + str(brightness))
         if (self._hub_connected()):
             self._active_hub_module.set_brightness(brightness)
 
     def increment_brightness(self):
-        self._logger.info("Incrementing brightness")
+        PTLogger.info("Incrementing brightness")
         if (self._hub_connected()):
             self._active_hub_module.increment_brightness()
 
     def decrement_brightness(self):
-        self._logger.info("Decrementing brightness")
+        PTLogger.info("Decrementing brightness")
         if (self._hub_connected()):
             self._active_hub_module.decrement_brightness()
 
     def blank_screen(self):
-        self._logger.info("Blanking screen")
+        PTLogger.info("Blanking screen")
         if (self._hub_connected()):
             self._active_hub_module.blank_screen()
 
     def unblank_screen(self):
-        self._logger.info("Unblanking screen")
+        PTLogger.info("Unblanking screen")
         if (self._hub_connected()):
             self._active_hub_module.unblank_screen()
 
     def shutdown(self):
-        self._logger.info("Shutting down the hub")
+        PTLogger.info("Shutting down the hub")
         if (self._hub_connected()):
             self._active_hub_module.shutdown()
 
     def enable_hdmi_to_i2s_audio(self):
-        self._logger.info("Switching HDMI to I2S mux on")
+        PTLogger.info("Switching HDMI to I2S mux on")
         if (self._hub_connected()):
             self._active_hub_module.enable_hdmi_to_i2s_audio()
 
     def disable_hdmi_to_i2s_audio(self):
-        self._logger.info("Switching HDMI to I2S mux off")
+        PTLogger.info("Switching HDMI to I2S mux off")
         if (self._hub_connected()):
             self._active_hub_module.disable_hdmi_to_i2s_audio()
 
@@ -219,7 +219,7 @@ class HubManager():
 
     def _write_device_id_to_file(self, device_id):
 
-        self._logger.info("Writing device ID to file: " + str(device_id))
+        PTLogger.info("Writing device ID to file: " + str(device_id))
 
         f = open(self.DEVICE_ID_FILE_PATH, 'w')
         f.write(str(device_id) + "\n")
@@ -234,10 +234,10 @@ class HubManager():
             f.close()
 
             if device_id_file_str == "pi-top":
-                self._logger.info("Found legacy device id file (pi-top). Upgrading...")
+                PTLogger.info("Found legacy device id file (pi-top). Upgrading...")
                 _write_device_id_to_file(common_ids.DeviceID.pi_top)
             elif device_id_file_str == "pi-topCEED":
-                self._logger.info("Found legacy device id file (pi-topCEED). Upgrading...")
+                PTLogger.info("Found legacy device id file (pi-topCEED). Upgrading...")
                 _write_device_id_to_file(common_ids.DeviceID.pi_top_ceed)
 
     def _attempt_get_device_id_from_device(self):
@@ -262,7 +262,7 @@ class HubManager():
 
             try:
                 device_id = int(device_id_file_str)
-                _logger.info("Got device ID from file: " + str(device_id))
+                PTLogger.info("Got device ID from file: " + str(device_id))
 
             except:
                 pass

@@ -1,6 +1,7 @@
 
 # Handles safe shutdown when the hub is communicating that its battery capacity is below a threshold set by ptdm_controller
 
+from ptcommon.logger import PTLogger
 from ptcommon import common_ids
 from ptcommon import counter as c
 from os import system
@@ -23,12 +24,10 @@ class ShutdownManager:
         self._callback = None
         self._battery_capacity = None
         self._battery_charging = None
-        self._logger = None
 
         self._device_id = common_ids.DeviceID.not_yet_known
 
-    def initialise(self, logger, callback):
-        self._logger = logger
+    def initialise(self, callback):
         self._callback = callback
 
     def set_battery_capacity(self, new_value):
@@ -46,7 +45,7 @@ class ShutdownManager:
             self._device_id = new_value
 
         elif (device_id_changing is True):
-            self._logger.warning("The device id has changed! This is likely due to moving an SD card between different devices. Rebooting to re-initialise...")
+            PTLogger.warning("The device id has changed! This is likely due to moving an SD card between different devices. Rebooting to re-initialise...")
             self.reboot()
 
     def get_battery_capacity(self):
@@ -109,9 +108,9 @@ class ShutdownManager:
                 self.shown_warning_battery_message = True
 
     def shutdown(self):
-        self._logger.info("Shutting down OS")
+        PTLogger.info("Shutting down OS")
         system("shutdown -h now")
 
     def reboot(self):
-        self._logger.info("Rebooting OS")
+        PTLogger.info("Rebooting OS")
         system("reboot")
