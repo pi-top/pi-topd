@@ -1,0 +1,12 @@
+[Unit]
+Description=pi-topHUB shutdown announcement
+DefaultDependencies=no
+Before=umount.target
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/lib/pt-device-manager/poweroff-v2
+
+[Install]
+WantedBy=halt.target poweroff.target

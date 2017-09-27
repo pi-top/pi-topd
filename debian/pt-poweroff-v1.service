@@ -1,4 +1,3 @@
-
 [Unit]
 Description=pi-topHUB shutdown announcement
 DefaultDependencies=no
@@ -7,8 +6,7 @@ After=multi-user.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/lib/pt-device-manager/poweroff
-ExecStart=/usr/lib/pt-device-manager/poweroff-v2
+ExecStart=/usr/lib/pt-device-manager/poweroff-v1
 
 [Install]
 WantedBy=halt.target poweroff.target
