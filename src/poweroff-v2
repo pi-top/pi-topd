@@ -11,7 +11,7 @@ PWR__SHUTDOWN_CTRL__MODE1 = 0x08
 
 try:
 
-    hub = i2c_device.I2CDevice("/dev/i2c-1", 0x10, None)
+    hub = i2c_device.I2CDevice("/dev/i2c-1", 0x10)
     hub.connect()
 
     # Get the current power control register
