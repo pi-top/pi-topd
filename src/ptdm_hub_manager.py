@@ -86,7 +86,7 @@ class HubManager():
 
     def wait_for_device_id(self):
 
-        PTLogger.info("Waiting for device id to be established...")
+        PTLogger.debug("Waiting for device id to be established...")
 
         time_waited = 0
         while (time_waited < 5):
@@ -94,38 +94,38 @@ class HubManager():
             device_id = self.get_device_id()
             if (device_id != common_ids.DeviceID.not_yet_known):
 
-                PTLogger.info("Got device id (" + str(device_id) + "). Waited " + str(time_waited) + " seconds")
+                PTLogger.debug("Got device id (" + str(device_id) + "). Waited " + str(time_waited) + " seconds")
                 return
             else:
                 sleep(0.25)
                 time_waited += 0.25
 
-        PTLogger.info("Timed out waiting for device id.")
+        PTLogger.warning("Timed out waiting for device id.")
 
     def get_device_id(self):
 
-        # Get the device Id from the file
+        # Get the device Id from the file and device
 
         device_id_from_file = self._attempt_get_device_id_from_file()
-
-        if (device_id_from_file != common_ids.DeviceID.unknown):
-
-            PTLogger.debug("Got device id from file: " + str(device_id_from_file))
-
-            return device_id_from_file
-
-        # No file was found, query the device
-
         device_id_from_device = self._attempt_get_device_id_from_device()
+
+        # First see if we got a valid id from the device
 
         if (device_id_from_device != common_ids.DeviceID.not_yet_known and device_id_from_device != common_ids.DeviceID.unknown):
 
-            PTLogger.debug("Got device id from device: " + str(device_id_from_device))
+            PTLogger.info("Got a valid device id from the device: " + str(device_id_from_device))
             self._write_device_id_to_file(device_id_from_device)
 
             return device_id_from_device
 
-        # Otherwise we don't know
+        PTLogger.debug("Hub has yet to establish device id, checking file")
+
+        if (device_id_from_file != common_ids.DeviceID.unknown):
+
+            PTLogger.info("Got a valid device id from file: " + str(device_id_from_file))
+            return device_id_from_file
+
+        # No file was found, but we can hope that the hub comes back with a valid id after shortly
 
         PTLogger.info("Could not determine device!")
         return common_ids.DeviceID.unknown
@@ -219,7 +219,7 @@ class HubManager():
 
     def _write_device_id_to_file(self, device_id):
 
-        PTLogger.info("Writing device ID to file: " + str(device_id))
+        PTLogger.debug("Writing device ID to file: " + str(device_id))
 
         f = open(self.DEVICE_ID_FILE_PATH, 'w')
         f.write(str(device_id) + "\n")
@@ -262,7 +262,7 @@ class HubManager():
 
             try:
                 device_id = int(device_id_file_str)
-                PTLogger.info("Got device ID from file: " + str(device_id))
+                PTLogger.debug("Read device ID from file: " + str(device_id))
 
             except:
                 pass
