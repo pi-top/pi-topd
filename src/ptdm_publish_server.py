@@ -48,7 +48,7 @@ class PublishServer():
 
             self._zmq_socket.close()
             self._zmq_context.destroy()
-            PTLogger.debug("Done.")
+            PTLogger.debug("Closed publisher socket.")
 
         except zmq.error.ZMQError as e:
             PTLogger.error("Error starting the publish server: " + str(e))
