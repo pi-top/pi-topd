@@ -59,20 +59,25 @@ class PublishServer():
 
     def publish_brightness_changed(self, new_brightness: int):
         self._check_type(new_brightness, int)
+        PTLogger.info("Publishing PUB_BRIGHTNESS_CHANGED " + str(new_brightness))
         self._send_message(ptdm_message.Message.PUB_BRIGHTNESS_CHANGED, [new_brightness])
 
     def publish_peripheral_connected(self, peripheral_id: int):
         self._check_type(peripheral_id, int)
+        PTLogger.info("Publishing PUB_PERIPHERAL_CONNECTED " + str(peripheral_id))
         self._send_message(ptdm_message.Message.PUB_PERIPHERAL_CONNECTED, [peripheral_id])
 
     def publish_peripheral_disconnected(self, peripheral_id: int):
         self._check_type(peripheral_id, int)
+        PTLogger.info("Publishing PUB_PERIPHERAL_DISCONNECTED " + str(peripheral_id))
         self._send_message(ptdm_message.Message.PUB_PERIPHERAL_DISCONNECTED, [peripheral_id])
 
     def publish_shutdown_requested(self):
+        PTLogger.info("Publishing PUB_SHUTDOWN_REQUESTED")
         self._send_message(ptdm_message.Message.PUB_SHUTDOWN_REQUESTED, [])
 
     def publish_reboot_required(self):
+        PTLogger.info("Publishing PUB_REBOOT_REQUIRED")
         self._send_message(ptdm_message.Message.PUB_REBOOT_REQUIRED, [])
 
     def publish_battery_state_changed(self, connected: int, new_capacity: int, new_time: int, new_wattage: int):
@@ -83,21 +88,27 @@ class PublishServer():
         self._send_message(ptdm_message.Message.PUB_BATTERY_STATE_CHANGED, [connected, new_capacity, new_time, new_wattage])
 
     def publish_screen_blanked(self):
+        PTLogger.info("Publishing PUB_SCREEN_BLANKED")
         self._send_message(ptdm_message.Message.PUB_SCREEN_BLANKED, [])
 
     def publish_screen_unblanked(self):
+        PTLogger.info("Publishing PUB_SCREEN_UNBLANKED")
         self._send_message(ptdm_message.Message.PUB_SCREEN_UNBLANKED, [])
 
     def publish_low_battery_warning(self):
+        PTLogger.info("Publishing PUB_LOW_BATTERY_WARNING")
         self._send_message(ptdm_message.Message.PUB_LOW_BATTERY_WARNING, [])
 
     def publish_critical_battery_warning(self):
+        PTLogger.info("Publishing PUB_CRITICAL_BATTERY_WARNING")
         self._send_message(ptdm_message.Message.PUB_CRITICAL_BATTERY_WARNING, [])
 
     def publish_lid_opened(self):
+        PTLogger.info("Publishing PUB_LID_OPENED")
         self._send_message(ptdm_message.Message.PUB_LID_OPENED, [])
 
     def publish_lid_closed(self):
+        PTLogger.info("Publishing PUB_LID_CLOSED")
         self._send_message(ptdm_message.Message.PUB_LID_CLOSED, [])
 
     # Internal functions
