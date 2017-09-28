@@ -110,13 +110,13 @@ class PeripheralManager():
             self._custom_imported_modules[module_name] = i
 
         except ImportError:
-            PTLogger.info("Could not import " + cfg_module_str)
+            PTLogger.warning("Could not import " + cfg_module_str)
 
     def add_known_device(self, device):
         self._known_devices.append(device)
 
     def add_enabled_device(self, device):
-        PTLogger.debug("Adding enabled device: " + device['name'])
+        PTLogger.info("Adding enabled device: " + device['name'])
 
         self._enabled_devices.append(device)
         self.emit_peripheral_connected(device['id'])
