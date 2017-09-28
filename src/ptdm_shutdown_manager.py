@@ -19,6 +19,7 @@ class ShutdownManager:
 
     shown_warning_battery_message = False
     shown_critical_battery_message = False
+    shutdown_initiated = False
 
     def __init__(self):
         self._callback = None
@@ -76,7 +77,8 @@ class ShutdownManager:
 
         if under_shutdown_threshold:
             self.shutdown_battery_ctr.increment()
-            PTLogger.info("Battery: shutdown threshold reached " + str(self.shutdown_battery_ctr._current) + " of " + str(self.shutdown_battery_ctr._max))
+            if (self.shutdown_initiated is False):
+                PTLogger.info("Battery: shutdown threshold reached " + str(self.shutdown_battery_ctr._current) + " of " + str(self.shutdown_battery_ctr._max))
         else:
             self.shutdown_battery_ctr.reset()
 
@@ -109,7 +111,7 @@ class ShutdownManager:
             self.shown_warning_battery_message = False
             self.shown_critical_battery_message = False
         else:
-            if self.shutdown_battery_ctr.maxed():
+            if self.shutdown_battery_ctr.maxed() and not self.shutdown_initiated:
                 self.shutdown()
             elif self.critical_battery_ctr.maxed() and not self.shown_critical_battery_message:
                 self._callback._on_critical_battery_warning()
@@ -119,9 +121,16 @@ class ShutdownManager:
                 self.shown_warning_battery_message = True
 
     def shutdown(self):
-        PTLogger.info("Shutting down OS")
+        if (self.shutdown_initiated is True):
+            PTLogger.warning("Shutdown already initiated")
+            return
+
+        PTLogger.info("Shutting down OS...")
         system("shutdown -h now")
+        self.shutdown_initiated = True
+        PTLogger.info("OS shutdown command issued")
 
     def reboot(self):
         PTLogger.info("Rebooting OS")
         system("reboot")
+        PTLogger.info("OS reboot command issued")

@@ -42,7 +42,7 @@ class IdleMonitor():
         PTLogger.info("Stopping idle time monitor...")
         self._run_main_thread = False
         self._main_thread.join()
-        PTLogger.debug("Done.")
+        PTLogger.debug("Stopped idle time monitor.")
 
     def get_configured_timeout(self):
         return self._idle_timeout_s
