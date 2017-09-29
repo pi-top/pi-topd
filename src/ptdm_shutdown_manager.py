@@ -101,7 +101,13 @@ class ShutdownManager:
 
         if self.device_has_battery():
             if self.battery_state_fully_defined():
-                if self._battery_charging == 0:
+
+                # If the battery has not been removed altogther and the battery is not being charged, then evaluate
+                # whether we want to show warning messages or shutdown
+
+                battery_removed = (self._battery_capacity == 0)
+
+                if (battery_removed is False and self._battery_charging == 0):
                     self.update_counters_from_battery_state()
                     reset_ctrs = False
 
