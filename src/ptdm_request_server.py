@@ -52,7 +52,7 @@ class RequestServer():
         self._zmq_socket.close()
         self._zmq_context.destroy()
 
-        PTLogger.debug("Done.")
+        PTLogger.debug("Closed responder socket.")
 
     def _thread_method(self):
 

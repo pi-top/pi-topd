@@ -19,6 +19,7 @@ class ShutdownManager:
 
     shown_warning_battery_message = False
     shown_critical_battery_message = False
+    shutdown_initiated = False
 
     def __init__(self):
         self._callback = None
@@ -76,12 +77,24 @@ class ShutdownManager:
 
         if under_shutdown_threshold:
             self.shutdown_battery_ctr.increment()
+            if (self.shutdown_initiated is False):
+                PTLogger.info("Battery: shutdown threshold reached " + str(self.shutdown_battery_ctr._current) + " of " + str(self.shutdown_battery_ctr._max))
+        else:
+            self.shutdown_battery_ctr.reset()
+
         if under_critical_threshold:
             self.critical_battery_ctr.increment()
-        elif under_warning_threshold:
-            self.warning_battery_ctr.increment()
+            if (self.shown_critical_battery_message is False):
+                PTLogger.info("Battery: critical threshold reached " + str(self.critical_battery_ctr._current) + " of " + str(self.critical_battery_ctr._max))
         else:
-            self.reset_counters()
+            self.critical_battery_ctr.reset()
+
+        if under_warning_threshold:
+            self.warning_battery_ctr.increment()
+            if (self.shown_warning_battery_message is False):
+                PTLogger.info("Battery: warning threshold reached " + str(self.warning_battery_ctr._current) + " of " + str(self.warning_battery_ctr._max))
+        else:
+            self.warning_battery_ctr.reset()
 
     def process_battery_state(self):
         reset_ctrs = True
@@ -98,19 +111,26 @@ class ShutdownManager:
             self.shown_warning_battery_message = False
             self.shown_critical_battery_message = False
         else:
-            if self.shutdown_battery_ctr.maxed():
+            if self.shutdown_battery_ctr.maxed() and not self.shutdown_initiated:
                 self.shutdown()
             elif self.critical_battery_ctr.maxed() and not self.shown_critical_battery_message:
                 self._callback._on_critical_battery_warning()
                 self.shown_critical_battery_message = True
-            elif self.warning_battery_ctr.maxed() and self.shown_warning_battery_message:
+            elif self.warning_battery_ctr.maxed() and not self.shown_warning_battery_message:
                 self._callback._on_low_battery_warning()
                 self.shown_warning_battery_message = True
 
     def shutdown(self):
-        PTLogger.info("Shutting down OS")
+        if (self.shutdown_initiated is True):
+            PTLogger.warning("Shutdown already initiated")
+            return
+
+        PTLogger.info("Shutting down OS...")
         system("shutdown -h now")
+        self.shutdown_initiated = True
+        PTLogger.info("OS shutdown command issued")
 
     def reboot(self):
         PTLogger.info("Rebooting OS")
         system("reboot")
+        PTLogger.info("OS reboot command issued")
