@@ -5,6 +5,7 @@ from ptcommon import common_ids
 from time import sleep
 from os import makedirs
 from os import path
+from os import remove
 
 # Discovers which hub libraries are installed, and uses those to
 # determine the type of hub in use and communicate with it
@@ -13,6 +14,7 @@ from os import path
 class HubManager():
 
     HUB_CONFIG_DIR = '/etc/pi-top/pt-hub'
+    REBOOT_STATE_FILE_PATH = HUB_CONFIG_DIR + '/reboot.state'
     DEVICE_ID_FILE_PATH = '/etc/pi-top/device_id'
 
     def initialise(self, callback_client):
@@ -104,9 +106,20 @@ class HubManager():
 
     def get_device_id(self):
 
-        # Get the device Id from the file and device
+        # Get the device id from the file and device
 
         device_id_from_file = self._attempt_get_device_id_from_file()
+
+        if path.isfile(self.REBOOT_STATE_FILE_PATH):
+            remove(self.REBOOT_STATE_FILE_PATH)
+
+            if device_id_from_file != common_ids.DeviceID.unknown:
+                PTLogger.info("Reboot state file found - assuming device ID in file is correct: " + str(device_id_from_file))
+                return device_id_from_file
+            else:
+                # Not valid - do not return anything
+                PTLogger.error("Reboot state file found, but invalid device ID in file: " + str(device_id_from_file))
+
         device_id_from_device = self._attempt_get_device_id_from_device()
 
         # First see if we got a valid id from the device
