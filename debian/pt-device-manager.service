@@ -1,5 +1,6 @@
 [Unit]
 Description=pi-top device auto-detection and configuration daemon
+After=pt-desktop-message.service
 
 [Service]
 Restart=always
