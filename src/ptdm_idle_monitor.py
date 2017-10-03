@@ -1,10 +1,10 @@
 from ptcommon.logger import PTLogger
-import idletime
-import time
-import threading
+from idletime import get_idle_time
 from os import makedirs
 from os import path
 from os import remove
+from threading import Thread
+from time import sleep
 
 
 class IdleMonitor():
@@ -33,7 +33,7 @@ class IdleMonitor():
     def start(self):
         PTLogger.info("Starting idle time monitor...")
         if self._main_thread is None:
-            self._main_thread = threading.Thread(target=self._main_thread_loop)
+            self._main_thread = Thread(target=self._main_thread_loop)
 
         self._run_main_thread = True
         self._main_thread.start()
@@ -83,7 +83,7 @@ class IdleMonitor():
 
     def _main_thread_loop(self):
         while self._run_main_thread:
-            time_since_idle = idletime.get_idle_time()
+            time_since_idle = get_idle_time()
 
             if (time_since_idle != -1):
 
@@ -107,7 +107,7 @@ class IdleMonitor():
                 PTLogger.warning("pt-idletime.get_idle_time() returned -1. Check the configuration of xhost.")
 
             for i in range(5):
-                time.sleep(self._cycle_sleep_time / 5)
+                sleep(self._cycle_sleep_time / 5)
 
                 if (self._run_main_thread is False):
                     break
