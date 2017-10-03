@@ -1,10 +1,10 @@
+from ptcommon.common_ids import DeviceID
 from ptcommon.logger import PTLogger
 from importlib import import_module
 import traceback
-from ptcommon import common_ids
-from time import sleep
 from os import makedirs
 from os import path
+from time import sleep
 
 # Discovers which hub libraries are installed, and uses those to
 # determine the type of hub in use and communicate with it
@@ -92,7 +92,7 @@ class HubManager():
         while (time_waited < 5):
 
             device_id = self.get_device_id()
-            if (device_id != common_ids.DeviceID.not_yet_known):
+            if (device_id != DeviceID.not_yet_known):
 
                 PTLogger.debug("Got device id (" + str(device_id) + "). Waited " + str(time_waited) + " seconds")
                 return
@@ -111,7 +111,7 @@ class HubManager():
 
         # First see if we got a valid id from the device
 
-        if (device_id_from_device != common_ids.DeviceID.not_yet_known and device_id_from_device != common_ids.DeviceID.unknown):
+        if (device_id_from_device != DeviceID.not_yet_known and device_id_from_device != DeviceID.unknown):
 
             PTLogger.info("Got a valid device id from the device: " + str(device_id_from_device))
             self._write_device_id_to_file(device_id_from_device)
@@ -120,7 +120,7 @@ class HubManager():
 
         PTLogger.debug("Hub has yet to establish device id, checking file")
 
-        if (device_id_from_file != common_ids.DeviceID.unknown):
+        if (device_id_from_file != DeviceID.unknown):
 
             PTLogger.info("Got a valid device id from file: " + str(device_id_from_file))
             return device_id_from_file
@@ -128,7 +128,7 @@ class HubManager():
         # No file was found, but we can hope that the hub comes back with a valid id after shortly
 
         PTLogger.info("Could not determine device!")
-        return common_ids.DeviceID.unknown
+        return DeviceID.unknown
 
     def get_brightness(self):
         if (self._hub_connected()):
@@ -235,14 +235,14 @@ class HubManager():
 
             if device_id_file_str == "pi-top":
                 PTLogger.info("Found legacy device id file (pi-top). Upgrading...")
-                _write_device_id_to_file(common_ids.DeviceID.pi_top)
+                _write_device_id_to_file(DeviceID.pi_top)
             elif device_id_file_str == "pi-topCEED":
                 PTLogger.info("Found legacy device id file (pi-topCEED). Upgrading...")
-                _write_device_id_to_file(common_ids.DeviceID.pi_top_ceed)
+                _write_device_id_to_file(DeviceID.pi_top_ceed)
 
     def _attempt_get_device_id_from_device(self):
 
-        device_id = common_ids.DeviceID.not_yet_known
+        device_id = DeviceID.not_yet_known
 
         if (self._hub_connected()):
             device_id = self._active_hub_module.get_device_id()
@@ -251,7 +251,7 @@ class HubManager():
 
     def _attempt_get_device_id_from_file(self):
 
-        device_id = common_ids.DeviceID.unknown
+        device_id = DeviceID.unknown
 
         self._upgrade_legacy_device_id_file()
 

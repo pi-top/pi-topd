@@ -15,13 +15,11 @@
 import signal
 from ptcommon.logger import PTLogger
 from ptdm_controller import Controller
-import logging
-import sys
-import os
-import argparse
+from os import environ
+from argparse import ArgumentParser
 
 # Set the display env var
-os.environ["DISPLAY"] = ":0.0"
+environ["DISPLAY"] = ":0.0"
 
 # Create the controller
 controller = Controller()
@@ -35,7 +33,7 @@ signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
 # Process command line
-parser = argparse.ArgumentParser(description="pi-top hardware manager")
+parser = ArgumentParser(description="pi-top hardware manager")
 parser.add_argument("--no-journal", help="output to stdout not the journal", action="store_true")
 parser.add_argument("--log-level", type=int, help="set the logging level from 10 (more verbose) to 50 (less verbose)", default=20)
 args = parser.parse_args()
