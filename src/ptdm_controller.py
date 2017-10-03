@@ -2,16 +2,14 @@
 # Instantiates and coordinates between the other classes
 
 from ptcommon.logger import PTLogger
-from ptcommon import common_ids
 from ptdm_hub_manager import HubManager
 from ptdm_idle_monitor import IdleMonitor
 from ptdm_peripheral_manager import PeripheralManager
 from ptdm_publish_server import PublishServer
 from ptdm_request_server import RequestServer
 from ptdm_shutdown_manager import ShutdownManager
-import time
-import sys
-import logging
+from time import sleep
+from sys import exit
 
 
 class Controller():
@@ -71,7 +69,7 @@ class Controller():
             return
 
         while (self._continue_running is True):
-            time.sleep(0.5)
+            sleep(0.5)
 
         # Stop the other classes
         self._request_server.stop_listening()
@@ -82,7 +80,7 @@ class Controller():
 
         PTLogger.info("Exiting...")
 
-        sys.exit(0)
+        exit(0)
 
     def stop(self):
         PTLogger.info("Stopping device manager...")
