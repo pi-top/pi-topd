@@ -1,21 +1,20 @@
+from ptcommon.logger import PTLogger
+from ptcommon.common_ids import DeviceID
+from ptcommon.counter import Counter
+from os import system
 
 # Handles safe shutdown when the hub is communicating that its battery capacity is below a threshold set by ptdm_controller
-
-from ptcommon.logger import PTLogger
-from ptcommon import common_ids
-from ptcommon import counter as c
-from os import system
 
 
 class ShutdownManager:
     warning_battery_level = 5
-    warning_battery_ctr = c.Counter(3)
+    warning_battery_ctr = Counter(3)
 
     critical_battery_level = 3
-    critical_battery_ctr = c.Counter(3)
+    critical_battery_ctr = Counter(3)
 
     shutdown_battery_level = 2
-    shutdown_battery_ctr = c.Counter(3)
+    shutdown_battery_ctr = Counter(3)
 
     shown_warning_battery_message = False
     shown_critical_battery_message = False
@@ -26,7 +25,7 @@ class ShutdownManager:
         self._battery_capacity = None
         self._battery_charging = None
 
-        self._device_id = common_ids.DeviceID.not_yet_known
+        self._device_id = DeviceID.not_yet_known
 
     def initialise(self, callback):
         self._callback = callback
@@ -39,7 +38,7 @@ class ShutdownManager:
 
     def set_device_id(self, new_value):
 
-        device_id_already_established = (self._device_id != common_ids.DeviceID.not_yet_known and self._device_id != common_ids.DeviceID.unknown)
+        device_id_already_established = (self._device_id != DeviceID.not_yet_known and self._device_id != DeviceID.unknown)
         device_id_changing = (self._device_id != new_value)
 
         if (device_id_already_established is False):
@@ -56,8 +55,8 @@ class ShutdownManager:
         return self._battery_charging
 
     def device_has_battery(self):
-        return (self._device_id == common_ids.DeviceID.pi_top or
-                self._device_id == common_ids.DeviceID.pi_top_v2)
+        return (self._device_id == DeviceID.pi_top or
+                self._device_id == DeviceID.pi_top_v2)
 
     def battery_state_fully_defined(self):
         capacity_defined = (self._battery_capacity is not None)

@@ -8,16 +8,16 @@
 import zmq
 from time import sleep
 from threading import Thread
-from ptcommon import ptdm_message
+from ptcommon.ptdm_message import Message
 
 
 def send_request(message_request_id, parameters):
 
-    message = ptdm_message.Message.from_parts(message_request_id, parameters)
+    message = Message.from_parts(message_request_id, parameters)
     zmq_socket.send_string(message.to_string())
 
     response_string = zmq_socket.recv_string()
-    response = ptdm_message.Message.from_string(response_string)
+    response = Message.from_string(response_string)
 
     return response.message_id()
 
@@ -52,7 +52,7 @@ def request_test_emits():
     print(" ACTUAL: ")
     print("---------")
 
-    send_request(ptdm_message.Message.REQ_TEST_PUB_EMITS, [])
+    send_request(Message.REQ_TEST_PUB_EMITS, [])
 
 
 def listen_thread():
@@ -73,7 +73,7 @@ def listen_thread():
 
         for i in range(len(events)):
             message_string = zmq_socket.recv_string()
-            message = ptdm_message.Message.from_string(message_string)
+            message = Message.from_string(message_string)
             print("Received publish event: " + message.message_friendly_string())
 
 

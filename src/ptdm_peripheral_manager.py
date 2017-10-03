@@ -1,18 +1,20 @@
+from ptcommon.common_functions import reboot_system
+from ptcommon.common_functions import touch_file
+from ptcommon.common_ids import DeviceID
 from ptcommon.logger import PTLogger
-from ptcommon import common_ids
-from ptcommon import common_functions
-from ptcommon import sys_config
+from ptcommon.sys_config import I2C
+from ptcommon.sys_config import I2S
 from importlib import import_module
-from string import whitespace
-from threading import Thread
-from shutil import copy
-from subprocess import check_output
-from subprocess import Popen
-from subprocess import call
 from os import path
 from os import remove
 from os import remove
 from os import utime
+from shutil import copy
+from string import whitespace
+from subprocess import check_output
+from subprocess import Popen
+from subprocess import call
+from threading import Thread
 from time import sleep
 
 # Discovers which peripheral libraries are installed, and uses those to
@@ -76,7 +78,7 @@ class PeripheralManager():
             self._callback_client._on_reboot_required()
 
     def start(self):
-        if self._device_id is None or self._device_id == common_ids.DeviceID.not_yet_known:
+        if self._device_id is None or self._device_id == DeviceID.not_yet_known:
             PTLogger.error("Unable to start pi-top peripheral management - invalid device ID")
             return False
 
@@ -251,11 +253,11 @@ class PeripheralManager():
         if valid:
             if 'pi-topPULSE' in device['name']:
                 if 'ptpulse' in self._custom_imported_modules:
-                    is_v1_hub = (self._device_id == common_ids.DeviceID.pi_top) or (self._device_id == common_ids.DeviceID.pi_top_ceed)
+                    is_v1_hub = (self._device_id == DeviceID.pi_top) or (self._device_id == DeviceID.pi_top_ceed)
 
-                    if self._device_id == common_ids.DeviceID.pi_top_v2:
+                    if self._device_id == DeviceID.pi_top_v2:
                         self.configure_v2_hub_pulse(device, enable)
-                    elif is_v1_hub or self._device_id == common_ids.DeviceID.unknown:
+                    elif is_v1_hub or self._device_id == DeviceID.unknown:
                         self.configure_v1_hub_pulse(device, enable)
                     else:
                         print("NOT A VALID CONFIGURATION")
@@ -263,15 +265,15 @@ class PeripheralManager():
                     self.show_pulse_install_package_message()
             elif 'pi-topSPEAKER' in device['name']:
                 if 'ptspeaker' in self._custom_imported_modules:
-                    is_v1_hub = (self._device_id == common_ids.DeviceID.pi_top) or (self._device_id == common_ids.DeviceID.pi_top_ceed)
+                    is_v1_hub = (self._device_id == DeviceID.pi_top) or (self._device_id == DeviceID.pi_top_ceed)
 
-                    if self._device_id == common_ids.DeviceID.pi_top_v2:
+                    if self._device_id == DeviceID.pi_top_v2:
                         # CHECK THAT SPEAKER IS V2
                         if device['name'] == 'pi-topSPEAKER-v2':
                             self.enable_v2_hub_v2_speaker(device)
                         else:
                             print("Unable to initialise V1 speaker with V2 hardware")
-                    elif is_v1_hub or self._device_id == common_ids.DeviceID.unknown:
+                    elif is_v1_hub or self._device_id == DeviceID.unknown:
                         if enable is True:
                             if device['name'] == 'pi-topSPEAKER-v2':
                                 self.enable_v1_hub_v2_speaker(device)
@@ -289,7 +291,7 @@ class PeripheralManager():
             PTLogger.debug("Device state was already set")
 
     def get_connected_devices(self):
-        addresses = sys_config.I2C.get_connected_device_addresses()
+        addresses = I2C.get_connected_device_addresses()
 
         detected_devices = []
 
@@ -346,7 +348,7 @@ class PeripheralManager():
             PTLogger.debug("Device " + current_device_name + " already enabled")
 
     def auto_initialise_peripherals(self):
-        addresses = sys_config.I2C.get_connected_device_addresses()
+        addresses = I2C.get_connected_device_addresses()
 
         for device in self._enabled_devices:
 
@@ -362,10 +364,10 @@ class PeripheralManager():
                 self.attempt_enable_device_by_name(current_device['name'])
 
     def configure_hifiberry_alsactl(self):
-        if sys_config.I2S.get_current_state() is True and path.isfile(self._i2s_configured_file_path) is False:
+        if I2S.get_current_state() is True and path.isfile(self._i2s_configured_file_path) is False:
             call(("/usr/sbin/alsactl", "-f", self._i2s_config_file_path, "restore"))
-            common_functions.touch_file(self._i2s_configured_file_path)
-            common_functions.reboot_system()
+            touch_file(self._i2s_configured_file_path)
+            reboot_system()
 
     def get_peripheral_enabled(self, peripheral_id):
         device = self.get_device_by_id(peripheral_id)
