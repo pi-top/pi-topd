@@ -52,7 +52,7 @@ class Controller():
 
         # Wait until we have established what device we're running on
 
-        self._hub_manager.wait_for_device_id()
+        self._hub_manager.wait_for_device_identification()
         device_id = self._hub_manager.get_device_id()
 
         # Now we have a device id, pass it to the other services
@@ -173,8 +173,8 @@ class Controller():
 
     def _on_device_id_changed(self, device_id_int):
 
-        # Inform the shutdown manager that the device id has changed.
-        # This will trigger a reboot if required
+        # Inform the shutdown manager that the device id has changed, so
+        # it can handle battery notifications correctly
 
         self._shutdown_manager.set_device_id(device_id_int)
 
