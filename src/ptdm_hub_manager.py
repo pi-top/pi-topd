@@ -12,13 +12,7 @@ from time import sleep
 
 class HubManager():
 
-    HUB_CONFIG_DIR = '/etc/pi-top/pt-hub'
-    DEVICE_ID_FILE_PATH = '/etc/pi-top/device_id'
-
     def initialise(self, callback_client):
-
-        if not path.exists(self.HUB_CONFIG_DIR):
-            makedirs(self.HUB_CONFIG_DIR)
 
         self._callback_client = callback_client
         self._active_hub_module = None
@@ -70,6 +64,8 @@ class HubManager():
     def start(self):
         if (self._hub_connected()):
             self._active_hub_module.start()
+        else:
+            PTLogger.warning("Attempted to call start when there was no active hub")
 
     def stop(self):
 
@@ -84,7 +80,7 @@ class HubManager():
             PTLogger.info("Stopping hub module...")
             self._active_hub_module.stop()
 
-    def wait_for_device_id(self):
+    def wait_for_device_identification(self):
 
         PTLogger.debug("Waiting for device id to be established...")
 
@@ -92,107 +88,115 @@ class HubManager():
         while (time_waited < 5):
 
             device_id = self.get_device_id()
-            if (device_id != DeviceID.not_yet_known):
+            if (device_id == DeviceID.unknown):
 
-                PTLogger.debug("Got device id (" + str(device_id) + "). Waited " + str(time_waited) + " seconds")
-                return
-            else:
                 sleep(0.25)
                 time_waited += 0.25
 
-        PTLogger.warning("Timed out waiting for device id.")
+            else:
+                PTLogger.debug("Got device id (" + str(device_id) + "). Waited " + str(time_waited) + " seconds")
+                return
+
+        PTLogger.warning("Timed out waiting for device identification.")
 
     def get_device_id(self):
-
-        # Get the device Id from the file and device
-
-        device_id_from_file = self._attempt_get_device_id_from_file()
-        device_id_from_device = self._attempt_get_device_id_from_device()
-
-        # First see if we got a valid id from the device
-
-        if (device_id_from_device != DeviceID.not_yet_known and device_id_from_device != DeviceID.unknown):
-
-            PTLogger.info("Got a valid device id from the device: " + str(device_id_from_device))
-            self._write_device_id_to_file(device_id_from_device)
-
-            return device_id_from_device
-
-        PTLogger.debug("Hub has yet to establish device id, checking file")
-
-        if (device_id_from_file != DeviceID.unknown):
-
-            PTLogger.info("Got a valid device id from file: " + str(device_id_from_file))
-            return device_id_from_file
-
-        # No file was found, but we can hope that the hub comes back with a valid id after shortly
-
-        PTLogger.info("Could not determine device!")
-        return DeviceID.unknown
+        if (self._hub_connected()):
+            return self._active_hub_module.get_device_id()
+        else:
+            PTLogger.warning("Attempted to call get_device_id when there was no active hub")
+            return DeviceID.unknown
 
     def get_brightness(self):
         if (self._hub_connected()):
             return self._active_hub_module.get_brightness()
+        else:
+            PTLogger.warning("Attempted to call get_brightness when there was no active hub")
 
     def get_screen_off_state(self):
         if (self._hub_connected()):
             return self._active_hub_module.get_screen_off_state()
+        else:
+            PTLogger.warning("Attempted to call get_screen_off_state when there was no active hub")
 
     def get_shutdown_state(self):
         if (self._hub_connected()):
             return self._active_hub_module.get_shutdown_state()
+        else:
+            PTLogger.warning("Attempted to call get_shutdown_state when there was no active hub")
 
     def get_battery_charging_state(self):
         if (self._hub_connected()):
             return self._active_hub_module.get_battery_charging_state()
+        else:
+            PTLogger.warning("Attempted to call get_battery_charging_state when there was no active hub")
 
     def get_battery_time_state(self):
         if (self._hub_connected()):
             return self._active_hub_module.get_battery_time_state()
+        else:
+            PTLogger.warning("Attempted to call get_battery_time_state when there was no active hub")
 
     def get_battery_state(self):
         if (self._hub_connected()):
             return self._active_hub_module.get_battery_state()
+        else:
+            PTLogger.warning("Attempted to call get_battery_state when there was no active hub")
 
     def set_brightness(self, brightness):
         PTLogger.info("Setting brightness to " + str(brightness))
         if (self._hub_connected()):
             self._active_hub_module.set_brightness(brightness)
+        else:
+            PTLogger.warning("Attempted to call set_brightness when there was no active hub")
 
     def increment_brightness(self):
         PTLogger.info("Incrementing brightness")
         if (self._hub_connected()):
             self._active_hub_module.increment_brightness()
+        else:
+            PTLogger.warning("Attempted to call increment_brightness when there was no active hub")
 
     def decrement_brightness(self):
         PTLogger.info("Decrementing brightness")
         if (self._hub_connected()):
             self._active_hub_module.decrement_brightness()
+        else:
+            PTLogger.warning("Attempted to call decrement_brightness when there was no active hub")
 
     def blank_screen(self):
         PTLogger.info("Blanking screen")
         if (self._hub_connected()):
             self._active_hub_module.blank_screen()
+        else:
+            PTLogger.warning("Attempted to call blank_screen when there was no active hub")
 
     def unblank_screen(self):
         PTLogger.info("Unblanking screen")
         if (self._hub_connected()):
             self._active_hub_module.unblank_screen()
+        else:
+            PTLogger.warning("Attempted to call unblank_screen when there was no active hub")
 
     def shutdown(self):
         PTLogger.info("Shutting down the hub")
         if (self._hub_connected()):
             self._active_hub_module.shutdown()
+        else:
+            PTLogger.warning("Attempted to call shutdown when there was no active hub")
 
     def enable_hdmi_to_i2s_audio(self):
         PTLogger.info("Switching HDMI to I2S mux on")
         if (self._hub_connected()):
             self._active_hub_module.enable_hdmi_to_i2s_audio()
+        else:
+            PTLogger.warning("Attempted to call enable_hdmi_to_i2s_audio when there was no active hub")
 
     def disable_hdmi_to_i2s_audio(self):
         PTLogger.info("Switching HDMI to I2S mux off")
         if (self._hub_connected()):
             self._active_hub_module.disable_hdmi_to_i2s_audio()
+        else:
+            PTLogger.warning("Attempted to call disable_hdmi_to_i2s_audio when there was no active hub")
 
     def _hub_connected(self):
         return (self._active_hub_module is not None)
@@ -214,60 +218,7 @@ class HubManager():
                 self._on_lid_opened,
                 self._on_lid_closed,
                 self._on_hub_shutdown_requested,
-                self._on_device_id_changed,
                 self._on_hub_battery_state_changed)
-
-    def _write_device_id_to_file(self, device_id):
-
-        PTLogger.debug("Writing device ID to file: " + str(device_id))
-
-        f = open(self.DEVICE_ID_FILE_PATH, 'w')
-        f.write(str(device_id) + "\n")
-        f.close()
-
-    def _upgrade_legacy_device_id_file(self):
-
-        if path.isfile(self.DEVICE_ID_FILE_PATH):
-
-            f = open(self.DEVICE_ID_FILE_PATH, 'r+')
-            device_id_file_str = f.read().strip()
-            f.close()
-
-            if device_id_file_str == "pi-top":
-                PTLogger.info("Found legacy device id file (pi-top). Upgrading...")
-                _write_device_id_to_file(DeviceID.pi_top)
-            elif device_id_file_str == "pi-topCEED":
-                PTLogger.info("Found legacy device id file (pi-topCEED). Upgrading...")
-                _write_device_id_to_file(DeviceID.pi_top_ceed)
-
-    def _attempt_get_device_id_from_device(self):
-
-        device_id = DeviceID.not_yet_known
-
-        if (self._hub_connected()):
-            device_id = self._active_hub_module.get_device_id()
-
-        return device_id
-
-    def _attempt_get_device_id_from_file(self):
-
-        device_id = DeviceID.unknown
-
-        self._upgrade_legacy_device_id_file()
-
-        if path.isfile(self.DEVICE_ID_FILE_PATH):
-            f = open(self.DEVICE_ID_FILE_PATH, 'r')
-            device_id_file_str = f.read().strip()
-            f.close()
-
-            try:
-                device_id = int(device_id_file_str)
-                PTLogger.debug("Read device ID from file: " + str(device_id))
-
-            except:
-                pass
-
-        return device_id
 
     # Hub callbacks
 
@@ -291,13 +242,3 @@ class HubManager():
 
     def _on_lid_closed(self):
         self._callback_client._on_lid_closed()
-
-    def _on_device_id_changed(self, device_id_int):
-
-        # The device id has changed, this may have happened a short time
-        # after starting up, once the v1 hub has had time to communicate
-        # Update the device id file with this value
-
-        self._write_device_id_to_file(device_id_int)
-
-        self._callback_client._on_device_id_changed(device_id_int)

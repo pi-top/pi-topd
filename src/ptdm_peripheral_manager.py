@@ -38,7 +38,7 @@ class PeripheralManager():
         self._enabled_devices = []
         self._known_devices = []
         self._custom_imported_modules = {}
-        self._device_id = None
+        self._device_id = DeviceID.unknown
 
         PTLogger.debug("Initialising peripheral manager...")
         # Dynamically add the required python modules, if they are installed
@@ -78,7 +78,7 @@ class PeripheralManager():
             self._callback_client._on_reboot_required()
 
     def start(self):
-        if self._device_id is None or self._device_id == DeviceID.not_yet_known:
+        if self._device_id == DeviceID.unknown:
             PTLogger.error("Unable to start pi-top peripheral management - invalid device ID")
             return False
 

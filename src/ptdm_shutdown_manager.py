@@ -25,7 +25,7 @@ class ShutdownManager:
         self._battery_capacity = None
         self._battery_charging = None
 
-        self._device_id = DeviceID.not_yet_known
+        self._device_id = DeviceID.unknown
 
     def initialise(self, callback):
         self._callback = callback
@@ -37,16 +37,7 @@ class ShutdownManager:
         self._battery_charging = new_value
 
     def set_device_id(self, new_value):
-
-        device_id_already_established = (self._device_id != DeviceID.not_yet_known and self._device_id != DeviceID.unknown)
-        device_id_changing = (self._device_id != new_value)
-
-        if (device_id_already_established is False):
-            self._device_id = new_value
-
-        elif (device_id_changing is True):
-            PTLogger.warning("The device id has changed! This is likely due to moving an SD card between different devices. Rebooting to re-initialise...")
-            self.reboot()
+        self._device_id = new_value
 
     def get_battery_capacity(self):
         return self._battery_capacity
