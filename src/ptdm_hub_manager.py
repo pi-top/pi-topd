@@ -145,6 +145,7 @@ class HubManager():
     def set_brightness(self, brightness):
         PTLogger.info("Setting brightness to " + str(brightness))
         if (self._hub_connected()):
+            self.unblank_screen()
             self._active_hub_module.set_brightness(brightness)
         else:
             PTLogger.warning("Attempted to call set_brightness when there was no active hub")
@@ -152,6 +153,7 @@ class HubManager():
     def increment_brightness(self):
         PTLogger.info("Incrementing brightness")
         if (self._hub_connected()):
+            self.unblank_screen()
             self._active_hub_module.increment_brightness()
         else:
             PTLogger.warning("Attempted to call increment_brightness when there was no active hub")
@@ -159,6 +161,7 @@ class HubManager():
     def decrement_brightness(self):
         PTLogger.info("Decrementing brightness")
         if (self._hub_connected()):
+            self.unblank_screen()
             self._active_hub_module.decrement_brightness()
         else:
             PTLogger.warning("Attempted to call decrement_brightness when there was no active hub")
