@@ -1,3 +1,9 @@
+pt-device-manager (1.0.1-1) jessie; urgency=low
+
+  * Fixes around device identification, low-battery handling logic, brightness
+
+ -- Ben Pring <ben@pi-top.com>  Thu, 05 Oct 2017 14:21:42 +0100
+
 pt-device-manager (1.0.0-1) jessie; urgency=low
 
   * Initial release.
