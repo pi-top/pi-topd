@@ -55,7 +55,7 @@ class PeripheralManager():
 
         self.configure_hifiberry_alsactl()
 
-        if (HeadphoneJack.get_audio_output_interface_no() == 0):
+        if (HeadphoneJack.get_audio_output_interface_no() == "0"):
             PTLogger.info("System audio configured to auto - setting to headphone jack by default")
             HeadphoneJack.set_as_audio_output()
 
