@@ -4,6 +4,10 @@ Source: https://pi-top.com/
 Upstream-Contact: deb-maintainers@pi-top.com
 
 Files: *
-Copyright: Copyright 2017 CEED ltd.
+Copyright: Copyright 2017 CEED Ltd.
+License: Proprietary
+
+Files: debian/*
+Copyright: Copyright 2017 CEED Ltd.
 License: Apache-2.0
  `/usr/share/common-licenses/Apache-2.0'.

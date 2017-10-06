@@ -4,6 +4,7 @@ from ptcommon.common_ids import DeviceID
 from ptcommon.logger import PTLogger
 from ptcommon.sys_config import I2C
 from ptcommon.sys_config import I2S
+from ptcommon.sys_config import HeadphoneJack
 from importlib import import_module
 from os import path
 from os import remove
@@ -53,6 +54,10 @@ class PeripheralManager():
         self.initialise_known_device({'id': 4, 'compatible_ids': [None], 'name': 'pi-topSPEAKER-v2', 'type': 'addon', 'addr': 0x43})
 
         self.configure_hifiberry_alsactl()
+
+        if (HeadphoneJack.get_audio_output_interface_no() == "0"):
+            PTLogger.info("System audio configured to auto - setting to headphone jack by default")
+            HeadphoneJack.set_as_audio_output()
 
     def initialise_device_id(self, device_id):
         self._device_id = device_id
