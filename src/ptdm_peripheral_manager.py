@@ -78,6 +78,10 @@ class PeripheralManager():
         if (self._callback_client is not None):
             self._callback_client._on_peripheral_disconnected(device_id)
 
+    def emit_unsupported_hardware_message(self):
+        if (self._callback_client is not None):
+            self._callback_client._on_unsupported_hardware()
+
     def emit_reboot_message(self):
         if (self._callback_client is not None):
             self._callback_client._on_reboot_required()
@@ -278,6 +282,10 @@ class PeripheralManager():
                             self.enable_v2_hub_v2_speaker(device)
                         else:
                             print("Unable to initialise V1 speaker with V2 hardware")
+                            # Mark as enabled even if a reboot is required
+                            # to prevent subsequent attempts to enable
+                            self.add_enabled_device(device)
+                            self.emit_unsupported_hardware_message()
                     elif is_v1_hub or self._device_id == DeviceID.unknown:
                         if enable is True:
                             if device['name'] == 'pi-topSPEAKER-v2':
