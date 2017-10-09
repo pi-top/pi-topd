@@ -188,6 +188,9 @@ class Controller():
     def _on_peripheral_disconnected(self, peripheral_id_int):
         self._publish_server.publish_peripheral_disconnected(peripheral_id_int)
 
+    def _on_unsupported_hardware(self):
+        self._publish_server.publish_unsupported_hardware()
+
     def _on_reboot_required(self):
         self._publish_server.publish_reboot_required()
 

@@ -70,6 +70,10 @@ class PublishServer():
         PTLogger.info("Publishing PUB_PERIPHERAL_DISCONNECTED " + str(peripheral_id))
         self._send_message(Message.PUB_PERIPHERAL_DISCONNECTED, [peripheral_id])
 
+    def publish_unsupported_hardware(self):
+        PTLogger.info("Publishing PUB_UNSUPPORTED_HARDWARE")
+        self._send_message(Message.PUB_UNSUPPORTED_HARDWARE, [])
+
     def publish_shutdown_requested(self):
         PTLogger.info("Publishing PUB_SHUTDOWN_REQUESTED")
         self._send_message(Message.PUB_SHUTDOWN_REQUESTED, [])
