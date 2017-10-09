@@ -167,9 +167,11 @@ class Controller():
 
     def _on_lid_opened(self):
         self._publish_server.publish_lid_opened()
+        self._hub_manager.unblank_screen()
 
     def _on_lid_closed(self):
         self._publish_server.publish_lid_closed()
+        self._hub_manager.blank_screen()
 
     def _on_device_id_changed(self, device_id_int):
 
@@ -184,15 +186,18 @@ class Controller():
 
     def _on_peripheral_connected(self, peripheral_id_int):
         self._publish_server.publish_peripheral_connected(peripheral_id_int)
+        self._hub_manager.unblank_screen()
 
     def _on_peripheral_disconnected(self, peripheral_id_int):
         self._publish_server.publish_peripheral_disconnected(peripheral_id_int)
 
     def _on_unsupported_hardware(self):
         self._publish_server.publish_unsupported_hardware()
+        self._hub_manager.unblank_screen()
 
     def _on_reboot_required(self):
         self._publish_server.publish_reboot_required()
+        self._hub_manager.unblank_screen()
 
     def _on_enable_hdmi_to_i2s_audio(self):
         self._hub_manager.enable_hdmi_to_i2s_audio()
@@ -206,6 +211,8 @@ class Controller():
 
     def _on_low_battery_warning(self):
         self._publish_server.publish_low_battery_warning()
+        self._hub_manager.unblank_screen()
 
     def _on_critical_battery_warning(self):
         self._publish_server.publish_critical_battery_warning()
+        self._hub_manager.unblank_screen()
