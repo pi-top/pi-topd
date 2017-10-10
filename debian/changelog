@@ -1,3 +1,9 @@
+pt-device-manager (1.0.2-1) jessie; urgency=low
+
+  * Add support for unsupported hardware message
+
+ -- Ben Pring <ben@pi-top.com>  Tue, 10 Oct 2017 15:02:14 +0100
+
 pt-device-manager (1.0.1-1) jessie; urgency=low
 
   * Fixes around device identification, low-battery handling logic, brightness
