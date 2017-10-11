@@ -116,12 +116,11 @@ class PeripheralManager():
     def add_module_if_available(self, module_name):
         cfg_module_str = str(module_name + ".configuration")
         try:
-
             i = import_module(cfg_module_str)
             self._custom_imported_modules[module_name] = i
 
-        except ImportError:
-            PTLogger.warning("Could not import " + cfg_module_str)
+        except ImportError as exc:
+            PTLogger.warning("Error: failed to import " + cfg_module_str + " settings module (" + str(exc) + ")")
 
     def add_known_device(self, device):
         self._known_devices.append(device)
