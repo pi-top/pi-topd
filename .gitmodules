@@ -1,0 +1,3 @@
+[submodule "Device-Management"]
+	path = Device-Management
+	url = git@github.com:pi-top/Device-Management.git
