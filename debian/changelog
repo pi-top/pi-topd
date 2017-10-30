@@ -1,3 +1,10 @@
+pt-device-manager (1.0.3-1) jessie; urgency=low
+
+  * Allow device manager to run on non-pi-top hardware
+  * Add some documentation
+
+ -- Ben Pring <ben@pi-top.com>  Thu, 26 Oct 2017 11:07:31 +0100
+
 pt-device-manager (1.0.2-1) jessie; urgency=low
 
   * Add support for unsupported hardware message
