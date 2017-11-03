@@ -1,5 +1,11 @@
 pt-device-manager (1.0.3-1) jessie; urgency=low
 
+  * Fixed bad ptdm_message call in pt-brightness
+
+ -- Mike Roberts <mike@pi-top.com>  Fri, 03 Nov 2017 14:24:52 +0000
+
+pt-device-manager (1.0.3-1) jessie; urgency=low
+
   * Allow device manager to run on non-pi-top hardware
   * Add some documentation
 
