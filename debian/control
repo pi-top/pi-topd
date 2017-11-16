@@ -9,7 +9,7 @@ Homepage: https://pi-top.com/
 Package: pt-device-manager
 Architecture: armhf
 Depends: ${shlibs:Depends}, ${misc:Depends}, ${python3:Depends}, python3-pip, libzmq3-dev, python3-zmq, python3-systemd, wiringpi (>= 2.44), python3-pt-idletime (>= 1.0.0), python3-pt-common (>= 1.0.2)
-Recommends: pt-desktop, python3-pt-pulse, python3-pt-speaker, python3-pt-hub, python3-pt-hub-v2
+Recommends: pt-desktop, pt-input, python3-pt-pulse, python3-pt-speaker, python3-pt-hub, python3-pt-hub-v2
 Replaces: pt-hub-controller-desktop, pt-hub-controller, pt-battery, pt-peripheral-cfg
 Breaks: pt-hub-controller-desktop, pt-hub-controller, pt-battery, pt-peripheral-cfg
 Description: pi-top Device Manager -
