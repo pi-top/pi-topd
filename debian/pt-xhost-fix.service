@@ -1,6 +1,5 @@
 [Unit]
 Description=pi-top xhost fix
-After=pt-update-installer.service
 
 [Service]
 User=pi
