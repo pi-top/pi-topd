@@ -18,7 +18,7 @@ node ('master') {
     }
     
     stage ('Publish') {
-        publish()
+        publish('experimental-non-free')
     }
 }
 
