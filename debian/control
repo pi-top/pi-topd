@@ -14,6 +14,7 @@ Depends: ${misc:Depends}, ${python3:Depends},
  python3-spidev, python3-systemd, python3-systemd, 
  python3-zmq, raspi-config, wiringpi (>= 2.44)
 Recommends: pt-desktop, python3-pt-pulse, 
- python3-pt-speaker, python3-pt-hub-v1, python3-pt-hub-v2
+ python3-pt-speaker, python3-pt-hub-v1, python3-pt-hub-v2, 
+ python3-pt-proto-plus
 Description: pi-top Device Manager -
  Core pi-top application for interfacing with pi-top hardware
