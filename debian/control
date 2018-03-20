@@ -16,5 +16,5 @@ Depends: ${misc:Depends}, ${python3:Depends},
 Recommends: pt-desktop, python3-pt-pulse, 
  python3-pt-speaker, python3-pt-hub-v1, python3-pt-hub-v2, 
  python3-pt-proto-plus
-Description: pi-top Device Manager -
+Description: pi-top Device Manager
  Core pi-top application for interfacing with pi-top hardware
