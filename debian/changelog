@@ -1,6 +1,17 @@
 pt-device-manager (1.0.5-1) stretch; urgency=low
 
   * Updated package for Stretch
+  * Recommends pt-input
+* Added pt-devices
+* Increased default screen timeout
+* Fixed 'empty timeout file' bug
+* Add initial code for pi-topPROTO+ support
+* Use python3-pt-common for device classes
+* Fix pi-topCEED shutdown
+* WantedBy=local-fs.target
+* I2C is now enabled on initialisation if it is not already enabled
+* Improved handling of undetected hardware, particularly around shutdown
+* Improved pt-battery output
 
  -- Mike Roberts <mike@pi-top.com>  Fri, 09 Mar 2018 16:19:05 +0000
 
