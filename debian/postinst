@@ -1,7 +1,8 @@
 #!/bin/bash -e
 
 lightdm_conf="/etc/lightdm/lightdm.conf"
-display_setup_script="/etc/pi-top/lightdm/display-setup-script"
+display_setup_script_dir="/etc/pi-top/lightdm"
+display_setup_script="$display_setup_script_dir/display-setup-script"
 line_to_add="/usr/bin/xhost local:root"
 
 error_help_print()
@@ -10,21 +11,34 @@ error_help_print()
 	echo "See https://github.com/pi-top/Device-Management/ for more information on how to resolve this issue"
 }
 
+create_new_display_setup_script()
+{
+	mkdir -p "$display_setup_script_dir"
+	# Avoid possible recursion
+	if [[ "$existing_script" == "$display_setup_script" ]]; then
+		existing_script=""
+	fi
+	cat << EOF > "$display_setup_script"
+#!/bin/bash
+
+$existing_script
+$line_to_add
+EOF
+}
+
 configure_display_setup_script()
 {
-	existing_script=$(grep "display-setup-script=" "$lightdm_conf" | awk -F "=" {print $NF})
-	if [[ ! -f "$display_setup_script" ]]; then
-		echo "#!/bin/bash" > "$display_setup_script"
-		echo "" >> "$display_setup_script"
-		if [[ "$existing_script" != "" ]]; then
-			echo "$existing_script" >> "$display_setup_script"
+	existing_script=$(grep "display\-setup\-script=" "$lightdm_conf" | awk -F "=" '{print $NF}')
+	if [[ -f "$display_setup_script" ]]; then
+		echo "$display_setup_script already exists"
+
+		if grep -q "$line_to_add" "$display_setup_script"; then
+			echo "xhost fix line detected - deleting..."
+			sed -i "\|$line_to_add|d" "$display_setup_script"
 		fi
 		echo "$line_to_add" >> "$display_setup_script"
 	else
-		echo "$display_setup_script already exists - deleting existing lines and re-adding"
-
-		sed -i "|$line_to_add|d" "$display_setup_script"
-		echo "$line_to_add" >> "$display_setup_script"
+		create_new_display_setup_script
 	fi
 }
 
@@ -36,7 +50,7 @@ configure_lightdm_conf()
 echo "'python3-pt-idletime' requires non-network local connections to X server"
 echo "Attempting to enable..."
 if [[ -f "$lightdm_conf" ]]; then
-	if grep "display-setup-script=" "$lightdm_conf"; then
+	if grep -q "display-setup-script=" "$lightdm_conf"; then
 		configure_display_setup_script
 		configure_lightdm_conf
 		echo "DONE. Reboot for this to take effect"
