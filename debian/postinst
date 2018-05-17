@@ -1,0 +1,50 @@
+#!/bin/bash -e
+
+lightdm_conf="/etc/lightdm/lightdm.conf"
+display_setup_script="/etc/pi-top/lightdm/display-setup-script"
+line_to_add="/usr/bin/xhost local:root"
+
+error_help_print()
+{
+	echo "NOTE: python3-pt-idletime will likely not be able to work"
+	echo "See https://github.com/pi-top/Device-Management/ for more information on how to resolve this issue"
+}
+
+configure_display_setup_script()
+{
+	existing_script=$(grep "display-setup-script=" "$lightdm_conf" | awk -F "=" {print $NF})
+	if [[ ! -f "$display_setup_script" ]]; then
+		echo "#!/bin/bash" > "$display_setup_script"
+		echo "" >> "$display_setup_script"
+		if [[ "$existing_script" != "" ]]; then
+			echo "$existing_script" >> "$display_setup_script"
+		fi
+		echo "$line_to_add" >> "$display_setup_script"
+	else
+		echo "$display_setup_script already exists - deleting existing lines and re-adding"
+
+		sed -i "|$line_to_add|d" "$display_setup_script"
+		echo "$line_to_add" >> "$display_setup_script"
+	fi
+}
+
+configure_lightdm_conf()
+{
+	sed -i "s|.*display-setup-script=.*|display-setup-script=$display_setup_script|1" "$lightdm_conf"
+}
+
+echo "'python3-pt-idletime' requires non-network local connections to X server"
+echo "Attempting to enable..."
+if [[ -f "$lightdm_conf" ]]; then
+	if grep "display-setup-script=" "$lightdm_conf"; then
+		configure_display_setup_script
+		configure_lightdm_conf
+		echo "DONE. Reboot for this to take effect"
+	else
+		echo "Unable to find 'display-setup-script' in $lightdm_conf"
+		error_help_print
+	fi
+else
+	echo "Unable to find $lightdm_conf"
+	error_help_print
+fi
