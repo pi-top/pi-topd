@@ -40,6 +40,7 @@ configure_display_setup_script()
 	else
 		create_new_display_setup_script
 	fi
+	chmod +x "$display_setup_script"
 }
 
 configure_lightdm_conf()
