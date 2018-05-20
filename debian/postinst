@@ -21,8 +21,8 @@ create_new_display_setup_script()
 	cat << EOF > "$display_setup_script"
 #!/bin/bash
 
-$existing_script
 $line_to_add
+$existing_script
 EOF
 }
 
