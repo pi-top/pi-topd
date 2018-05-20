@@ -7,7 +7,7 @@ line_to_add="/usr/bin/xhost local:root"
 
 error_help_print()
 {
-	echo "NOTE: python3-pt-idletime will likely not be able to work"
+	echo "NOTE: User idle time detection will likely not be able to work"
 	echo "See https://github.com/pi-top/Device-Management/ for more information on how to resolve this issue"
 }
 
