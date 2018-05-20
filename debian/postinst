@@ -48,7 +48,7 @@ configure_lightdm_conf()
 	sed -i "s|.*display-setup-script=.*|display-setup-script=$display_setup_script|1" "$lightdm_conf"
 }
 
-echo "'python3-pt-idletime' requires non-network local connections to X server"
+echo "User idle time detection requires non-network local connections to X server"
 echo "Attempting to enable..."
 if [[ -f "$lightdm_conf" ]]; then
 	if grep -q "display-setup-script=" "$lightdm_conf"; then
