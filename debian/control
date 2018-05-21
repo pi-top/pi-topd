@@ -10,9 +10,9 @@ Package: pt-device-manager
 Architecture: armhf
 Depends: ${misc:Depends}, ${python3:Depends},
  libc6-dev, libzmq3-dev, python3-numpy, python3-pip,
- python3-pt-common, python3-pt-idletime, python3-smbus,
- python3-spidev, python3-systemd, python3-systemd,
- python3-zmq, raspi-config, wiringpi
+ python3-pt-common, python3-smbus, python3-spidev,
+ python3-systemd, python3-systemd, python3-zmq,
+ raspi-config, wiringpi, xprintidle
 Recommends: x11-xserver-utils, lightdm, pt-desktop,
  python3-pt-pulse, python3-pt-speaker, python3-pt-hub-v1,
  python3-pt-hub-v2, python3-pt-proto-plus

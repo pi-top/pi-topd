@@ -7,7 +7,7 @@ line_to_add="/usr/bin/xhost local:root"
 
 error_help_print()
 {
-	echo "NOTE: python3-pt-idletime will likely not be able to work"
+	echo "NOTE: User idle time detection will likely not be able to work"
 	echo "See https://github.com/pi-top/Device-Management/ for more information on how to resolve this issue"
 }
 
@@ -21,8 +21,8 @@ create_new_display_setup_script()
 	cat << EOF > "$display_setup_script"
 #!/bin/bash
 
-$existing_script
 $line_to_add
+$existing_script
 EOF
 }
 
@@ -48,7 +48,7 @@ configure_lightdm_conf()
 	sed -i "s|.*display-setup-script=.*|display-setup-script=$display_setup_script|1" "$lightdm_conf"
 }
 
-echo "'python3-pt-idletime' requires non-network local connections to X server"
+echo "User idle time detection requires non-network local connections to X server"
 echo "Attempting to enable..."
 if [[ -f "$lightdm_conf" ]]; then
 	if grep -q "display-setup-script=" "$lightdm_conf"; then
