@@ -1,3 +1,10 @@
+pt-device-manager (1.0.6-1) stretch; urgency=low
+
+  * Retired usage of python3-pt-idletime, in favour of xprintidle
+  * Local connections to X server enabled by setting display-setup-script in lightdm configuration instead of pt-xhost-fix systemd service
+
+ -- Mike Roberts <mike@pi-top.com>  Mon, 21 May 2018 18:24:08 +0100
+
 pt-device-manager (1.0.5-1) stretch; urgency=low
 
   * Updated package for Stretch
