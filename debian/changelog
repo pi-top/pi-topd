@@ -1,3 +1,9 @@
+pt-device-manager (1.0.6-2) stretch; urgency=low
+
+  * Manual systemd management in maintainer scripts
+
+ -- Mike Roberts <mike@pi-top.com>  Mon, 21 May 2018 18:24:08 +0100
+
 pt-device-manager (1.0.6-1) stretch; urgency=low
 
   * Retired usage of python3-pt-idletime, in favour of xprintidle
