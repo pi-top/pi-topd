@@ -1,1 +1,12 @@
-../Device-Management/config/xhost-setup
+#!/bin/bash -e
+
+/usr/lib/pt-device-manager/config/xhost-setup
+
+echo "Unmasking device manager service..."
+systemctl unmask pt-device-manager
+
+echo "Enabling device manager service..."
+systemctl enable pt-device-manager
+
+echo "Starting device manager service..."
+systemctl start pt-device-manager

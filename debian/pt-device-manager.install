@@ -3,6 +3,7 @@ Device-Management/tools/pt-i2s                                          /usr/bin
 Device-Management/tools/pt-battery                                      /usr/bin/
 Device-Management/tools/pt-brightness                                   /usr/bin/
 Device-Management/tools/pt-devices                                      /usr/bin/
+Device-Management/config/xhost-setup                                    /usr/lib/pt-device-manager/config/
 Device-Management/poweroff/poweroff-v1                                  /usr/lib/pt-device-manager/
 Device-Management/poweroff/poweroff-v2                                  /usr/lib/pt-device-manager/
 Device-Management/pt-device-manager/pt-device-manager                   /usr/lib/pt-device-manager/

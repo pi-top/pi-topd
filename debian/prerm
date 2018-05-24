@@ -1,0 +1,7 @@
+#!/bin/bash -e
+
+echo "Stopping device manager service..."
+systemctl stop pt-device-manager
+
+echo "Disabling device manager service..."
+systemctl disable pt-device-manager
