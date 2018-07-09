@@ -1,3 +1,9 @@
+pt-device-manager (1.0.7-1) stretch; urgency=low
+
+  * Additional logging around soft shutdown on low battery
+
+ -- Mike Roberts <mike@pi-top.com>  Mon, 09 Jul 2018 13:59:57 +0100
+
 pt-device-manager (1.0.6-2) stretch; urgency=low
 
   * Manual systemd management in maintainer scripts
