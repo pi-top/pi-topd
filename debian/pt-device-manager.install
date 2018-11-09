@@ -1,5 +1,6 @@
 private-Device-Management/assets/hifiberry-alsactl.restore          /etc/pi-top/.i2s-vol/
 private-Device-Management/tools/                                    /usr/bin/
 private-Device-Management/config/xhost-setup                        /usr/lib/pt-device-manager/config/
-private-Device-Management/poweroff                                  /usr/lib/pt-device-manager
-private-Device-Management/pt-device-manager                         /usr/lib/pt-device-manager
+private-Device-Management/pt-device-manager                         /usr/lib
+private-Device-Management/poweroff/*                                /usr/lib/pt-device-manager
+
