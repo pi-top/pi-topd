@@ -3,5 +3,12 @@
 echo "Stopping device manager service..."
 systemctl stop pt-device-manager
 
+echo "Stopping OLED animation service..."
+systemctl stop pt-oled-startup-anim
+
+
 echo "Disabling device manager service..."
 systemctl disable pt-device-manager
+
+echo "Disabling OLED animation service..."
+systemctl disable pt-oled-startup-anim
