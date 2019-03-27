@@ -1,4 +1,4 @@
-library 'devops-jenkins-shared-library@twj_wip'
+@Library('devops-jenkins-shared-library@twj_wip') _
 
 pipeline {
   agent { label 'master'}
