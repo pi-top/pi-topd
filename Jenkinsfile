@@ -8,26 +8,33 @@ pipeline {
   }
   stages {
     stage ('Checkout Repository') {
-      checkoutSubmodule()
+      steps{
+        checkoutSubmodule()
+      }
     }
     stage ('Build') {
-      buildGenericPkg()
+      steps{
+        buildGenericPkg()
+      }
     }
     stage ('Test') {
-      checkSymLinks()
-      shellcheck()
-      script{
-        try {
-          lintian()
-        } catch (e) {
-          currentBuild.result = 'UNSTABLE'
+      steps {
+        checkSymLinks()
+        shellcheck()
+        script{
+          try {
+            lintian()
+          } catch (e) {
+            currentBuild.result = 'UNSTABLE'
+          }
         }
-
       }
     }
 
     stage ('Publish') {
-      publishSirius()
+      steps{
+        publishSirius()
+      }
     }
   }
   post {
