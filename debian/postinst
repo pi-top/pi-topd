@@ -1,0 +1,5 @@
+#!/bin/bash -e
+
+/usr/lib/pt-device-manager/config/xhost-setup
+
+#DEBHELPER#
