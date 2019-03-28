@@ -1,27 +1,29 @@
-@Library('devops-jenkins-shared-library@twj_wip') _
+@Library('devops-jenkins-shared-library@master') _
 
 pipeline {
-  agent { label 'master'}
+  agent { label 'master' }
   options {
     timestamps()
     ansiColor('xterm')
   }
   stages {
     stage ('Checkout Repository') {
-      steps{
+      steps {
         checkoutSubmodule()
       }
     }
+
     stage ('Build') {
-      steps{
+      steps {
         buildGenericPkg()
       }
     }
+
     stage ('Test') {
       steps {
         checkSymLinks()
         shellcheck()
-        script{
+        script {
           try {
             lintian()
           } catch (e) {
@@ -32,7 +34,7 @@ pipeline {
     }
 
     stage ('Publish') {
-      steps{
+      steps {
         publishSirius()
       }
     }
