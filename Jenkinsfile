@@ -1,24 +1,49 @@
-node ('master') {
-    stage ('Checkout') {
-        checkoutSubmodule()    
+@Library('devops-jenkins-shared-library@master') _
+
+pipeline {
+  agent { label 'master' }
+  options {
+    timestamps()
+    ansiColor('xterm')
+  }
+  stages {
+    stage ('Checkout Repository') {
+      steps {
+        checkoutSubmodule()
+      }
     }
-    
+
     stage ('Build') {
+      steps {
         buildGenericPkg()
+      }
     }
-    
+
     stage ('Test') {
+      steps {
         checkSymLinks()
         shellcheck()
-        try {
+        script {
+          try {
             lintian()
-        } catch (e) {
+          } catch (e) {
             currentBuild.result = 'UNSTABLE'
+          }
         }
+      }
     }
-    
-    stage ('Publish') {
-        publishSirius()
-    }
-}
 
+    stage ('Publish') {
+      steps {
+        publishSirius()
+      }
+    }
+  }
+  post {
+    failure {
+      slackSend color: "danger",
+      message: "Job: <${JOB_URL}|${env.JOB_NAME}> build <${env.BUILD_URL}|${env.BUILD_NUMBER}> failed or rejected",
+      channel: "#os-devs"
+    }
+  }
+}
