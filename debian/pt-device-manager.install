@@ -4,7 +4,6 @@ private-Device-Management/pt-device-manager/pt-device-manager               /usr
 private-Device-Management/pt-device-manager/ptdm*                           /usr/lib/pt-device-manager
 private-Device-Management/poweroff/poweroff                                 /usr/lib/pt-device-manager
 private-Device-Management/poweroff/poweroff-legacy                          /usr/lib/pt-device-manager
-private-Device-Management/config                                            /usr/lib/pt-device-manager/
 private-Device-Management/pt-oled-startup-anim/pt-oled-startup-anim.py      /usr/lib/pt-oled-startup-anim/
 private-Device-Management/pt-oled-startup-anim/pi-top_startup.gif           /usr/lib/pt-oled-startup-anim/
 private-Device-Management/pt-oled-startup-anim/pi-top_startup.mp3           /usr/lib/pt-oled-startup-anim/
