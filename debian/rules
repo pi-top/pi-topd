@@ -6,8 +6,15 @@ SUBSTVARS = -Vshlibs:Depends="libc6 (>= 2.7), libglib2.0-0 (>= 2.31.8), libgtk2.
 	dh $@ --with python3 --with systemd
 
 
-override_dh_strip:
-	dh_strip -Xpoweroff-legacy
+# override_dh_strip:
+# 	dh_strip -Xpoweroff-legacy
+
+# Needed to suppress:
+# dpkg-shlibdeps: warning: couldn't find library libwiringPi.so needed by debian/pt-device-manager/usr/lib/pt-device-manager/poweroff-legacy (ELF format: 'elf32-little'; RPATH: '')
+# dpkg-shlibdeps: error: couldn't find library libc.so.6 needed by debian/pt-device-manager/usr/lib/pt-device-manager/poweroff-legacy (ELF format: 'elf32-little'; RPATH: '')
+# dpkg-shlibdeps: error: cannot continue due to the error above
+override_dh_shlibdeps:
+	dh_shlibdeps -Xpoweroff-legacy
 
 override_dh_installinit:
 	dh_installinit --noscripts
