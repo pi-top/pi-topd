@@ -1,4 +1,7 @@
 #!/usr/bin/make -f
+
+SUBSTVARS = -Vshlibs:Depends="libc6 (>= 2.7), libglib2.0-0 (>= 2.31.8), libgtk2.0-0 (>= 2.12.0)"
+
 %:
 	dh $@ --with python3 --with systemd
 
@@ -23,3 +26,6 @@ override_dh_systemd_start:
 	dh_systemd_start --name=pt-oled-startup-anim --no-start
 	dh_systemd_start --name=pt-poweroff --no-start
 	dh_systemd_start --name=pt-poweroff-legacy --no-start
+
+override_dh_gencontrol:
+	dh_gencontrol -- $(SUBSTVARS)
