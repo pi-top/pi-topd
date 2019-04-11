@@ -9,9 +9,6 @@ SUBSTVARS = -Vshlibs:Depends="libc6 (>= 2.7), libglib2.0-0 (>= 2.31.8), libgtk2.
 override_dh_strip:
 	dh_strip -Xpoweroff-legacy
 
-override_dh_shlibdeps:
-	dh_shlibdeps -Xpoweroff-legacy
-
 override_dh_installinit:
 	dh_installinit --noscripts
 
