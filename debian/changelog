@@ -1,3 +1,10 @@
+pt-device-manager (2.0.0-1) stretch; urgency=low
+
+  * Added pi-top [4] support, including Bluetooth keyboard handling
+  * xhost configuration moved from maintainer script to pt-display dependency
+
+ -- Mike Roberts <mike@pi-top.com>  Fri, 24 Aug 2018 17:15:59 +0100
+
 pt-device-manager (1.0.7-2) stretch; urgency=low
 
   * Correctly handle data type in get_debian_version
