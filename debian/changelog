@@ -1,3 +1,9 @@
+pt-device-manager (2.1.0-1) stretch; urgency=low
+
+  * Add support for publishing display state changes
+
+ -- Mike Roberts <mike@pi-top.com>  Wed, 24 Apr 2019 20:03:45 +0800
+
 pt-device-manager (2.0.0-1) stretch; urgency=low
 
   * Added pi-top [4] support, including Bluetooth keyboard handling
