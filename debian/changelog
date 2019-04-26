@@ -1,3 +1,17 @@
+pt-device-manager (2.2.0-1) stretch; urgency=low
+
+  * Only use Bluetooth discovery when needed for auto-connecting, to avoid heavy Bluetooth traffic which slows down lxpanel
+  * Restart Bluetooth manager loop if an exception is caught
+  * Improve handling and print-out of all DBus errors
+  * Increase max number of attempts to get current keyboard mac address from 10 to 20
+  * When forgetting previous keyboards, check if need to disconnect before removing
+  * Check that keyboard last master mac address if valid before parsing when checking if keyboard master matches current device
+  * Separate out cleanup from auto-connecting bt keyboard into separate function to always stop Bluetooth discovery
+  * Fix "get_keyboard_docked()" function in hub manager
+  * Add debug print-out to show when main idletime check thread has started
+
+ -- Mike Roberts <mike@pi-top.com>  Fri, 26 Apr 2019 13:54:50 +0800
+
 pt-device-manager (2.1.0-1) stretch; urgency=low
 
   * Add support for publishing display state changes
