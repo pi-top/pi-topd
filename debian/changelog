@@ -1,3 +1,9 @@
+pt-device-manager (2.2.1-1) stretch; urgency=low
+
+  * Move the keyboard autoconnect logic into the BTKBManager class, and into its own thread which can be signalled when necessary
+
+ -- Ben Pring <ben@pi-top.com>  Mon, 29 Apr 2019 15:48:31 +0100
+
 pt-device-manager (2.2.0-1) stretch; urgency=low
 
   * Only use Bluetooth discovery when needed for auto-connecting, to avoid heavy Bluetooth traffic which slows down lxpanel
