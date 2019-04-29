@@ -1,3 +1,30 @@
+pt-device-manager (2.2.0-1) stretch; urgency=low
+
+  * Only use Bluetooth discovery when needed for auto-connecting, to avoid heavy Bluetooth traffic which slows down lxpanel
+  * Restart Bluetooth manager loop if an exception is caught
+  * Improve handling and print-out of all DBus errors
+  * Increase max number of attempts to get current keyboard mac address from 10 to 20
+  * When forgetting previous keyboards, check if need to disconnect before removing
+  * Check that keyboard last master mac address if valid before parsing when checking if keyboard master matches current device
+  * Separate out cleanup from auto-connecting bt keyboard into separate function to always stop Bluetooth discovery
+  * Fix "get_keyboard_docked()" function in hub manager
+  * Add debug print-out to show when main idletime check thread has started
+
+ -- Mike Roberts <mike@pi-top.com>  Fri, 26 Apr 2019 13:54:50 +0800
+
+pt-device-manager (2.1.0-1) stretch; urgency=low
+
+  * Add support for publishing display state changes
+
+ -- Mike Roberts <mike@pi-top.com>  Wed, 24 Apr 2019 20:03:45 +0800
+
+pt-device-manager (2.0.0-1) stretch; urgency=low
+
+  * Added pi-top [4] support, including Bluetooth keyboard handling
+  * xhost configuration moved from maintainer script to pt-display dependency
+
+ -- Mike Roberts <mike@pi-top.com>  Fri, 24 Aug 2018 17:15:59 +0100
+
 pt-device-manager (1.0.7-2) stretch; urgency=low
 
   * Correctly handle data type in get_debian_version
