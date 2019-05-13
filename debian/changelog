@@ -1,3 +1,9 @@
+pt-device-manager (2.2.2-1) stretch; urgency=low
+
+  * Fix bug pairing bluetooth keyboards
+
+ -- Ben Pring <ben@pi-top.com>  Mon, 13 May 2019 13:57:11 +0100
+
 pt-device-manager (2.2.1-1) stretch; urgency=low
 
   * Move the keyboard autoconnect logic into the BTKBManager class, and into its own thread which can be signalled when necessary
