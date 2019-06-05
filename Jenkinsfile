@@ -22,7 +22,7 @@ pipeline {
     stage ('Test') {
       steps {
                 
-        sh "python3 " + env.WORKSPACE + "/private-Device-Management/pt-device-manager/test_ptdm_controller.py"
+        sh "python3 " + env.WORKSPACE + "/pt-device-manager/private-Device-Management/pt-device-manager/test_ptdm_controller.py"
 
         checkSymLinks()
         shellcheck()
