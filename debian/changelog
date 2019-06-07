@@ -1,3 +1,11 @@
+pt-device-manager (2.2.3-1) stretch; urgency=medium
+
+  * Only run the bt keyboard manager if we're on a pi-top[4]
+  * Add pt-host to provide an easy way to discover the host device
+  * Improve error handling around the oled start-up animation
+
+ -- Choudhry Amjad <choudhry@pi-top.com>  Fri, 07 Jun 2019 11:59:36 +0100
+
 pt-device-manager (2.2.2-1) stretch; urgency=low
 
   * Fix bug pairing bluetooth keyboards
