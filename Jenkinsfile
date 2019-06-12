@@ -21,8 +21,8 @@ pipeline {
 
     stage ('Test') {
       steps {
-                
-        sh "python3 " + env.WORKSPACE + "/pt-device-manager/private-Device-Management/pt-device-manager/test_ptdm_controller.py"
+        sh "pip3 install nose"
+        sh "nosetests " + env.WORKSPACE + "/pt-device-manager/private-Device-Management/pt-device-manager/"
 
         checkSymLinks()
         shellcheck()
