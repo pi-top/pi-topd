@@ -1,3 +1,9 @@
+pt-device-manager (2.3.0-1) stretch; urgency=med
+
+  * Add logic to modify /boot/config.txt once device type is detected.
+
+ -- Ben Pring <ben@pi-top.com>  Thu, 13 Jun 2019 15:26:49 +0100
+
 pt-device-manager (2.2.2-1) stretch; urgency=low
 
   * Fix bug pairing bluetooth keyboards
