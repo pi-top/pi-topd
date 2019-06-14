@@ -22,7 +22,7 @@ pipeline {
     stage ('Test') {
       steps {
         sh "pip3 install nose coverage"
-        sh "/var/lib/jenkins/.local/bin/nosetests -v -with-coverage --cover-package=" + env.WORKSPACE + "/pt-device-manager/private-Device-Management/pt-device-manager " + env.WORKSPACE + "/pt-device-manager/private-Device-Management/pt-device-manager/"
+        sh "/var/lib/jenkins/.local/bin/nosetests -v --with-coverage --cover-package=" + env.WORKSPACE + "/pt-device-manager/private-Device-Management/pt-device-manager " + env.WORKSPACE + "/pt-device-manager/private-Device-Management/pt-device-manager/"
 
         checkSymLinks()
         shellcheck()
