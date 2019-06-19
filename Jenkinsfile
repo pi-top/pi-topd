@@ -21,8 +21,7 @@ pipeline {
 
     stage ('Test') {
       steps {
-        sh "pip3 install nose"
-        sh "/var/lib/jenkins/.local/bin/nosetests " + env.WORKSPACE + "/pt-device-manager/private-Device-Management/pt-device-manager/"
+        runPythonUnitTesting(env.WORKSPACE + "/pt-device-manager/private-Device-Management/tests/", env.WORKSPACE + "/pt-device-manager/private-Device-Management/pt-device-manager/") 
 
         checkSymLinks()
         shellcheck()
