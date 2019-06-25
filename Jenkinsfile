@@ -15,8 +15,10 @@ pipeline {
 
     stage ('Pre-commit Checks') {
       steps {
-        REPO_NAME = env.JOB_NAME.split('/')[1]
-        PKG_NAME  = REPO_NAME.substring(0, REPO_NAME.length() - 4)
+        script {
+          REPO_NAME = env.JOB_NAME.split('/')[1]
+          PKG_NAME  = REPO_NAME.substring(0, REPO_NAME.length() - 4)
+        }
         dir(PKG_NAME) {
           preCommit()
         }
