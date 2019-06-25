@@ -13,6 +13,12 @@ pipeline {
       }
     }
 
+    stage ('Pre-commit Checks') {
+      steps {
+        preCommit()
+      }
+    }
+
     stage ('Build') {
       steps {
         buildGenericPkg()
