@@ -1,3 +1,9 @@
+pt-device-manager-deb (2.2.2-2) buster; urgency=medium
+
+  * Move to Buster
+
+ -- Mike Roberts <mike@pi-top.com>  Tue, 25 Jun 2019 15:10:39 +0100
+
 pt-device-manager (2.2.2-1) stretch; urgency=low
 
   * Fix bug pairing bluetooth keyboards
