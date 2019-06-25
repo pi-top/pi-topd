@@ -1,4 +1,4 @@
-pt-device-manager (2.2.2-2) buster; urgency=medium
+pt-device-manager-deb (2.2.2-2) buster; urgency=medium
 
   * Move to Buster
 
