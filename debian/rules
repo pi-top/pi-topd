@@ -27,7 +27,7 @@ override_dh_systemd_enable:
 
 override_dh_systemd_start:
 	dh_systemd_start --name=pt-device-manager
-	dh_systemd_start --name=pt-oled-startup-anim --no-start --no-restart-on-upgrade
+	dh_systemd_start --name=pt-oled-startup-anim --no-start --no-restart-on-upgrade --no-stop-on-upgrade
 	dh_systemd_start --name=pt-poweroff --no-start --no-restart-on-upgrade
 	dh_systemd_start --name=pt-poweroff-legacy --no-start --no-restart-on-upgrade
 
