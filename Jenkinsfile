@@ -13,6 +13,18 @@ pipeline {
       }
     }
 
+    stage ('Pre-commit Checks') {
+      steps {
+        script {
+          REPO_NAME = env.JOB_NAME.split('/')[1]
+          PKG_NAME  = REPO_NAME.substring(0, REPO_NAME.length() - 4)
+        }
+        dir(PKG_NAME) {
+          preCommit()
+        }
+      }
+    }
+
     stage ('Build') {
       steps {
         buildGenericPkg()
@@ -21,8 +33,7 @@ pipeline {
 
     stage ('Test') {
       steps {
-                
-        sh "python3 " + env.WORKSPACE + "/pt-device-manager/private-Device-Management/pt-device-manager/test_ptdm_controller.py"
+        runPythonUnitTesting(env.WORKSPACE + "/pt-device-manager/private-Device-Management/tests/", env.WORKSPACE + "/pt-device-manager/private-Device-Management/pt-device-manager/")
 
         checkSymLinks()
         shellcheck()
