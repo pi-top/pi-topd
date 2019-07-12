@@ -1,3 +1,9 @@
+pt-device-manager (2.3.0-1) stretch; urgency=medium
+
+  * Allow device manager to exit cleanly on non-pi-top hardware.
+
+ -- Ben Pring <ben@pi-top.com>  Fri, 12 Jul 2019 09:42:52 +0100
+
 pt-device-manager (2.2.3-1) stretch; urgency=medium
 
   * Add pt-host to provide an easy way to discover the host device
