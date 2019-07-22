@@ -1,6 +1,7 @@
 pt-device-manager (2.3.0-1) stretch; urgency=medium
 
   * Allow device manager to exit cleanly on non-pi-top hardware.
+  * Fix I2S audio switching  
 
  -- Ben Pring <ben@pi-top.com>  Fri, 12 Jul 2019 09:42:52 +0100
 
