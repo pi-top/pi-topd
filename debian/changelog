@@ -1,3 +1,9 @@
+pt-device-manager (2.3.1-1) stretch; urgency=medium
+
+  * Refactor shutdown manager to work is new pt[4] i2c address
+
+ -- Choudhry Amjad <Choudhry@pi-top.com>  Mon, 29 Jul 2019 14:42:32 +0100
+
 pt-device-manager (2.3.0-1) stretch; urgency=medium
 
   * Allow device manager to exit cleanly on non-pi-top hardware.
