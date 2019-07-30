@@ -1,3 +1,9 @@
+pt-device-manager (2.3.1-1) stretch; urgency=medium
+
+  * Refactor shutdown service to handle different host devices better
+
+ -- Choudhry Amjad <Choudhry@pi-top.com>  Tue, 30 Jul 2019 16:20:05 +0100
+
 pt-device-manager (2.3.0-1) stretch; urgency=medium
 
   * Allow device manager to exit cleanly on non-pi-top hardware.
