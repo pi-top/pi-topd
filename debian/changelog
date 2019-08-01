@@ -1,8 +1,16 @@
-pt-device-manager (2.3.1-1) stretch; urgency=medium
+pt-device-manager (2.4.1-1) stretch; urgency=medium
 
   * Refactor shutdown service to handle different host devices better
 
  -- Choudhry Amjad <Choudhry@pi-top.com>  Tue, 30 Jul 2019 16:20:05 +0100
+
+pt-device-manager (2.4.0-1) stretch; urgency=medium
+
+  * Migrate notification manager from pt-notifications
+  * Refactor shutdown service to better handle different host devices
+  * Release systemd service earlier
+
+ -- Mike Roberts <mike@pi-top.com>  Tue, 25 Jun 2019 15:10:39 +0100
 
 pt-device-manager (2.3.0-1) stretch; urgency=medium
 
