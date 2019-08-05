@@ -1,3 +1,10 @@
+pt-device-manager (2.4.2-1) stretch; urgency=medium
+
+  * Remove retired pt-notifications-service dependency from systemd service
+  * Remove unnecessary DISPLAY environment variable from systemd service
+
+ -- Mike Roberts <mike@pi-top.com>  Tue, 25 Jun 2019 15:10:39 +0100
+
 pt-device-manager (2.4.1-1) stretch; urgency=medium
 
   * Refactor shutdown service to handle different host devices better
