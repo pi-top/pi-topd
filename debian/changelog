@@ -1,3 +1,10 @@
+pt-device-manager (2.4.3-1) stretch; urgency=medium
+  * Apply linting
+  * Update device ID names to match branding
+  * Simplify function to write device ID to file
+
+ -- Mike Roberts <mike@pi-top.com>  Sun, 11 Aug 2019 12:14:55 +0100
+
 pt-device-manager (2.4.2-1) stretch; urgency=medium
 
   * Remove retired pt-notifications-service dependency from systemd service
