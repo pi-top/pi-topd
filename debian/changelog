@@ -1,3 +1,8 @@
+pt-device-manager (2.4.4-1) stretch; urgency=medium
+  * pt-poweroff: strip device host ID string
+
+ -- Mike Roberts <mike@pi-top.com>  Sun, 11 Aug 2019 18:40:39 +0100
+
 pt-device-manager (2.4.3-1) stretch; urgency=medium
   * Apply linting
   * Update device ID names to match branding
