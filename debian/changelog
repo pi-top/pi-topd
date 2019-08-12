@@ -1,9 +1,18 @@
+pt-device-manager (2.5.0-1) stretch; urgency=medium
+
+  * Add ability to cancel battery warning notifications
+  * Support pulse with and without pi-top hardware
+
+ -- Mike Roberts <mike@pi-top.com>  Mon, 12 Aug 2019 16:14:36 +0100
+
 pt-device-manager (2.4.4-1) stretch; urgency=medium
+
   * pt-poweroff: strip device host ID string
 
  -- Mike Roberts <mike@pi-top.com>  Sun, 11 Aug 2019 18:40:39 +0100
 
 pt-device-manager (2.4.3-1) stretch; urgency=medium
+
   * Apply linting
   * Update device ID names to match branding
   * Simplify function to write device ID to file
