@@ -1,3 +1,9 @@
+pt-device-manager (2.5.1-1) stretch; urgency=medium
+
+  * Bugfix: notification system
+
+ -- Mike Roberts <mike@pi-top.com>  Tue, 13 Aug 2019 17:01:11 +0100
+
 pt-device-manager (2.5.0-1) stretch; urgency=medium
 
   * Add ability to cancel battery warning notifications
