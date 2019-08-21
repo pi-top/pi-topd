@@ -1,8 +1,8 @@
-pt-device-manager (2.5.2-1) stretch; urgency=medium
+pt-device-manager (2.5.2-2) stretch; urgency=medium
 
-  * Refactor
+  * Update dependencies: pt-display is deprecated, add pt-os-mods
 
- -- Ben Pring <ben@pi-top.com>  Mon, 19 Aug 2019 13:22:24 +0100
+ -- Ben Pring <ben@pi-top.com>  Wed, 21 Aug 2019 10:47:01 +0100
 
 pt-device-manager (2.5.1-1) stretch; urgency=medium
 
