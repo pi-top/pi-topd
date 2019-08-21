@@ -9,8 +9,8 @@ Homepage: https://pi-top.com/
 Package: pt-device-manager
 Architecture: armhf
 Depends: ${shlibs:Depends}, ${misc:Depends}, ${python3:Depends},
- libzmq3-dev, pt-os-mods, python3-pip, python3-pt-common, 
- python3-pt-oled, python3-systemd, python3-zmq, wiringpi, 
+ libzmq3-dev, pt-os-mods, python3-pip, python3-pt-common,
+ python3-pt-oled, python3-systemd, python3-zmq, wiringpi,
  xprintidle
 Recommends: x11-xserver-utils, pt-notifications,
  python3-pt-pulse, python3-pt-speaker, python3-pt-hub-v1,
