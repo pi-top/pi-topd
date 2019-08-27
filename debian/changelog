@@ -1,3 +1,9 @@
+pt-device-manager (2.5.3-2) stretch; urgency=medium
+
+  * Fix setting /boot/config.txt settings for dtoverlays
+
+-- Ben Pring <ben@pi-top.com>  Tue, 27 Aug 2019 12:39:21 +0100
+
 pt-device-manager (2.5.2-2) stretch; urgency=medium
 
   * Update dependencies: pt-display is deprecated, add pt-os-mods
