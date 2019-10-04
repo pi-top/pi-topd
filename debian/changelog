@@ -1,6 +1,6 @@
 pt-device-manager (2.6.0-2) stretch; urgency=medium
 
-  * Fix setting /boot/config.txt settings for dtoverlays
+  * Add reboot service
 
 -- Choudhry Amjad <choudhry@pi-top.com> Fri, 04 Oct 2019 13:19:39 +0100
 
