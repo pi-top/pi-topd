@@ -1,3 +1,10 @@
+pt-device-manager (2.6.0-4) buster; urgency=medium
+
+  * Move to Buster (again)
+  * Fix changelog formatting
+
+ -- Mike Roberts <mike@pi-top.com>  Tue, 08 Oct 2019 16:57:02 +0800
+
 pt-device-manager (2.6.0-3) stretch; urgency=medium
 
   * Enable reboot service
