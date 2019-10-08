@@ -1,3 +1,9 @@
+pt-device-manager (2.6.0-3) stretch; urgency=medium
+
+  * Enable reboot service
+
+ -- Mike Roberts <mike@pi-top.com>  Tue, 08 Oct 2019 16:51:01 +0800
+
 pt-device-manager (2.6.0-2) stretch; urgency=medium
 
   * Add reboot service
