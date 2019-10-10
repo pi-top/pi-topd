@@ -1,3 +1,9 @@
+pt-device-manager (2.6.1-1) buster; urgency=medium
+
+  * Reduce output noise from polling lxpanel plugin and battery warning message
+
+ -- Choudhry Amjad <choudhry@pi-top.com>  Thu, 10 Oct 2019 11:56:52 +0100
+
 pt-device-manager (2.6.0-4) buster; urgency=medium
 
   * Move to Buster (again)
