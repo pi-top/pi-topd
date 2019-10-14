@@ -1,3 +1,9 @@
+pt-device-manager (2.6.2-1) buster; urgency=medium
+
+  * Set default screen blanking timeout to 5 mins
+
+ -- Choudhry Amjad <choudhry@pi-top.com>  Mon, 14 Oct 2019 16:54:19 +0100
+
 pt-device-manager (2.6.1-1) buster; urgency=medium
 
   * Reduce output noise from polling lxpanel plugin and battery warning message
