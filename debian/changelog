@@ -1,3 +1,10 @@
+pt-device-manager (2.7.0-1) buster; urgency=medium
+
+  * Only modify /boot/config.txt if the host hardware has changed, otherwise
+    preserve the user's changes.
+
+ -- Ben Pring <ben@pi-top.com>  Tue, 21 Jan 2020 14:10:28 +0000
+
 pt-device-manager (2.6.2-1) buster; urgency=medium
 
   * Set default screen blanking timeout to 5 mins
