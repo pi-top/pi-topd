@@ -57,7 +57,7 @@ pipeline {
     failure {
       slackSend color: "danger",
       message: "Job: <${JOB_URL}|${env.JOB_NAME}> build <${env.BUILD_URL}|${env.BUILD_NUMBER}> failed or rejected",
-      channel: "#os-devs"
+      channel: "#os-builds"
     }
   }
 }
