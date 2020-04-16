@@ -1,3 +1,9 @@
+pt-device-manager (2.8.0-1) buster; urgency=medium
+
+  * Add charging cable connection sounds
+
+ -- Mike Roberts <mike@pi-top.com>  Thu, 16 Apr 2020 10:42:11 +0100
+
 pt-device-manager (2.7.0-1) buster; urgency=medium
 
   * Only modify /boot/config.txt if the host hardware has changed, otherwise
