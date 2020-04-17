@@ -4,12 +4,6 @@
 	dh $@ --with python3 --with systemd
 
 # Needed to suppress:
-# Can't exec "arm-linux-gnueabihf-strip": No such file or directory at /usr/share/perl5/Debian/Debhelper/Dh_Lib.pm line 225.
-# dh_strip: arm-linux-gnueabihf-strip --remove-section=.comment --remove-section=.note debian/pt-device-manager/usr/lib/pt-device-manager/poweroff-legacy failed to to execute: No such file or directory
-override_dh_strip:
-	dh_strip -Xpoweroff-legacy
-
-# Needed to suppress:
 # dpkg-shlibdeps: warning: couldn't find library libwiringPi.so needed by debian/pt-device-manager/usr/lib/pt-device-manager/poweroff-legacy (ELF format: 'elf32-little'; RPATH: '')
 # dpkg-shlibdeps: error: couldn't find library libc.so.6 needed by debian/pt-device-manager/usr/lib/pt-device-manager/poweroff-legacy (ELF format: 'elf32-little'; RPATH: '')
 # dpkg-shlibdeps: error: cannot continue due to the error above
