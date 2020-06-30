@@ -1,3 +1,9 @@
+pt-device-manager (2.7.1-1) buster; urgency=medium
+
+  * Remove unused Bluetooth keyboard functions
+
+ -- Mike Roberts <mike@pi-top.com>  Tue, 30 Jun 2020 17:33:08 +0100
+
 pt-device-manager (2.7.0-1) buster; urgency=medium
 
   * Only modify /boot/config.txt if the host hardware has changed, otherwise
