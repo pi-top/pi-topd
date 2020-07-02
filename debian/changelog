@@ -1,3 +1,9 @@
+pt-device-manager (2.8.0-1) buster; urgency=medium
+
+  * Add 'hard reboot' support (full power cycle)
+
+ -- Mike Roberts <mike@pi-top.com>  Thu, 02 Jul 2020 11:18:22 +0100
+
 pt-device-manager (2.7.1-1) buster; urgency=medium
 
   * Remove unused Bluetooth keyboard functions
