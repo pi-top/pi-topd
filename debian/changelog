@@ -1,3 +1,9 @@
+pt-device-manager (2.8.1-1) buster; urgency=medium
+
+  * Add dpkg triggers
+
+ -- Jorge Capona <jorge@pi-top.com>  Thu, 16 Jul 2020 10:57:42 -0400
+
 pt-device-manager (2.8.0-1) buster; urgency=medium
 
   * Add 'hard reboot' support (full power cycle)
