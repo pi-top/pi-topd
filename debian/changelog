@@ -1,3 +1,9 @@
+pt-device-manager (2.9.0-1) buster; urgency=medium
+
+  * Remove audio configuration change on start
+
+ -- Jorge Capona <jorge@pi-top.com>  Mon, 03 Aug 2020 19:43:31 -0400
+
 pt-device-manager (2.8.1-1) buster; urgency=medium
 
   * Add dpkg triggers
