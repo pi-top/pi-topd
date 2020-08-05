@@ -1,6 +1,12 @@
+pt-device-manager (2.10.0-1) buster; urgency=medium
+
+  * Set Hifiberry explicitly in ALSA
+
+ -- Mike Roberts <mike@pi-top.com>  Wed, 05 Aug 2020 17:15:02 +0100
+
 pt-device-manager (2.9.0-1) buster; urgency=medium
 
-  * Remove audio configuration change on start
+  * Remove headphones audio configuration change on start
 
  -- Jorge Capona <jorge@pi-top.com>  Mon, 03 Aug 2020 19:43:31 -0400
 
