@@ -11,12 +11,34 @@ Homepage: https://pi-top.com/
 
 Package: pt-device-manager
 Architecture: armhf
-Depends: ${shlibs:Depends}, ${misc:Depends}, ${python3:Depends},
- libzmq3-dev, pt-os-mods, python3-pip, python3-pt-common,
- python3-pt-oled, python3-systemd, python3-zmq, wiringpi,
+Depends: ${shlibs:Depends},
+ ${misc:Depends},
+ ${python3:Depends},
+# Include xhost modification to allow root user to access running X server
+# Necessary for xprintidle to work
+ pt-os-mods,
+ python3-pt-common,
+# Used for playing boot-up animation on pi-top [4]
+ python3-pt-oled,
+# Journal handling
+ python3-systemd,
+# System state change communication
+ python3-zmq,
+# Used by poweroff-v1
+ wiringpi,
+# User idle time
  xprintidle
-Recommends: x11-xserver-utils, pt-notifications,
- python3-pt-pulse, python3-pt-speaker, python3-pt-hub-v1,
- python3-pt-hub-v2, python3-pt-hub-v3
+Recommends: x11-xserver-utils,
+# Low battery warnings
+ pt-notifications,
+# Peripheral management
+ python3-pt-pulse,
+ python3-pt-speaker,
+# Hub management
+ python3-pt-hub-v1,
+ python3-pt-hub-v2,
+ python3-pt-hub-v3,
+# Used for playing boot-up audio on pi-top [4]
+ python3-pygame
 Description: pi-top Device Manager
  Core pi-top service for interfacing with pi-top hardware
