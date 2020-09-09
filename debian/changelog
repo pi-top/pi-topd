@@ -1,3 +1,10 @@
+pt-device-manager (2.11.0-1) buster; urgency=medium
+
+  * Loop startup animation when expanding filesystem
+  * Fix OLED animation startup systemd dependency
+
+ -- Mike Roberts <mike@pi-top.com>  Wed, 09 Sep 2020 10:18:28 +0100
+
 pt-device-manager (2.10.0-1) buster; urgency=medium
 
   * Set Hifiberry explicitly in ALSA
