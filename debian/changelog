@@ -1,3 +1,10 @@
+pt-device-manager (2.12.0-1) buster; urgency=medium
+
+  * Improve initial logging flow
+  * Improve `pt-host` robustness; use stderr for error printing
+
+ -- Mike Roberts <mike@pi-top.com>  Thu, 10 Sep 2020 14:13:45 +0100
+
 pt-device-manager (2.11.0-1) buster; urgency=medium
 
   * Loop startup animation when expanding filesystem
