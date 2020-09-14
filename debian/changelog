@@ -1,3 +1,13 @@
+pt-device-manager (2.14.0-1) buster; urgency=medium
+
+  * Handle SPI via raspi-config
+  * Send STOPPING signal to systemd before cleaning up
+  * Shorten wait time for device ID to 5s (from 15s)
+  * Non-zero exit code when an internal service fails
+  * Zero exit code when a device ID could not be found
+
+ -- Mike Roberts <mike@pi-top.com>  Mon, 14 Sep 2020 15:05:25 +0100
+
 pt-device-manager (2.13.0-1) buster; urgency=medium
 
   * Remove apparently unnecessary baudrate reduction for pi-top 1
