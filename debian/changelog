@@ -1,3 +1,9 @@
+pt-device-manager (2.13.0-1) buster; urgency=medium
+
+  * Remove apparently unnecessary baudrate reduction for pi-top 1
+
+ -- Mike Roberts <mike@pi-top.com>  Mon, 14 Sep 2020 09:46:00 +0100
+
 pt-device-manager (2.12.2-1) buster; urgency=medium
 
   * Remove extra character from startup animation script
