@@ -1,2 +1,3 @@
 pt-device-manager: binary-without-manpage
 pt-device-manager: hardening-no-relro
+pt-device-manager: arch-independent-package-contains-binary-or-object usr/lib/pt-device-manager/poweroff-legacy
