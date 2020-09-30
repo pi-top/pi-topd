@@ -26,8 +26,8 @@ Depends: ${shlibs:Depends},
 # User idle time
  xprintidle
 Recommends: x11-xserver-utils,
- # Include xhost modification to allow root user to access running X server
- # Necessary for xprintidle to work
+# Include xhost modification to allow root user to access running X server
+# Necessary for xprintidle to work
  pt-os-mods,
 # Low battery warnings
  pt-notifications,
