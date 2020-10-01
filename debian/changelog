@@ -1,3 +1,9 @@
+pt-device-manager (2.14.1-1) buster; urgency=medium
+
+  * Handle non pi-topOS situation for startup animation
+
+ -- Jorge Capona <jorge@pi-top.com>  Thu, 01 Oct 2020 12:13:57 -0300
+
 pt-device-manager (2.14.0-1) buster; urgency=medium
 
   * Handle SPI via raspi-config
