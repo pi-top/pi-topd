@@ -1,0 +1,40 @@
+#!/bin/bash -e
+
+previous_version_is_earlier_than() {
+       local version_to_check_against="${1}"
+       # Is new install or version is earlier than upgrade check
+       [[ -z "${previous_version}" ]] && return 0
+       dpkg --compare-versions "${previous_version}" lt "${version_to_check_against}" && return 0
+       return 1
+}
+
+create_expanded_fs_breadcrumb() {
+       BREADCRUMB_FILENAME=".expandedFs"
+       PATH_TO_BREADCRUMB="/etc/pi-top"
+       mkdir -p "${PATH_TO_BREADCRUMB}"
+       touch "${PATH_TO_BREADCRUMB}/${BREADCRUMB_FILENAME}"
+}
+
+case "$1" in
+       upgrade)
+       shift
+       previous_version="${1}"
+
+       if previous_version_is_earlier_than "2.14.2"; then
+              create_expanded_fs_breadcrumb
+       fi
+       ;;
+
+       install | abort-upgrade)
+       ;;
+
+\
+       *)
+       echo "postinst called with unknown argument \`$1'" >&2
+       exit 1
+       ;;
+esac
+
+#DEBHELPER#
+
+exit 0
