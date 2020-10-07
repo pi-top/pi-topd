@@ -1,3 +1,9 @@
+pt-device-manager (2.14.3-1) buster; urgency=medium
+
+  * Don't create 'expanded FS' breadcrumb if on chroot environment
+
+ -- Jorge Capona <jorge@pi-top.com>  Wed, 07 Oct 2020 18:08:53 -0300
+
 pt-device-manager (2.14.2-1) buster; urgency=medium
 
   * Add 'expanded FS' breadcrumb to handle upgrade situation
