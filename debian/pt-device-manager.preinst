@@ -9,6 +9,11 @@ previous_version_is_earlier_than() {
 }
 
 create_expanded_fs_breadcrumb() {
+         if ischroot; then
+             echo "In a chroot environment - skipping..."
+             return
+         fi
+
        BREADCRUMB_FILENAME=".expandedFs"
        PATH_TO_BREADCRUMB="/etc/pi-top"
        mkdir -p "${PATH_TO_BREADCRUMB}"
