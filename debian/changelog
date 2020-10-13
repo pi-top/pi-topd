@@ -6,8 +6,7 @@ pt-device-manager (3.0.0) buster; urgency=medium
   * Migrate to native package format
   * Use multi-user.target to start services
 
-
- -- Mike Roberts <mike@pi-top.com>  Tue, 13 Oct 2020 13:45:27 +0100
+ -- Mike Roberts <mike@pi-top.com>  Tue, 13 Oct 2020 15:40:58 +0100
 
 pt-device-manager (2.16.0-1) buster; urgency=medium
 
