@@ -3,15 +3,13 @@ Section: utils
 Priority: optional
 Maintainer: pi-top <deb-maintainers@pi-top.com>
 Build-Depends: debhelper-compat (= 12),
- dh-python,
- python3:any
+ dh-sequence-python3
 Standards-Version: 3.9.8
 Homepage: https://pi-top.com/
 
 Package: pt-device-manager
 Architecture: all
-Depends: ${shlibs:Depends},
- ${misc:Depends},
+Depends: ${misc:Depends},
  ${python3:Depends},
 # Used for 'ischroot' command
  debianutils (>= 4.8.6.1),
