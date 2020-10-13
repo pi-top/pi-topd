@@ -1,13 +1,26 @@
+pt-device-manager (3.0.0) buster; urgency=medium
+
+  * Use compat level 12
+  * Add dh-sequence-python3 build dependency
+  * Standards-Version: 4.5.0
+  * Migrate to native package format
+  * Use multi-user.target to start services
+
+
+ -- Mike Roberts <mike@pi-top.com>  Tue, 13 Oct 2020 13:45:27 +0100
+
 pt-device-manager (2.16.0-1) buster; urgency=medium
 
   * Replace poweroff-legacy with Python implementation
   * Remove wiringpi dependency
+  * Clean up rules file
 
  -- Mike Roberts <mike@pi-top.com>  Tue, 13 Oct 2020 13:45:27 +0100
 
 pt-device-manager (2.15.0-1) buster; urgency=medium
 
   * Extend pt-devices to support new connected pi-top devices
+  * Move 'expanded FS' breadcrumb handling to preinst
 
  -- Mike Roberts <mike@pi-top.com>  Tue, 13 Oct 2020 13:32:36 +0100
 
