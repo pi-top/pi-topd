@@ -1,3 +1,9 @@
+pt-device-manager (2.15.0-1) buster; urgency=medium
+
+  * Extend pt-devices to support new connected pi-top devices
+
+ -- Mike Roberts <mike@pi-top.com>  Tue, 13 Oct 2020 13:32:36 +0100
+
 pt-device-manager (2.14.3-1) buster; urgency=medium
 
   * Don't create 'expanded FS' breadcrumb if on chroot environment
