@@ -20,6 +20,11 @@ create_expanded_fs_breadcrumb() {
        touch "${PATH_TO_BREADCRUMB}/${BREADCRUMB_FILENAME}"
 }
 
+disable_overlays_in_config_txt() {
+       sudo sed -i "/dtoverlay=spi1-1cs/d" /boot/config.txt
+       sudo sed -i "/dtparam=i2c1_baudrate/d" /boot/config.txt
+}
+
 case "$1" in
        upgrade)
        shift
@@ -27,6 +32,10 @@ case "$1" in
 
        if previous_version_is_earlier_than "2.14.2"; then
               create_expanded_fs_breadcrumb
+       fi
+
+       if previous_version_is_earlier_than "3.0.0"; then
+              disable_overlays_in_config_txt
        fi
        ;;
 
