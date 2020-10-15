@@ -5,6 +5,5 @@
 
 override_dh_installsystemd:
 	dh_installsystemd --name=pt-device-manager
-	dh_installsystemd --name=pt-oled-startup-anim --no-start --no-stop-on-upgrade
 	dh_installsystemd --name=pt-poweroff --no-start --no-stop-on-upgrade
 	dh_installsystemd --name=pt-reboot --no-start --no-stop-on-upgrade
