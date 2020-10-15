@@ -34,29 +34,3 @@ Suggests: pt-device-cli-utils,
  xprintidle,
 Description: pi-top Device Manager
  Core pi-top service for interfacing with pi-top hardware
-
-Package: pt-device-cli-utils
-Architecture: all
-Depends: ${misc:Depends},
- ${python3:Depends},
-# Requires device manager to be installed
- pt-device-manager,
-# Common functions
- python3-pt-common,
-# System state change communication
- python3-zmq,
-Description: pi-top Device Manager Tools
- Command Line tools for interacting with the pi-top device manager daemon
-
-Package: pt-oled-startup-anim
-Architecture: all
-Depends: ${misc:Depends},
- ${python3:Depends},
-# Common functions
- python3-pt-common,
-# OLED functions
- python3-pt-oled,
-# Play first-time boot-up sound
- python3-pygame,
-Description: pi-top [4] OLED Startup Animation
- pi-top logo animation that displays on OLED during boot.
