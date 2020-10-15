@@ -37,8 +37,6 @@ Suggests: pt-os-mods,
  pt-notifications,
 # User idle time
  xprintidle,
-# Not sure why!
- x11-xserver-utils,
  Description: pi-top Device Manager
  Core pi-top service for interfacing with pi-top hardware
 
