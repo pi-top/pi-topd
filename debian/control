@@ -11,31 +11,26 @@ Package: pt-device-manager
 Architecture: all
 Depends: ${misc:Depends},
  ${python3:Depends},
-# Used for 'ischroot' command
+# Used for 'ischroot' command in preinst
  debianutils (>= 4.8.6.1),
+# Common functions
  python3-pt-common,
-# Used for playing boot-up animation on pi-top [4]
- python3-pt-oled,
 # Journal handling
  python3-systemd,
 # System state change communication
  python3-zmq,
-# User idle time
- xprintidle
-Recommends: x11-xserver-utils,
-# Include xhost modification to allow root user to access running X server
-# Necessary for xprintidle to work
- pt-os-mods,
-# Low battery warnings
- pt-notifications,
 # Peripheral management
- python3-pt-pulse,
+Recommends: python3-pt-pulse,
  python3-pt-speaker,
 # Hub management
  python3-pt-hub-v1,
  python3-pt-hub-v2,
  python3-pt-hub-v3,
-# Used for playing boot-up audio on pi-top [4]
- python3-pygame
+# Command line tools
+Suggests: pt-device-cli-utils,
+# Low battery warnings
+ pt-notifications,
+# User idle time
+ xprintidle,
 Description: pi-top Device Manager
  Core pi-top service for interfacing with pi-top hardware
