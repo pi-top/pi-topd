@@ -37,7 +37,7 @@ Suggests: pt-os-mods,
  pt-notifications,
 # User idle time
  xprintidle,
- Description: pi-top Device Manager
+Description: pi-top Device Manager
  Core pi-top service for interfacing with pi-top hardware
 
 Package: pt-device-manager-tools
@@ -63,5 +63,5 @@ Depends: ${misc:Depends},
  python3-pt-oled,
 # Play first-time boot-up sound
  python3-pygame,
- Description: pi-top [4] OLED Startup Animation
+Description: pi-top [4] OLED Startup Animation
  pi-top logo animation that displays on OLED during boot.
