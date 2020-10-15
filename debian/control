@@ -27,7 +27,7 @@ Recommends: python3-pt-pulse,
  python3-pt-hub-v2,
  python3-pt-hub-v3,
 # Command line tools
-Suggests: pt-device-manager-tools,
+Suggests: pt-device-cli-utils,
 # Low battery warnings
  pt-notifications,
 # User idle time
