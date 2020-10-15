@@ -5,3 +5,5 @@ private-Device-Management/shutdown/poweroff                                 /usr
 private-Device-Management/shutdown/poweroff-legacy                          /usr/lib/pt-device-manager
 private-Device-Management/shutdown/pt-poweroff                              /usr/lib/pt-device-manager
 private-Device-Management/shutdown/pt-reboot                                /usr/lib/pt-device-manager
+# Include xhost modification to allow root user to access running X server
+private-Device-Management/config/pt-xhost-local-root.conf                   /etc/lightdm/lightdm.conf.d/
