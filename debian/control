@@ -32,5 +32,7 @@ Suggests: pt-device-cli-utils,
  pt-notifications,
 # User idle time
  xprintidle,
+Replaces: pt-os-mods (<< 8)
+Breaks: pt-os-mods (<< 8)
 Description: pi-top Device Manager
  Core pi-top service for interfacing with pi-top hardware
