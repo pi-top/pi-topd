@@ -1,3 +1,9 @@
+pt-device-manager (3.1.0) buster; urgency=medium
+
+  * Fix poweroff on pi-topCEED
+
+ -- Jorge Capona <jorge@pi-top.com>  Mon, 26 Oct 2020 11:53:04 -0300
+
 pt-device-manager (3.0.0) buster; urgency=medium
 
   * Use compat level 12
