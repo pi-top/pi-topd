@@ -2,14 +2,16 @@ Source: pt-device-manager
 Section: utils
 Priority: optional
 Maintainer: pi-top <deb-maintainers@pi-top.com>
-Build-Depends: debhelper-compat (= 12),
- dh-sequence-python3
+Build-Depends:
+ debhelper-compat (= 12),
+ dh-sequence-python3,
 Standards-Version: 4.5.0
 Homepage: https://pi-top.com/
 
 Package: pt-device-manager
-Architecture: all
-Depends: ${misc:Depends},
+Architecture: any
+Depends:
+ ${misc:Depends},
  ${python3:Depends},
 # Used for 'ischroot' command in preinst
  debianutils (>= 4.8.6.1),
@@ -19,20 +21,24 @@ Depends: ${misc:Depends},
  python3-systemd,
 # System state change communication
  python3-zmq,
+Recommends:
 # Peripheral management
-Recommends: python3-pt-pulse,
+ python3-pt-pulse,
  python3-pt-speaker,
 # Hub management
  python3-pt-hub-v1,
  python3-pt-hub-v2,
  python3-pt-hub-v3,
+Suggests:
 # Command line tools
-Suggests: pt-device-cli-utils,
+ python3-pitop,
 # Low battery warnings
  pt-notifications,
 # User idle time
  xprintidle,
-Replaces: pt-os-mods (<< 8)
-Breaks: pt-os-mods (<< 8)
+Replaces:
+ pt-os-mods (<< 8),
+Breaks:
+ pt-os-mods (<< 8),
 Description: pi-top Device Manager
  Core pi-top service for interfacing with pi-top hardware
