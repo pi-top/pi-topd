@@ -20,7 +20,7 @@ from ptdm_publish_server import PublishServer
 from ptdm_request_server import RequestServer
 from ptdm_shutdown_manager import ShutdownManager
 from ptdm_config_manager import ConfigManager
-from ptcommon.logger import PTLogger
+from pitop.core.logger import PTLogger
 
 from systemd.daemon import notify
 

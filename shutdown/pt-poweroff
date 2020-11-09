@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import subprocess
-from ptcommon.sys_info import get_host_device_version
+from pitop.core.sys_info import get_host_device_version
 
 try:
     host_device = get_host_device_version()

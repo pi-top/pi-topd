@@ -11,7 +11,7 @@ from ptbk_helper import (
     get_current_bt_interface_address,
 )
 from threading import Thread, Event
-from ptcommon.logger import PTLogger
+from pitop.core.logger import PTLogger
 from time import sleep
 
 from dbus import Boolean, SystemBus, exceptions

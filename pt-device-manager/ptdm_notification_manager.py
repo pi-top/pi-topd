@@ -1,4 +1,4 @@
-from ptcommon.logger import PTLogger
+from pitop.core.logger import PTLogger
 from subprocess import getoutput
 from enum import IntEnum
 

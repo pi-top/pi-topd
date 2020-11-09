@@ -1,12 +1,12 @@
-from ptcommon.logger import PTLogger
-from ptcommon.i2c_device import I2CDevice
-from ptcommon import bitwise_ops
-from pthub3.internal.apcad import APCAD
-from pthub3.internal.battery import BatteryControl
-from pthub3.internal.device_info import DeviceInfo
-from pthub3.internal.diagnostics import Diagnostics
-from pthub3.internal.display import Display, BacklightRegister
-from pthub3.internal.hardware import (
+from pitop.core.logger import PTLogger
+from pitop.core.i2c_device import I2CDevice
+from pitop.core import bitwise_ops
+from .internal.apcad import APCAD
+from .internal.battery import BatteryControl
+from .internal.device_info import DeviceInfo
+from .internal.diagnostics import Diagnostics
+from .internal.display import Display, BacklightRegister
+from .internal.hardware import (
     HardwareControl,
     OLEDControlRegister,
     UIButtonsRegister,
@@ -14,8 +14,8 @@ from pthub3.internal.hardware import (
     BatteryDisplayI2CBusControl,
     FanSpeedControl
 )
-from pthub3.internal.misc import AudioConfig, AudioRegister, UnixTime
-from pthub3.internal.power import PowerControl, ShutdownRegister
+from .internal.misc import AudioConfig, AudioRegister, UnixTime
+from .internal.power import PowerControl, ShutdownRegister
 from threading import Thread
 from time import sleep
 
