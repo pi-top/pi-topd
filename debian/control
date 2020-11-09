@@ -21,14 +21,13 @@ Depends:
  python3-systemd,
 # System state change communication
  python3-zmq,
+# Hub management
+ python3-smbus,
+ python3-spidev,
 Recommends:
 # Peripheral management
  python3-pt-pulse,
  python3-pt-speaker,
-# Hub management
- python3-pt-hub-v1,
- python3-pt-hub-v2,
- python3-pt-hub-v3,
 Suggests:
 # Command line tools
  python3-pitop,
