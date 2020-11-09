@@ -6,3 +6,6 @@ Upstream-Contact: deb-maintainers@pi-top.com
 Files: *
 Copyright: Copyright 2020 CEED Ltd.
 License: Apache-2.0
+
+License: Apache-2.0
+ `/usr/share/common-licenses/Apache-2.0'.
