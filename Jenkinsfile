@@ -4,8 +4,8 @@ buildOSPackage(
   [
     pythonComponents: [
       [
-        SRC: "private-Device-Management/pt-device-manager",
-        TEST: "private-Device-Management/tests"
+        SRC: "pt-device-manager",
+        TEST: "tests"
       ]
     ]
   ]

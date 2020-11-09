@@ -1,1 +1,12 @@
-../private-Device-Management/pt-device-manager/pt-device-manager.service
+[Unit]
+Description=pi-top device auto-detection and configuration daemon
+Documentation=https://knowledgebase.pi-top.com/knowledge
+
+[Service]
+Type=notify
+Restart=on-failure
+Environment="PYTHONDONTWRITEBYTECODE=1"
+ExecStart=/usr/lib/pt-device-manager/pt-device-manager
+
+[Install]
+WantedBy=multi-user.target
