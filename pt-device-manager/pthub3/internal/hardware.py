@@ -1,0 +1,38 @@
+class HardwareControl:
+    CTRL__BRD_DETECT = 0x10
+    CTRL__MODULE_DETECT = 0x11
+    CTRL__BATT_AND_DISP_I2C_MUX = 0x13
+    CTRL__UI_OLED_CTRL = 0x14
+    CTRL__UI_BUTTON_CTRL = 0x15
+    CTRL__FAN_SPEED = 0x16
+    CTRL__RASPI_CPU_TEMP = 0x17
+
+
+class BatteryDisplayI2CBusControl:
+    CTRL__BATT_AND_DISP_I2C_MUX__CONTROL = 0x1
+
+
+class RasPiBoardDetect:
+    CTRL__BRD_DETECT__DETECT = 0x1
+    CTRL__BRD_DETECT__PREVENT = 0x2
+
+
+class OLEDControlRegister:
+    CTRL__UI_OLED_CTRL__RPI_CONTROL = 0x1
+    CTRL__UI_OLED_CTRL__RST = 0x2
+    CTRL__UI_OLED_CTRL__SPI_ALT = 0x4
+
+
+class UIButtonsRegister:
+    # Bits
+    CTRL__UI_BUTTON_CTRL__UP = 0x1
+    CTRL__UI_BUTTON_CTRL__DOWN = 0x2
+    CTRL__UI_BUTTON_CTRL__CANCEL = 0x4
+    CTRL__UI_BUTTON_CTRL__SELECT = 0x8
+    CTRL__UI_BUTTON_CTRL__PWR = 0x10
+    CTRL__UI_BUTTON_CTRL__DIRECT_GPIO = 0x80
+
+
+class FanSpeedControl:
+    CTRL__FAN_SPEED__SPEED = 0x0F
+    CTRL__FAN_SPEED__AUTO = 0x80

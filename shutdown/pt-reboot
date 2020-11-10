@@ -1,0 +1,29 @@
+#!/usr/bin/python3
+
+# Reboot signal needs to be sent to the hub so it takes back
+# control of the oled and turns off the amp
+# Only needed for the pt[4]
+
+from pitop.core.i2c_device import I2CDevice
+from pitop.core.sys_info import get_host_device_version
+
+i2c_address = 0x11
+PWR__SHUTDOWN_CTRL = 0xA0
+PWR__SHUTDOWN_CTRL__MODE5 = 0x28
+
+try:
+    if get_host_device_version() == "pi_top_4":
+        hub = I2CDevice("/dev/i2c-1", i2c_address)
+        hub.connect()
+
+        # Get the current power control register
+        shutdown_control = hub.read_unsigned_byte(PWR__SHUTDOWN_CTRL)
+
+        # Set the shutdown mode to 5
+        shutdown_control = shutdown_control | PWR__SHUTDOWN_CTRL__MODE5
+
+        # Write back to the device
+        hub.write_byte(PWR__SHUTDOWN_CTRL, shutdown_control)
+
+except Exception as e:
+    print("Error rebooting pt[4]: " + str(e))

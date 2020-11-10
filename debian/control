@@ -16,19 +16,14 @@ Depends:
 # Used for 'ischroot' command in preinst
  debianutils (>= 4.8.6.1),
 # Common functions
- python3-pt-common,
+ python3-pitop.core,
 # Journal handling
  python3-systemd,
 # System state change communication
  python3-zmq,
-Recommends:
-# Peripheral management
- python3-pt-pulse,
- python3-pt-speaker,
 # Hub management
- python3-pt-hub-v1,
- python3-pt-hub-v2,
- python3-pt-hub-v3,
+ python3-smbus,
+ python3-spidev,
 Suggests:
 # Command line tools
  python3-pitop,

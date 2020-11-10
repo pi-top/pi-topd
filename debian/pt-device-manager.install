@@ -1,9 +1,10 @@
-private-Device-Management/assets/hifiberry-alsactl.restore                  /etc/pi-top/.i2s-vol/
-private-Device-Management/pt-device-manager/pt-device-manager               /usr/lib/pt-device-manager
-private-Device-Management/pt-device-manager/ptdm*                           /usr/lib/pt-device-manager
-private-Device-Management/shutdown/poweroff                                 /usr/lib/pt-device-manager
-private-Device-Management/shutdown/poweroff-legacy                          /usr/lib/pt-device-manager
-private-Device-Management/shutdown/pt-poweroff                              /usr/lib/pt-device-manager
-private-Device-Management/shutdown/pt-reboot                                /usr/lib/pt-device-manager
+assets/hifiberry-alsactl.restore                  /etc/pi-top/.i2s-vol/
+pt-device-manager/pt-device-manager               /usr/lib/pt-device-manager
+pt-device-manager/ptdm*                           /usr/lib/pt-device-manager
+pt-device-manager/pthub*                          /usr/lib/pt-device-manager
+shutdown/poweroff                                 /usr/lib/pt-device-manager
+shutdown/poweroff-legacy                          /usr/lib/pt-device-manager
+shutdown/pt-poweroff                              /usr/lib/pt-device-manager
+shutdown/pt-reboot                                /usr/lib/pt-device-manager
 # Include xhost modification to allow root user to access running X server
-private-Device-Management/config/pt-xhost-local-root.conf                   /etc/lightdm/lightdm.conf.d/
+config/pt-xhost-local-root.conf                   /etc/lightdm/lightdm.conf.d/

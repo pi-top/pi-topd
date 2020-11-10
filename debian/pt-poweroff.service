@@ -1,1 +1,14 @@
-../private-Device-Management/shutdown/pt-poweroff.service
+[Unit]
+Description=pi-topHUB shutdown announcement
+DefaultDependencies=no
+Before=umount.target
+After=multi-user.target
+Documentation=https://knowledgebase.pi-top.com/knowledge
+
+[Service]
+Type=oneshot
+Environment="PYTHONDONTWRITEBYTECODE=1"
+ExecStart=/usr/lib/pt-device-manager/pt-poweroff
+
+[Install]
+WantedBy=halt.target poweroff.target

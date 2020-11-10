@@ -1,1 +1,12 @@
-../private-Device-Management/shutdown/pt-reboot.service
+[Unit]
+Description=pi-top[4] reboot announcement
+DefaultDependencies=no
+Documentation=https://knowledgebase.pi-top.com/knowledge
+
+[Service]
+Type=oneshot
+Environment="PYTHONDONTWRITEBYTECODE=1"
+ExecStart=/usr/lib/pt-device-manager/pt-reboot
+
+[Install]
+WantedBy=reboot.target

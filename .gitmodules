@@ -1,6 +1,0 @@
-[submodule "Device-Management"]
-	path = Device-Management
-	url = git@github.com:pi-top/Device-Management.git
-[submodule "private-Device-Management"]
-	path = private-Device-Management
-	url = git@github.com:pi-top/private-Device-Management.git

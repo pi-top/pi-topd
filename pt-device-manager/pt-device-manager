@@ -1,0 +1,97 @@
+#!/usr/bin/python3
+
+# The entry point for the application. Creates the controller and handles
+# high-level config e.g. debug level etc. Note the log level can be
+# customised by passing an integer on the command line:
+#
+# Level     Value
+# CRITICAL  50
+# ERROR     40
+# WARNING   30
+# INFO      20
+# DEBUG     10
+# NOTSET    0
+from ptdm_controller import Controller
+from ptdm_hub_manager import HubManager
+from ptdm_idle_monitor import IdleMonitor
+from ptdm_notification_manager import NotificationManager
+from ptdm_peripheral_manager import PeripheralManager
+from ptdm_publish_server import PublishServer
+from ptdm_request_server import RequestServer
+from ptdm_shutdown_manager import ShutdownManager
+from ptdm_config_manager import ConfigManager
+from pitop.core.logger import PTLogger
+
+from systemd.daemon import notify
+
+from signal import signal, SIGINT, SIGTERM
+from os import environ
+from argparse import ArgumentParser
+
+# Set the display env var
+environ["DISPLAY"] = ":0.0"
+
+# Process command line
+parser = ArgumentParser(description="pi-top hardware manager")
+parser.add_argument(
+    "--no-journal", help="output to stdout not the journal", action="store_true"
+)
+parser.add_argument(
+    "--log-level",
+    type=int,
+    help="set the logging level from 10 (more verbose) to 50 (less verbose)",
+    default=20,
+)
+args = parser.parse_args()
+
+log_to_journal = args.no_journal is False
+
+if log_to_journal:
+    print("Logging to journal")
+
+PTLogger.setup_logging(logger_name="pt-device-manager",
+                       logging_level=args.log_level, log_to_journal=log_to_journal)
+
+
+publish_server = PublishServer()
+shutdown_manager = ShutdownManager()
+hub_manager = HubManager()
+idle_monitor = IdleMonitor()
+notification_manager = NotificationManager()
+peripheral_manager = PeripheralManager()
+request_server = RequestServer()
+config_manager = ConfigManager()
+
+# Create the controller
+controller = Controller(
+    publish_server,
+    shutdown_manager,
+    hub_manager,
+    idle_monitor,
+    notification_manager,
+    peripheral_manager,
+    request_server,
+    config_manager,
+)
+
+
+def signal_handler(unused_signal, unused_frame):
+    controller.stop()
+
+
+# Capture and handle interrupts
+signal(SIGINT, signal_handler)
+signal(SIGTERM, signal_handler)
+
+
+# Start the controller
+successful_start = controller.start()
+notify("STOPPING=1")
+
+if not successful_start:
+    PTLogger.error(
+        "Unable to start pi-top device manager's central controller")
+    controller.stop()
+
+# Exiting with 1 will cause systemd service to restart - we should only do this if we failed to determine a device ID
+exit(0 if controller.device_id is not None else 1)

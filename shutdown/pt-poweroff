@@ -1,0 +1,23 @@
+#!/usr/bin/python3
+
+import subprocess
+from pitop.core.sys_info import get_host_device_version
+
+try:
+    host_device = get_host_device_version()
+    if host_device in ["pi_top", "pi_top_ceed"]:
+        subprocess.run(["/usr/lib/pt-device-manager/poweroff-legacy"])
+    elif host_device in ["pi_top_3", "pi_top_4"]:
+        subprocess.run(
+            [
+                "/usr/bin/python3",
+                "-B",
+                "/usr/lib/pt-device-manager/poweroff",
+                str(host_device),
+            ]
+        )
+    else:
+        print("pt-poweroff did not receive a valid pt product version number.")
+        exit(0)
+except subprocess.CalledProcessError as e:
+    print("Error starting shutdown service: " + str(e))

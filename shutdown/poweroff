@@ -1,0 +1,42 @@
+#!/usr/bin/python3
+
+# Script to send a poweroff command to the pi-top hub. Typically this
+# is launched by systemd responding to halt.target/poweroff.target, to
+# ensure the hub shuts down after the Raspberry Pi
+
+from pitop.core.i2c_device import I2CDevice
+from os.path import isfile
+from sys import argv
+
+try:
+    device_id = argv[1]
+except Exception as e:
+    print("Error getting pi-top version from pt-poweroff: " + str(e))
+    exit(1)
+
+i2c_address = 0x11 if device_id == "pi_top_4" else 0x10
+
+PWR__SHUTDOWN_CTRL = 0xA0
+PWR__SHUTDOWN_CTRL__MODE1 = 0x08
+PWR__SHUTDOWN_CTRL__MODE4 = 0x20
+
+try:
+
+    hub = I2CDevice("/dev/i2c-1", i2c_address)
+    hub.connect()
+
+    # Get the current power control register
+    shutdown_control = hub.read_unsigned_byte(PWR__SHUTDOWN_CTRL)
+
+    if isfile("/tmp/pt-poweroff.reboot"):
+        # Set shutdown mode to 4
+        shutdown_control = shutdown_control | PWR__SHUTDOWN_CTRL__MODE4
+    else:
+        # Set shutdown mode to 1
+        shutdown_control = shutdown_control | PWR__SHUTDOWN_CTRL__MODE1
+
+    # Write back to the device
+    hub.write_byte(PWR__SHUTDOWN_CTRL, shutdown_control)
+
+except Exception as e:
+    print("Error shutting down the hub: " + str(e))
