@@ -7,7 +7,7 @@ from subprocess import call
 
 # Handles safe shutdown when the hub is communicating
 # that its battery capacity is below a threshold set by ptdm_controller
-class ShutdownManager:
+class PowerManager:
     no_of_sequential_reads_to_verify = 5
 
     warning_battery_level = 5

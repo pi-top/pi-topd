@@ -9,7 +9,7 @@ class Controller:
     def __init__(
         self,
         publish_server,
-        shutdown_manager,
+        power_manager,
         hub_manager,
         idle_monitor,
         notification_manager,
@@ -20,7 +20,7 @@ class Controller:
         self._continue_running = True
 
         self._publish_server = publish_server
-        self._shutdown_manager = shutdown_manager
+        self._power_manager = power_manager
         self._hub_manager = hub_manager
         self._idle_monitor = idle_monitor
         self._notification_manager = notification_manager
@@ -29,7 +29,7 @@ class Controller:
         self._config_manager = config_manager
 
         # Initialise
-        self._shutdown_manager.initialise(self)
+        self._power_manager.initialise(self)
         self._hub_manager.initialise(self)
         self._idle_monitor.initialise(self)
         self._peripheral_manager.initialise(self)
@@ -45,7 +45,7 @@ class Controller:
         self._config_manager.write_device_id_to_file(self.device_id)
 
         self._peripheral_manager.initialise_device_id(self.device_id)
-        self._shutdown_manager.set_device_id(self.device_id)
+        self._power_manager.set_device_id(self.device_id)
 
     def _set_host_device_id_from_hub(self):
         self._set_host_device_id(self._hub_manager.get_device_id())
@@ -199,7 +199,7 @@ class Controller:
         self._hub_manager.shutdown()
 
         # Now trigger the OS shutdown
-        self._shutdown_manager.shutdown()
+        self._power_manager.shutdown()
 
     def on_hub_brightness_changed(self, new_value):
         self._publish_server.publish_brightness_changed(new_value)
@@ -224,11 +224,11 @@ class Controller:
                 charging_state, capacity, time_remaining, wattage
             )
 
-            # Let the shutdown manager know about the state of the battery
+            # Let the power manager know about the state of the battery
             # so it can trigger warnings or safe-shutdown as necessary
-            self._shutdown_manager.set_battery_capacity(capacity)
-            self._shutdown_manager.set_battery_charging(charging_state)
-            self._shutdown_manager.process_battery_state()
+            self._power_manager.set_battery_capacity(capacity)
+            self._power_manager.set_battery_charging(charging_state)
+            self._power_manager.process_battery_state()
 
     def on_screen_blank_state_changed(self, blanked_state):
         if blanked_state:
@@ -295,9 +295,9 @@ class Controller:
                 is_pressed)
 
     def on_device_id_changed(self, device_id_int):
-        # Inform the shutdown manager that the device id has changed, so
+        # Inform the power manager that the device id has changed, so
         # it can handle battery notifications correctly
-        self._shutdown_manager.set_device_id(device_id_int)
+        self._power_manager.set_device_id(device_id_int)
 
     ###########################################
     # Peripheral Manager callback methods
@@ -327,7 +327,7 @@ class Controller:
         self._hub_manager.unblank_screen()
 
     ###########################################
-    # Shutdown manager callback methods
+    # Power manager callback methods
     ###########################################
 
     def on_clear_battery_warning(self):
