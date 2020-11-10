@@ -2,11 +2,12 @@ from pitop.core.logger import PTLogger
 from pitop.core.common_ids import DeviceID
 from pitop.core.counter import Counter
 from os import system
-from subprocess import call
-
+from os import path
 
 # Handles safe shutdown when the hub is communicating
 # that its battery capacity is below a threshold set by ptdm_controller
+
+
 class PowerManager:
     no_of_sequential_reads_to_verify = 5
 
@@ -36,8 +37,26 @@ class PowerManager:
     def set_battery_capacity(self, new_value):
         self._battery_capacity = new_value
 
+    def play_battery_charging_state_change_sound(self, is_now_charging):
+        # Only play sound if desired
+        if path.isfile("/etc/pi-top/.silentCharge"):
+            return
+
+        mp3_name = "charger-connected.mp3" if is_now_charging else "charger-disconnected.mp3"
+        system(
+            "omxplayer --no-keys --vol -1500 -o local /usr/lib/pt-device-manager/assets/%s" % mp3_name)
+
     def set_battery_charging(self, new_value):
+        previous_value = self._battery_charging
         self._battery_charging = new_value
+
+        # Don't play sound if this is the first time getting the state
+        if previous_value == -1:
+            return
+
+        # Only play sound if the state has changed
+        # if new_value != previous_value:
+        #     self.play_battery_charging_state_change_sound(new_value)
 
     def set_device_id(self, new_value):
         self._device_id = new_value
