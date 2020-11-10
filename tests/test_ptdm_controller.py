@@ -18,7 +18,7 @@ class ControllerTestCase(unittest.TestCase):
         # Mock objects and methods
 
         self.mock_publish_server = Mock()
-        self.mock_shutdown_manager = Mock()
+        self.mock_power_manager = Mock()
         self.mock_hub_manager = Mock()
         self.mock_idle_monitor = Mock()
         self.mock_notification_manager = Mock()
@@ -30,7 +30,7 @@ class ControllerTestCase(unittest.TestCase):
 
         self.controller = Controller(
             self.mock_publish_server,
-            self.mock_shutdown_manager,
+            self.mock_power_manager,
             self.mock_hub_manager,
             self.mock_idle_monitor,
             self.mock_notification_manager,
@@ -180,7 +180,7 @@ class ControllerTestCase(unittest.TestCase):
         self.mock_peripheral_manager.initialise_device_id.assert_called_with(
             DeviceID.pi_top_3
         )
-        self.mock_shutdown_manager.set_device_id.assert_called_with(
+        self.mock_power_manager.set_device_id.assert_called_with(
             DeviceID.pi_top_3)
 
     def test_controller_starts_peripheral_manager(self):

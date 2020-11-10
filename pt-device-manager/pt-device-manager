@@ -18,7 +18,7 @@ from ptdm_notification_manager import NotificationManager
 from ptdm_peripheral_manager import PeripheralManager
 from ptdm_publish_server import PublishServer
 from ptdm_request_server import RequestServer
-from ptdm_shutdown_manager import ShutdownManager
+from ptdm_power_manager import PowerManager
 from ptdm_config_manager import ConfigManager
 from pitop.core.logger import PTLogger
 
@@ -54,7 +54,7 @@ PTLogger.setup_logging(logger_name="pt-device-manager",
 
 
 publish_server = PublishServer()
-shutdown_manager = ShutdownManager()
+power_manager = PowerManager()
 hub_manager = HubManager()
 idle_monitor = IdleMonitor()
 notification_manager = NotificationManager()
@@ -65,7 +65,7 @@ config_manager = ConfigManager()
 # Create the controller
 controller = Controller(
     publish_server,
-    shutdown_manager,
+    power_manager,
     hub_manager,
     idle_monitor,
     notification_manager,
