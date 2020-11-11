@@ -16,7 +16,7 @@ Depends:
 # Used for 'ischroot' command in preinst
  debianutils (>= 4.8.6.1),
 # Common functions
- python3-pitop.core,
+ python3-pitop.utils,
 # Journal handling
  python3-systemd,
 # System state change communication
