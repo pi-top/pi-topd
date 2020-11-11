@@ -4,12 +4,12 @@
 
 from math import pow
 from smbus import SMBus
-from ptcommon.logger import PTLogger
-from ptcommon.common_ids import DeviceID
-from ptcommon.sys_config import I2S
-from ptcommon.sys_config import UART
-from ptcommon.sys_config import HDMI
-from ptcommon.common_functions import get_debian_version
+from pitop.utils.logger import PTLogger
+from pitop.utils.common_ids import DeviceID
+from pitop.utils.sys_config import I2S
+from pitop.utils.sys_config import UART
+from pitop.utils.sys_config import HDMI
+from pitop.utils.common_functions import get_debian_version
 
 _bus_id = 1
 _device_addr = 0x24
