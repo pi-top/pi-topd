@@ -1,9 +1,9 @@
-from pitop.core.file_ops import touch_file
-from pitop.core.current_session_info import get_user_using_first_display
-from pitop.core.sys_config import System
-from pitop.core.common_ids import DeviceID, Peripheral, PeripheralID
-from pitop.core.sys_config import I2C, I2S, Hifiberry
-from pitop.core.logger import PTLogger
+from pitop.utils.file_ops import touch_file
+from pitop.utils.current_session_info import get_user_using_first_display
+from pitop.utils.sys_config import System
+from pitop.utils.common_ids import DeviceID, Peripheral, PeripheralID
+from pitop.utils.sys_config import I2C, I2S, Hifiberry
+from pitop.utils.logger import PTLogger
 from importlib import import_module
 from os import path
 from subprocess import call

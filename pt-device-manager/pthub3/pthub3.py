@@ -1,5 +1,5 @@
-from pitop.core.logger import PTLogger
-from pitop.core.common_ids import DeviceID
+from pitop.utils.logger import PTLogger
+from pitop.utils.common_ids import DeviceID
 from .pthub3_state import State
 from .pthub3_connection import HubConnection
 

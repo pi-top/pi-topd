@@ -1,5 +1,5 @@
-from pitop.core.logger import PTLogger
-from pitop.core.counter import Counter
+from pitop.utils.logger import PTLogger
+from pitop.utils.counter import Counter
 from smbus import SMBus
 from threading import Thread
 from time import sleep
