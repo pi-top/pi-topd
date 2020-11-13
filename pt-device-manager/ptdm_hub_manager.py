@@ -2,9 +2,9 @@ from pitop.utils.common_ids import DeviceID
 from pitop.utils.logger import PTLogger
 from pitop.utils.command_runner import run_command
 
-from .pthub3 import pthub3
-from .pthub2 import pthub2
-from .pthub import pthub
+from pthub3 import pthub3
+from pthub2 import pthub2
+from pthub import pthub
 
 import traceback
 from glob import glob
