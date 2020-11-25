@@ -1,7 +1,5 @@
 # Refresh when pi-top Python library dependencies are updated
-interest-noawait updated-pt-hub-lib
-interest-noawait updated-pt-peripheral-lib
-interest-noawait updated-pt-common-lib
+interest-noawait updated-pitop-common-lib
 
 # Broadcast that device manager has updated
 activate-noawait updated-pt-device-manager
