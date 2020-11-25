@@ -1,3 +1,4 @@
+pt-device-manager: binary-without-manpage usr/bin/pt-i2s
 pt-device-manager: systemd-service-file-refers-to-unusual-wantedby-target lib/systemd/system/pt-poweroff.service halt.target
 pt-device-manager: systemd-service-file-refers-to-unusual-wantedby-target lib/systemd/system/pt-poweroff.service poweroff.target
 pt-device-manager: systemd-service-file-refers-to-unusual-wantedby-target lib/systemd/system/pt-reboot.service reboot.target
