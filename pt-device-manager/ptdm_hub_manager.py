@@ -6,10 +6,8 @@ from pthub3 import pthub3
 from pthub2 import pthub2
 from pthub import pthub
 
-import traceback
 from glob import glob
 from time import sleep
-from subprocess import call
 from os import path
 from os import remove
 from json import dump as json_dump

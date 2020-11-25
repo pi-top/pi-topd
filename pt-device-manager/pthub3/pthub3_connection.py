@@ -812,17 +812,6 @@ class HubConnection:
         else:
             self._state.set_lid_open()
 
-    def _read_keyboard_docked_register(self):
-        PTLogger.debug("Hub: Reading keyboard docked register")
-        keyboard_docked_state = self._i2c_device.read_unsigned_byte(
-            KeyboardControl.KBRD__DOCK_FLAG
-        )
-
-        if keyboard_docked_state != 0:
-            self._state.set_keyboard_docked()
-        else:
-            self._state.set_keyboard_undocked()
-
     def _read_display_register(self):
         PTLogger.debug("Hub: Reading native and external displays register")
         displays_state = self._i2c_device.read_unsigned_byte(
@@ -974,7 +963,6 @@ class HubConnection:
             self._read_battery_registers_if_min_time_passed()
             self._read_shutdown_control()
             # self._read_backlight_register()
-            # self._read_keyboard_docked_register()
             self._read_oled_register()
             self._read_ui_buttons_register()
             # self._read_display_register_if_min_time_passed()

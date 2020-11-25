@@ -50,31 +50,7 @@ def on_failed_to_connect_bt_keyboard():
     pass
 
 
-def on_failed_to_connect_bt_keyboard():
-    pass
-
-
-def on_failed_to_connect_bt_keyboard():
-    pass
-
-
-def on_failed_to_connect_bt_keyboard():
-    pass
-
-
-def on_failed_to_connect_bt_keyboard():
-    pass
-
-
-def on_failed_to_connect_bt_keyboard():
-    pass
-
-
 def on_successful_connect_bt_keyboard():
-    pass
-
-
-def get_keyboard_last_master_mac_address():
     pass
 
 
@@ -163,6 +139,7 @@ class BTManager:
 
     def initialise(self):
         # self._set_up_signals()
+        pass
 
     def start(self):
         self._continue = True

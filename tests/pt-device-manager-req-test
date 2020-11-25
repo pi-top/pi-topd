@@ -56,7 +56,8 @@ def listen_thread():
         for i in range(len(events)):
             message_string = zmq_socket.recv_string()
             message = Message.from_string(message_string)
-            # print("Received publish event: " + message.message_friendly_string())
+            print("Received publish event: " +
+                  message.message_friendly_string())
 
 
 def test_ping():

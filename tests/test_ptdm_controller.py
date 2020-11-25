@@ -2,7 +2,7 @@ from ptdm_controller import Controller
 from pitopcommon.common_ids import DeviceID
 import sys
 import unittest
-from unittest.mock import patch, call, Mock
+from unittest.mock import Mock
 
 mock_systemd_daemon = Mock()
 mock_common_ids = Mock()
@@ -111,7 +111,7 @@ class ControllerTestCase(unittest.TestCase):
 
         # Run
 
-        assert self.controller.start() == False
+        assert self.controller.start() is False
 
         # Test
 
@@ -161,7 +161,7 @@ class ControllerTestCase(unittest.TestCase):
 
         # Run
 
-        assert self.controller.start() == False
+        assert self.controller.start() is False
 
     def test_controller_device_id_passed_to_sub_systems(self):
 

@@ -266,7 +266,7 @@ class HubConnection:
             PTLogger.debug("Polling for backlight...")
             self._read_backlight_register()
 
-        except TypeError as e:
+        except TypeError:
             raise
 
         except Exception as e:

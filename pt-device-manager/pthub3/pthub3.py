@@ -213,10 +213,6 @@ def get_battery_error_flag():
     return _hub_connection.read_battery_error_flag()
 
 
-def get_battery_manufacture_date():
-    return _hub_connection.read_battery_manufacture_date()
-
-
 def get_battery_charging_error_detect():
     return _hub_connection.read_battery_charging_error_detect()
 

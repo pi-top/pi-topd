@@ -80,7 +80,7 @@ class BatteryStateHandler:
 
             PTLogger.debug("Testing comms with battery")
             return self._refresh_state()
-        except:
+        except Exception:
             PTLogger.warning("Unable to find pi-topHUB battery")
 
         return False
@@ -213,7 +213,7 @@ class BatteryStateHandler:
             resp = self.twos_comp(self._bus.read_word_data(
                 self._chip_address, register))
             successful_read = True
-        except:
+        except Exception:
             pass
 
         return successful_read, resp, register

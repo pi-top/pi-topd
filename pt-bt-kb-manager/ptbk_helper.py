@@ -1,4 +1,4 @@
-from dbus import Interface, SystemBus, Dictionary
+from dbus import Interface, SystemBus
 from dbus.mainloop.glib import DBusGMainLoop
 from subprocess import getoutput
 

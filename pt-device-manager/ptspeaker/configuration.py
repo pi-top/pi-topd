@@ -7,6 +7,7 @@ from pitopcommon.current_session_info import get_user_using_first_display
 from os import path
 from smbus import SMBus
 import traceback
+from sys import exit
 
 _BUS_ID = 1
 _I2C_BUS = None
@@ -73,7 +74,7 @@ def _parse_v1_speaker_playback_mode_file(mode):
                             "Error parsing line " +
                             str(index) + " - exiting..."
                         )
-                        sys.exit(0)
+                        exit(0)
                     else:
                         # Write all values from 4th to the end of the line
 
@@ -117,15 +118,15 @@ def _enable_v1_speaker(mode):
         PTLogger.info("Mode not recognised")
         return False
 
-    if _set_write_to_v1_speaker_enabled(address, True) == False:
+    if _set_write_to_v1_speaker_enabled(address, True) is False:
         PTLogger.info("Error enabling write to pi-topSPEAKER")
         return False
 
-    if _parse_v1_speaker_playback_mode_file(mode) == False:
+    if _parse_v1_speaker_playback_mode_file(mode) is False:
         PTLogger.info("Error parsing and writing mode file to pi-topSPEAKER")
         return False
 
-    if _set_write_to_v1_speaker_enabled(address, False) == False:
+    if _set_write_to_v1_speaker_enabled(address, False) is False:
         PTLogger.info("Error disabling write to pi-topSPEAKER")
         return False
 

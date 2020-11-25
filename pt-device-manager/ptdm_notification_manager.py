@@ -19,7 +19,8 @@ messages_en = {
     MessageID.body_low_battery: "Your pi-top's battery level is low. Please plug in a charging cable to prevent your system from shutting down.",
 
     MessageID.title_critical_battery: "Low Battery",
-    MessageID.body_critical_battery: "Your pi-top's battery level is critically low. System will shut down shortly unless a charging cable is plugged in.",
+    MessageID.body_critical_battery: "Your pi-top's battery level is critically low. "
+    "System will shut down shortly unless a charging cable is plugged in.",
 
     MessageID.title_reboot: "Reboot Required",
     MessageID.body_reboot: "Recently detected hardware requires a system settings modification.\nPlease reboot to enable hardware support.",

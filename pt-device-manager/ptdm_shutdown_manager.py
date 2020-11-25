@@ -2,7 +2,6 @@ from pitopcommon.logger import PTLogger
 from pitopcommon.common_ids import DeviceID
 from pitopcommon.counter import Counter
 from os import system
-from subprocess import call
 
 
 # Handles safe shutdown when the hub is communicating
