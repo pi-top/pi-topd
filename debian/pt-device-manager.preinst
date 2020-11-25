@@ -1,4 +1,12 @@
-#!/bin/bash -e
+#!/bin/bash
+###############################################################
+#                Unofficial 'Bash strict mode'                #
+# http://redsymbol.net/articles/unofficial-bash-strict-mode/  #
+###############################################################
+set -euo pipefail
+IFS=$'\n\t'
+###############################################################
+
 
 previous_version_is_earlier_than() {
        local version_to_check_against="${1}"
