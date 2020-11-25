@@ -6,9 +6,9 @@ from math import pow
 from smbus import SMBus
 from pitopcommon.logger import PTLogger
 from pitopcommon.common_ids import DeviceID
-from pitopcommon.sys_config import I2S
-from pitopcommon.sys_config import UART
-from pitopcommon.sys_config import HDMI
+from sys_config import I2S
+from sys_config import UART
+from sys_config import HDMI
 from pitopcommon.common_functions import get_debian_version
 
 _bus_id = 1

@@ -1,8 +1,16 @@
+from sys_config import (
+    I2C,
+    I2S,
+    Hifiberry,
+    System
+)
 from pitopcommon.file_ops import touch_file
 from pitopcommon.current_session_info import get_user_using_first_display
-from pitopcommon.sys_config import System
-from pitopcommon.common_ids import DeviceID, Peripheral, PeripheralID
-from pitopcommon.sys_config import I2C, I2S, Hifiberry
+from pitopcommon.common_ids import (
+    DeviceID,
+    Peripheral,
+    PeripheralID
+)
 from pitopcommon.logger import PTLogger
 from importlib import import_module
 from os import path
