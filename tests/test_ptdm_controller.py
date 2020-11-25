@@ -1,5 +1,5 @@
 from ptdm_controller import Controller
-from pitop.utils.common_ids import DeviceID
+from pitopcommon.common_ids import DeviceID
 import sys
 import unittest
 from unittest.mock import patch, call, Mock
@@ -7,9 +7,9 @@ from unittest.mock import patch, call, Mock
 mock_systemd_daemon = Mock()
 mock_common_ids = Mock()
 sys.modules["systemd.daemon"] = mock_systemd_daemon
-sys.modules["pitop.utils.common_ids"] = mock_common_ids
+sys.modules["pitopcommon.common_ids"] = mock_common_ids
 sys.modules["time"].sleep = Mock()
-sys.modules["pitop.utils.logger"] = Mock()
+sys.modules["pitopcommon.logger"] = Mock()
 
 
 class ControllerTestCase(unittest.TestCase):

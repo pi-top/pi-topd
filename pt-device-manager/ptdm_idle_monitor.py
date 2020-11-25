@@ -1,4 +1,4 @@
-from pitop.utils.logger import PTLogger
+from pitopcommon.logger import PTLogger
 from subprocess import check_output
 from subprocess import CalledProcessError
 from os import devnull

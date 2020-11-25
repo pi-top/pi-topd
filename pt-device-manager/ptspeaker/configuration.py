@@ -1,9 +1,9 @@
-from pitop.utils.logger import PTLogger
-from pitop.utils.common_ids import DeviceID
-from pitop.utils.sys_config import HDMI
-from pitop.utils.sys_config import I2C
-from pitop.utils.sys_config import I2S
-from pitop.utils.current_session_info import get_user_using_first_display
+from pitopcommon.logger import PTLogger
+from pitopcommon.common_ids import DeviceID
+from pitopcommon.sys_config import HDMI
+from pitopcommon.sys_config import I2C
+from pitopcommon.sys_config import I2S
+from pitopcommon.current_session_info import get_user_using_first_display
 from os import path
 from smbus import SMBus
 import traceback

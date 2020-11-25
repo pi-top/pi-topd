@@ -1,6 +1,6 @@
-from pitop.utils.common_ids import DeviceID
-from pitop.utils.logger import PTLogger
-from pitop.utils.command_runner import run_command
+from pitopcommon.common_ids import DeviceID
+from pitopcommon.logger import PTLogger
+from pitopcommon.command_runner import run_command
 
 from pthub3 import pthub3
 from pthub2 import pthub2

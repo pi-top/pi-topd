@@ -1,5 +1,5 @@
-from pitop.utils.logger import PTLogger
-from pitop.utils.common_ids import DeviceID
+from pitopcommon.logger import PTLogger
+from pitopcommon.common_ids import DeviceID
 
 
 class ConfigManager:

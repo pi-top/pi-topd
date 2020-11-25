@@ -4,7 +4,7 @@
 # is launched by systemd responding to halt.target/poweroff.target, to
 # ensure the hub shuts down after the Raspberry Pi
 
-from pitop.utils.i2c_device import I2CDevice
+from pitopcommon.i2c_device import I2CDevice
 from os.path import isfile
 from sys import argv
 
