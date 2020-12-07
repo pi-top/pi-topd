@@ -5,7 +5,7 @@
 import zmq
 from time import sleep
 from threading import Thread
-from pitopcommon.ptdm_message import Message
+from pitopcommon.ptdm import Message
 
 
 def cleanup():

@@ -1,5 +1,5 @@
 from pitopcommon.logger import PTLogger
-from pitopcommon.ptdm_message import Message
+from pitopcommon.ptdm import Message
 from pitopcommon.common_ids import DeviceID
 from threading import Thread
 from time import sleep
@@ -80,11 +80,9 @@ class RequestServer:
                            message.message_friendly_string())
 
             if message.message_id() == Message.REQ_PING:
-                message.validate_parameters(list())
                 response = Message.from_parts(Message.RSP_PING, list())
 
             elif message.message_id() == Message.REQ_GET_DEVICE_ID:
-                message.validate_parameters(list())
                 device_id = self._callback_client.on_request_get_device_id()
                 if device_id is None:
                     device_id = -1
@@ -95,7 +93,6 @@ class RequestServer:
                     Message.RSP_GET_DEVICE_ID, [device_id])
 
             elif message.message_id() == Message.REQ_GET_BRIGHTNESS:
-                message.validate_parameters(list())
                 brightness = self._callback_client.on_request_get_brightness()
                 if brightness is None:
                     brightness = -1
@@ -103,7 +100,6 @@ class RequestServer:
                     Message.RSP_GET_BRIGHTNESS, [brightness])
 
             elif message.message_id() == Message.REQ_SET_BRIGHTNESS:
-                message.validate_parameters([int])
                 self._callback_client.on_request_set_brightness(
                     int(message.parameters()[0])
                 )
@@ -111,30 +107,25 @@ class RequestServer:
                     Message.RSP_SET_BRIGHTNESS, list())
 
             elif message.message_id() == Message.REQ_INCREMENT_BRIGHTNESS:
-                message.validate_parameters(list())
                 self._callback_client.on_request_increment_brightness()
                 response = Message.from_parts(
                     Message.RSP_INCREMENT_BRIGHTNESS, list())
 
             elif message.message_id() == Message.REQ_DECREMENT_BRIGHTNESS:
-                message.validate_parameters(list())
                 self._callback_client.on_request_decrement_brightness()
                 response = Message.from_parts(
                     Message.RSP_DECREMENT_BRIGHTNESS, list())
 
             elif message.message_id() == Message.REQ_BLANK_SCREEN:
-                message.validate_parameters(list())
                 self._callback_client.on_request_blank_screen()
                 response = Message.from_parts(Message.RSP_BLANK_SCREEN, list())
 
             elif message.message_id() == Message.REQ_UNBLANK_SCREEN:
-                message.validate_parameters(list())
                 self._callback_client.on_request_unblank_screen()
                 response = Message.from_parts(
                     Message.RSP_UNBLANK_SCREEN, list())
 
             elif message.message_id() == Message.REQ_GET_SCREEN_BACKLIGHT_STATE:
-                message.validate_parameters(list())
                 backlight_state = (
                     self._callback_client.on_request_get_screen_backlight_state()
                 )
@@ -145,7 +136,6 @@ class RequestServer:
                 )
 
             elif message.message_id() == Message.REQ_SET_SCREEN_BACKLIGHT_STATE:
-                message.validate_parameters([int])
                 self._callback_client.on_request_set_screen_backlight_state(
                     int(message.parameters()[0])
                 )
@@ -154,7 +144,6 @@ class RequestServer:
                 )
 
             elif message.message_id() == Message.REQ_GET_OLED_CONTROL:
-                message.validate_parameters(list())
                 oled_pi_control_state = (
                     self._callback_client.on_request_get_oled_control()
                 )
@@ -165,7 +154,6 @@ class RequestServer:
                 )
 
             elif message.message_id() == Message.REQ_SET_OLED_CONTROL:
-                message.validate_parameters([int])
                 self._callback_client.on_request_set_oled_pi_control(
                     int(message.parameters()[0])
                 )
@@ -173,7 +161,6 @@ class RequestServer:
                     Message.RSP_SET_OLED_CONTROL, list())
 
             elif message.message_id() == Message.REQ_GET_BATTERY_STATE:
-                message.validate_parameters(list())
                 charging_state, capacity, time_remaining, wattage = (
                     self._callback_client.on_request_battery_state()
                 )
@@ -183,7 +170,6 @@ class RequestServer:
                 )
 
             elif message.message_id() == Message.REQ_GET_PERIPHERAL_ENABLED:
-                message.validate_parameters([int])
                 enabled_bool = self._callback_client.on_request_get_peripheral_enabled(
                     int(message.parameters()[0])
                 )
@@ -193,7 +179,6 @@ class RequestServer:
                 )
 
             elif message.message_id() == Message.REQ_GET_SCREEN_BLANKING_TIMEOUT:
-                message.validate_parameters(list())
                 timeout = self._callback_client.on_request_get_screen_blanking_timeout()
                 if timeout is None:
                     timeout = -1
@@ -202,7 +187,6 @@ class RequestServer:
                 )
 
             elif message.message_id() == Message.REQ_SET_SCREEN_BLANKING_TIMEOUT:
-                message.validate_parameters([int])
                 self._callback_client.on_request_set_screen_blanking_timeout(
                     int(message.parameters()[0])
                 )

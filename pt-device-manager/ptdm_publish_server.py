@@ -1,5 +1,5 @@
 from pitopcommon.logger import PTLogger
-from pitopcommon.ptdm_message import Message
+from pitopcommon.ptdm import Message
 import zmq
 import traceback
 from threading import Lock
