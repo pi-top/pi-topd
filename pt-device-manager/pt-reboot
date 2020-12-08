@@ -17,7 +17,7 @@ try:
     device_version = ""
     if exists(device_version_file):
         with open(device_version_file, "r") as f:
-            device_version = f.readline()
+            device_version = f.readline().strip()
 
     if device_version == "pi_top_4":
         hub = I2CDevice("/dev/i2c-1", i2c_address)
