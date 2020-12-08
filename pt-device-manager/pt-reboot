@@ -5,14 +5,21 @@
 # Only needed for the pt[4]
 
 from pitopcommon.i2c_device import I2CDevice
-from pitopcommon.sys_info import get_host_device_version
+from os.path import exists
 
 i2c_address = 0x11
 PWR__SHUTDOWN_CTRL = 0xA0
 PWR__SHUTDOWN_CTRL__MODE5 = 0x28
 
+device_version_file = "/etc/pi-top/pt-device-manager/device_version"
+
 try:
-    if get_host_device_version() == "pi_top_4":
+    device_version = ""
+    if exists(device_version_file):
+        with open(device_version_file, "r") as f:
+            device_version = f.readline()
+
+    if device_version == "pi_top_4":
         hub = I2CDevice("/dev/i2c-1", i2c_address)
         hub.connect()
 
@@ -26,4 +33,4 @@ try:
         hub.write_byte(PWR__SHUTDOWN_CTRL, shutdown_control)
 
 except Exception as e:
-    print("Error rebooting pt[4]: " + str(e))
+    print("Error starting reboot service: " + str(e))
