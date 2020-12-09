@@ -30,7 +30,6 @@ class _SystemCalls:
     I2S_ENABLE_CMD_ARR = [PTI2S_CMD, "enable"]
     I2S_DISABLE_CMD_ARR = [PTI2S_CMD, "disable"]
 
-    OLD_AMIXER_GET_CMD_ARR = ["amixer", "cget", "numid=3"]
     OLD_AMIXER_SET_CMD_ARR = ["amixer", "cset", "numid=3"]
     ALSA_RESTART_CMD = ["sudo", "/etc/init.d/alsa-utils", "restart"]
 
@@ -43,8 +42,15 @@ class _SystemCalls:
             return False
 
     @staticmethod
+    def _using_pulseaudio():
+        for line in run_command("ps ax", timeout=5).split("\n"):
+            if "/usr/bin/pulseaudio" in line:
+                return True
+        return False
+
+    @staticmethod
     def _using_new_alsa_config():
-        for line in run_command("aplay -l", timeout=5):
+        for line in run_command("aplay -l", timeout=5).split("\n"):
             if "bcm2835 ALSA" in line:
                 return False
         return True
@@ -238,8 +244,9 @@ class _SystemCalls:
 
         PTLogger.info(
             f"Setting audio output for user {user} to {interface.name} (card number {card_number})")
+        uid = run_command(f"id -u {user}", timeout=1).strip()
         run_command(
-            f"env SUDO_USER={user} raspi-config nonint do_audio {card_number}", timeout=5)
+            f"env SUDO_USER={user} SUDO_UID={uid} raspi-config nonint do_audio {card_number}", timeout=5)
 
         return True
 
@@ -437,7 +444,7 @@ class HeadphoneJack:
         if not _SystemCalls._using_onboard_sound_driver():
             return
 
-        if _SystemCalls._using_new_alsa_config():
+        if _SystemCalls._using_pulseaudio() or _SystemCalls._using_new_alsa_config():
             return _SystemCalls.set_audio_output_interface(AudioDevice.Headphones, user)
         else:
             return _SystemCalls.legacy_set_audio_output_interface_no(1, "35mm")
@@ -453,7 +460,7 @@ class HDMI:
         if not _SystemCalls._using_onboard_sound_driver():
             return
 
-        if _SystemCalls._using_new_alsa_config():
+        if _SystemCalls._using_pulseaudio() or _SystemCalls._using_new_alsa_config():
             return _SystemCalls.set_audio_output_interface(AudioDevice.HDMI, user)
         else:
             return _SystemCalls.legacy_set_audio_output_interface_no(2, "HDMI")
