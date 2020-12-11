@@ -1,3 +1,12 @@
+pt-device-manager (4.0.0) buster; urgency=medium
+
+  * Apply Flake8 linting
+  * Move hardware interaction library dependencies into package
+  * Add bash strict mode to maintainer scripts
+  * Update dpkg triggers for Python SDK
+
+ -- Mike Roberts <mike@pi-top.com>  Fri, 11 Dec 2020 13:55:33 +0000
+
 pt-device-manager (3.1.0) buster; urgency=medium
 
   * Fix poweroff on pi-topCEED
