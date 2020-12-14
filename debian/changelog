@@ -1,3 +1,9 @@
+pt-device-manager (4.0.1) buster; urgency=medium
+
+  * Make all systemd services unbuffered
+
+ -- Mike Roberts <mike@pi-top.com>  Mon, 14 Dec 2020 17:29:59 +0000
+
 pt-device-manager (4.0.0) buster; urgency=medium
 
   * Apply Flake8 linting
