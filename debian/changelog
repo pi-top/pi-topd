@@ -1,3 +1,9 @@
+pt-device-manager (4.0.2) buster; urgency=medium
+
+  * Make package provide packages that are no longer desired on the system
+
+ -- Mike Roberts <mike@pi-top.com>  Tue, 15 Dec 2020 00:34:15 +0000
+
 pt-device-manager (4.0.1) buster; urgency=medium
 
   * Make all systemd services unbuffered
