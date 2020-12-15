@@ -1,3 +1,10 @@
+pt-device-manager (4.0.3) buster; urgency=medium
+
+  * Breaks and Replaces pt-os-mods (<< 8) (for taking ownership of files)
+  * Remove version restriction for packages to remove
+
+ -- Mike Roberts <mike@pi-top.com>  Tue, 15 Dec 2020 01:08:22 +0000
+
 pt-device-manager (4.0.2) buster; urgency=medium
 
   * Make package provide packages that are no longer desired on the system
