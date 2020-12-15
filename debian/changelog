@@ -1,9 +1,3 @@
-pt-device-manager (5.0.0) buster; urgency=medium
-
-  * Add 'request-restart-pt-device-manager' dpkg trigger for pt-os-mods
-
- -- Mike Roberts <mike@pi-top.com>  Tue, 15 Dec 2020 14:09:49 +0000
-
 pt-device-manager (4.0.3) buster; urgency=medium
 
   * Breaks and Replaces pt-os-mods (<< 8) (for taking ownership of files)

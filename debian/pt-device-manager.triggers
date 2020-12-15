@@ -1,6 +1,3 @@
-# Refresh when something tells us to
-interest-noawait request-restart-pt-device-manager
-
 # Refresh when pi-top Python library dependencies are updated
 interest-noawait updated-pitop-common-lib
 
