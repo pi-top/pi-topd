@@ -156,6 +156,15 @@ class HubManager:
             )
             return None
 
+    def get_lid_open_state(self):
+        if self._hub_connected():
+            return self._active_hub_module.get_lid_open_state()
+        else:
+            PTLogger.warning(
+                "Attempted to call get_lid_open_state when there was no active hub"
+            )
+            return None
+
     def get_battery_state(self):
         if self._hub_connected():
             return self._active_hub_module.get_battery_state()

@@ -125,6 +125,47 @@ class RequestServer:
                 response = Message.from_parts(
                     Message.RSP_UNBLANK_SCREEN, list())
 
+            elif message.message_id() == Message.REQ_GET_BATTERY_STATE:
+                charging_state, capacity, time_remaining, wattage = (
+                    self._callback_client.on_request_battery_state()
+                )
+                response = Message.from_parts(
+                    Message.RSP_GET_BATTERY_STATE,
+                    [charging_state, capacity, time_remaining, wattage],
+                )
+
+            elif message.message_id() == Message.REQ_GET_PERIPHERAL_ENABLED:
+                enabled_bool = self._callback_client.on_request_get_peripheral_enabled(
+                    int(message.parameters()[0])
+                )
+                enabled_int = int(enabled_bool is True)
+                response = Message.from_parts(
+                    Message.RSP_GET_PERIPHERAL_ENABLED, [enabled_int]
+                )
+
+            elif message.message_id() == Message.REQ_GET_SCREEN_BLANKING_TIMEOUT:
+                timeout = self._callback_client.on_request_get_screen_blanking_timeout()
+                if timeout is None:
+                    timeout = -1
+                response = Message.from_parts(
+                    Message.RSP_GET_SCREEN_BLANKING_TIMEOUT, [timeout]
+                )
+
+            elif message.message_id() == Message.REQ_SET_SCREEN_BLANKING_TIMEOUT:
+                self._callback_client.on_request_set_screen_blanking_timeout(
+                    int(message.parameters()[0])
+                )
+                response = Message.from_parts(
+                    Message.RSP_SET_SCREEN_BLANKING_TIMEOUT, list()
+                )
+
+            elif message.message_id() == Message.REQ_GET_LID_OPEN_STATE:
+                lid_open_bool = self._callback_client.on_request_get_lid_open_state()
+                lid_open_int = int(lid_open_bool is True)
+                response = Message.from_parts(
+                    Message.RSP_GET_LID_OPEN_STATE, [lid_open_int]
+                )
+
             elif message.message_id() == Message.REQ_GET_SCREEN_BACKLIGHT_STATE:
                 backlight_state = (
                     self._callback_client.on_request_get_screen_backlight_state()
@@ -159,40 +200,6 @@ class RequestServer:
                 )
                 response = Message.from_parts(
                     Message.RSP_SET_OLED_CONTROL, list())
-
-            elif message.message_id() == Message.REQ_GET_BATTERY_STATE:
-                charging_state, capacity, time_remaining, wattage = (
-                    self._callback_client.on_request_battery_state()
-                )
-                response = Message.from_parts(
-                    Message.RSP_GET_BATTERY_STATE,
-                    [charging_state, capacity, time_remaining, wattage],
-                )
-
-            elif message.message_id() == Message.REQ_GET_PERIPHERAL_ENABLED:
-                enabled_bool = self._callback_client.on_request_get_peripheral_enabled(
-                    int(message.parameters()[0])
-                )
-                enabled_int = int(enabled_bool is True)
-                response = Message.from_parts(
-                    Message.RSP_GET_PERIPHERAL_ENABLED, [enabled_int]
-                )
-
-            elif message.message_id() == Message.REQ_GET_SCREEN_BLANKING_TIMEOUT:
-                timeout = self._callback_client.on_request_get_screen_blanking_timeout()
-                if timeout is None:
-                    timeout = -1
-                response = Message.from_parts(
-                    Message.RSP_GET_SCREEN_BLANKING_TIMEOUT, [timeout]
-                )
-
-            elif message.message_id() == Message.REQ_SET_SCREEN_BLANKING_TIMEOUT:
-                self._callback_client.on_request_set_screen_blanking_timeout(
-                    int(message.parameters()[0])
-                )
-                response = Message.from_parts(
-                    Message.RSP_SET_SCREEN_BLANKING_TIMEOUT, list()
-                )
 
             else:
                 PTLogger.error("Unsupported request received: " + request)
