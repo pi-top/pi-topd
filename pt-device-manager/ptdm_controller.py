@@ -124,14 +124,14 @@ class Controller:
     # Request server callback methods
     ###########################################
 
+    def on_request_get_device_id(self):
+        return self._hub_manager.get_device_id()
+
     def on_request_get_brightness(self):
         return self._hub_manager.get_brightness()
 
     def on_request_set_brightness(self, brightness):
         self._hub_manager.set_brightness(brightness)
-
-    def on_request_get_device_id(self):
-        return self._hub_manager.get_device_id()
 
     def on_request_increment_brightness(self):
         self._hub_manager.increment_brightness()
@@ -144,6 +144,24 @@ class Controller:
 
     def on_request_unblank_screen(self):
         self._hub_manager.unblank_screen()
+
+    def on_request_battery_state(self):
+        return self._hub_manager.get_battery_state()
+
+    def on_request_get_peripheral_enabled(self, peripheral_id):
+        return self._peripheral_manager.get_peripheral_id_enabled(peripheral_id)
+
+    def on_request_get_screen_blanking_timeout(self):
+        return self._idle_monitor.get_configured_timeout()
+
+    def on_request_set_screen_blanking_timeout(self, timeout):
+        return self._idle_monitor.set_configured_timeout(timeout)
+
+    def on_request_get_lid_open_state(self):
+        if self._hub_manager.get_lid_open_state():
+            return 1
+        else:
+            return 0
 
     def on_request_get_screen_backlight_state(self):
         if self._hub_manager.get_screen_blanked_state():
@@ -165,18 +183,6 @@ class Controller:
 
     def on_request_set_oled_pi_control(self, is_pi_controlled):
         self._hub_manager.set_oled_pi_control_state(is_pi_controlled)
-
-    def on_request_battery_state(self):
-        return self._hub_manager.get_battery_state()
-
-    def on_request_get_peripheral_enabled(self, peripheral_id):
-        return self._peripheral_manager.get_peripheral_id_enabled(peripheral_id)
-
-    def on_request_get_screen_blanking_timeout(self):
-        return self._idle_monitor.get_configured_timeout()
-
-    def on_request_set_screen_blanking_timeout(self, timeout):
-        return self._idle_monitor.set_configured_timeout(timeout)
 
     ###########################################
     # Idle Monitor callback methods
