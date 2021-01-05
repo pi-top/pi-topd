@@ -41,7 +41,7 @@ class State:
                         on_battery_state_changed_func=None,
                         on_button_press_state_changed_func=None,
                         on_oled_pi_controlled_state_change_func=None,
-                        # on_oled_spi_state_change_func=None,
+                        on_oled_spi_state_change_func=None,
                         on_direct_button_gpio_state_change_func=None
                         ):
         self._brightness_change_func = on_brightness_changed_func
@@ -53,7 +53,7 @@ class State:
         self._battery_state_change_func = on_battery_state_changed_func
         self._button_press_state_changed_func = on_button_press_state_changed_func
         self._oled_pi_controlled_state_change_func = on_oled_pi_controlled_state_change_func
-        # self._oled_spi_state_change_func = on_oled_spi_state_change_func
+        self._oled_spi_state_change_func = on_oled_spi_state_change_func
         self._direct_button_gpio_state_change_func = on_direct_button_gpio_state_change_func
 
     def emit_battery_state_change(self):

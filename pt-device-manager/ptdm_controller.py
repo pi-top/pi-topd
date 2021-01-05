@@ -184,6 +184,12 @@ class Controller:
     def on_request_set_oled_pi_control(self, is_pi_controlled):
         self._hub_manager.set_oled_pi_control_state(is_pi_controlled)
 
+    def on_request_get_oled_spi_state(self):
+        if self._hub_manager.get_oled_spi_state():
+            return 1
+        else:
+            return 0
+
     ###########################################
     # Idle Monitor callback methods
     ###########################################
