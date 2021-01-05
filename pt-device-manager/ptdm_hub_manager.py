@@ -276,6 +276,15 @@ class HubManager:
             )
             return None
 
+    def set_oled_use_spi0(self, use_spi0):
+        if self._hub_connected():
+            return self._active_hub_module.set_oled_use_spi0(use_spi0)
+        else:
+            PTLogger.warning(
+                "Attempted to call set_oled_spi_state when there was no active hub"
+            )
+            return None
+
     def _hub_connected(self):
         return self._active_hub_module is not None
 

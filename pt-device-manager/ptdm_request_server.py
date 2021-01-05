@@ -209,6 +209,14 @@ class RequestServer:
                     Message.RSP_GET_OLED_SPI_IN_USE, [oled_spi_state]
                 )
 
+            elif message.message_id() == Message.REQ_SET_OLED_SPI_IN_USE:
+                self._callback_client.on_request_set_oled_spi_in_use(
+                    int(message.parameters()[0])
+                )
+                response = Message.from_parts(
+                    Message.RSP_SET_OLED_SPI_IN_USE, list()
+                )
+
             else:
                 PTLogger.error("Unsupported request received: " + request)
                 response = Message.from_parts(

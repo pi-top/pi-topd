@@ -190,6 +190,10 @@ class Controller:
         else:
             return 1
 
+    def on_request_set_oled_spi_in_use(self, spi_port_number):
+        use_spi0 = spi_port_number == 0
+        self._hub_manager.set_oled_use_spi0(use_spi0)
+
     ###########################################
     # Idle Monitor callback methods
     ###########################################
