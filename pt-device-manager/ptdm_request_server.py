@@ -201,12 +201,12 @@ class RequestServer:
                 response = Message.from_parts(
                     Message.RSP_SET_OLED_CONTROL, list())
 
-            elif message.message_id() == Message.REQ_GET_OLED_SPI_STATE:
+            elif message.message_id() == Message.REQ_GET_OLED_SPI_IN_USE:
                 oled_spi_state = self._callback_client.on_request_get_oled_spi_in_use()
                 if oled_spi_state is None:
                     oled_spi_state = -1
                 response = Message.from_parts(
-                    Message.RSP_GET_OLED_SPI_STATE, [oled_spi_state]
+                    Message.RSP_GET_OLED_SPI_IN_USE, [oled_spi_state]
                 )
 
             else:
