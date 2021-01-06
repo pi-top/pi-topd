@@ -812,39 +812,6 @@ class HubConnection:
         else:
             self._state.set_lid_open()
 
-    def _read_display_register(self):
-        PTLogger.debug("Hub: Reading native and external displays register")
-        displays_state = self._i2c_device.read_unsigned_byte(
-            Display.DIS__STATUS)
-
-        native_display_connected = bitwise_ops.get_bits(
-            displays_state, 1)  # last bit
-        external_display_connected = bitwise_ops.get_bits(
-            displays_state, 2
-        )  # 2nd last bit
-
-        if native_display_connected != 0:
-            self._state.set_native_display_connected()
-        else:
-            self._state.set_native_display_disconnected()
-
-        if external_display_connected != 0:
-            self._state.set_external_display_connected()
-        else:
-            self._state.set_external_display_disconnected()
-
-    def _read_display_register_if_min_time_passed(self):
-        # Reset display sleep counter if time has passed
-        if self._display_sleep_counter >= self._display_min_read_sleep_s:
-            self._display_sleep_counter = 0
-
-        # Read display state if counter reset
-        if self._display_sleep_counter == 0:
-            self._read_display_register()
-
-        # Update display counter with sleep time
-        self._display_sleep_counter += self._cycle_sleep_time
-
     def _read_oled_register(self):
         PTLogger.debug("Hub: Reading OLED register")
 
@@ -965,7 +932,6 @@ class HubConnection:
             # self._read_backlight_register()
             self._read_oled_register()
             self._read_ui_buttons_register()
-            # self._read_display_register_if_min_time_passed()
             self._write_cpu_temp_register_if_min_time_passed()
             PTLogger.debug("Finished poll hub registers")
 
