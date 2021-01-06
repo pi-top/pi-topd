@@ -157,6 +157,9 @@ class State:
             self.oled_is_using_spi0 = is_using_spi0
             self.emit_oled_spi_bus_state_changed()
 
+    def set_button_direct_gpio_state(self, use_direct_gpio):
+        pass
+
     def set_up_button_press_state(self, is_pressed):
         if self.up_button_press_state is not is_pressed:
             self.up_button_press_state = is_pressed
