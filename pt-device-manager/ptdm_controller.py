@@ -252,30 +252,6 @@ class Controller:
         else:
             self.on_screen_unblanked()
 
-    def on_external_display_connected(self):
-        self._publish_server.publish_external_display_connected()
-
-    def on_external_display_disconnected(self):
-        self._publish_server.publish_external_display_disconnected()
-
-    def on_external_display_connect_state_changed(self, connected_state):
-        if connected_state:
-            self.on_external_display_connected()
-        else:
-            self.on_external_display_disconnected()
-
-    def on_native_display_connected(self):
-        self._publish_server.publish_native_display_connected()
-
-    def on_native_display_disconnected(self):
-        self._publish_server.publish_native_display_disconnected()
-
-    def on_native_display_connect_state_changed(self, connected_state):
-        if connected_state:
-            self.on_native_display_connected()
-        else:
-            self.on_native_display_disconnected()
-
     def on_screen_blanked(self):
         self._publish_server.publish_screen_blanked()
 
@@ -314,6 +290,13 @@ class Controller:
         # Inform the power manager that the device id has changed, so
         # it can handle battery notifications correctly
         self._power_manager.set_device_id(device_id_int)
+
+    def on_oled_pi_controlled_state_changed(self, oled_controlled_by_pi):
+        self._publish_server.publish_oled_pi_controlled_state_changed(
+            oled_controlled_by_pi)
+
+    def on_oled_spi_state_changed(self, oled_uses_spi0):
+        self._publish_server.publish_oled_spi_state_changed(oled_uses_spi0)
 
     ###########################################
     # Peripheral Manager callback methods

@@ -291,16 +291,17 @@ class HubManager:
     def _register_client(self):
         if self._hub_connected():
             if self._active_hub_module.__name__ == "pthub3.pthub3":
-                self._active_hub_module.register_client(
-                    self._on_hub_brightness_changed,
-                    self._on_screen_blank_state_changed,
-                    self._on_native_display_connect_state_changed,
-                    self._on_external_display_connect_state_changed,
-                    self._on_lid_open_state_changed,
-                    self._on_hub_shutdown_requested,
-                    self._on_hub_battery_state_changed,
-                    self._on_button_press_state_changed,
-                )
+                self._active_hub_module.register_client({
+                    "hub_brightness": self._on_hub_brightness_changed,
+                    "screen_blank_state": self._on_screen_blank_state_changed,
+                    "lid_open_state": self._on_lid_open_state_changed,
+                    "hub_shutdown_requested": self._on_hub_shutdown_requested,
+                    "hub_battery_state": self._on_hub_battery_state_changed,
+                    "button_press_state": self._on_button_press_state_changed,
+                    "oled_pi_controlled_state": self._on_oled_pi_controlled_state_changed,
+                    "oled_spi_state": self._on_oled_spi_state_changed,
+                    # "buttons_route_to_gpio": self._on_buttons_route_to_gpio_state_changed,
+                })
                 self._active_hub_module.set_speed(10)
             else:
                 self._active_hub_module.register_client(
@@ -354,16 +355,15 @@ class HubManager:
         self._callback_client.on_button_press_state_changed(
             button_pressed, is_pressed)
 
+    def _on_oled_pi_controlled_state_changed(self, oled_controlled_by_pi):
+        self._callback_client.on_oled_pi_controlled_state_changed(
+            oled_controlled_by_pi)
+
+    def _on_oled_spi_state_changed(self, oled_uses_spi0):
+        self._callback_client.on_oled_spi_state_changed(oled_uses_spi0)
+
     def _on_screen_blank_state_changed(self, blanked_state):
         self._callback_client.on_screen_blank_state_changed(blanked_state)
-
-    def _on_external_display_connect_state_changed(self, connected_state):
-        self._callback_client.on_external_display_connect_state_changed(
-            connected_state)
-
-    def _on_native_display_connect_state_changed(self, connected_state):
-        self._callback_client.on_native_display_connect_state_changed(
-            connected_state)
 
     def _on_screen_blanked(self):
         self._callback_client.on_screen_blanked()

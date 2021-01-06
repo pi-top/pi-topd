@@ -21,32 +21,8 @@ def initialise():
     return True
 
 
-def register_client(
-        on_brightness_changed_func=None,
-        on_screen_blank_state_changed_func=None,
-        on_native_display_connect_state_changed_func=None,
-        on_external_display_connect_state_changed_func=None,
-        on_lid_open_state_changed_func=None,
-        on_shutdown_requested_func=None,
-        on_battery_state_changed_func=None,
-        on_button_press_state_changed_func=None,
-        on_oled_pi_controlled_state_change_func=None,
-        # on_oled_spi_state_change_func=None,  # Not implemented in device manager - not yet required
-        on_direct_button_gpio_state_change_func=None
-):
-    _state.register_client(
-        on_brightness_changed_func,
-        on_screen_blank_state_changed_func,
-        on_native_display_connect_state_changed_func,
-        on_external_display_connect_state_changed_func,
-        on_lid_open_state_changed_func,
-        on_shutdown_requested_func,
-        on_battery_state_changed_func,
-        on_button_press_state_changed_func,
-        on_oled_pi_controlled_state_change_func,
-        # on_oled_spi_state_change_func,
-        on_direct_button_gpio_state_change_func
-    )
+def register_client(funcs):
+    _state.register_client(funcs)
 
 
 def start():
