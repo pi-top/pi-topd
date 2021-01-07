@@ -784,7 +784,7 @@ class HubConnection:
             HardwareControl.CTRL__UI_BUTTON_CTRL
         )
 
-        self._state.set_button_direct_gpio_state(
+        self._state.set_buttons_route_to_gpio_state(
             bitwise_ops.get_bits(
                 UIButtonsRegister.CTRL__UI_BUTTON_CTRL__DIRECT_GPIO, ui_button_state
             )
