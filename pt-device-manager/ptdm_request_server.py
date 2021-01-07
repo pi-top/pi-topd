@@ -213,7 +213,7 @@ class RequestServer:
                 self._callback_client.on_request_set_oled_spi_bus(
                     int(message.parameters()[0])
                 )
-                response = Message.from_parts(Message.RSP_SET_OLED_SPI_IN_USE)
+                response = Message.from_parts(Message.RSP_SET_OLED_SPI_BUS)
 
             else:
                 PTLogger.error("Unsupported request received: " + request)
