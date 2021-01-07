@@ -101,7 +101,7 @@ class RequestServer:
 
             elif message.message_id() == Message.REQ_SET_BRIGHTNESS:
                 self._callback_client.on_request_set_brightness(
-                    int(message.parameters()[0])
+                    int(message.parameters[0])
                 )
                 response = Message.from_parts(
                     Message.RSP_SET_BRIGHTNESS, list())
@@ -136,7 +136,7 @@ class RequestServer:
 
             elif message.message_id() == Message.REQ_GET_PERIPHERAL_ENABLED:
                 enabled_bool = self._callback_client.on_request_get_peripheral_enabled(
-                    int(message.parameters()[0])
+                    int(message.parameters[0])
                 )
                 enabled_int = int(enabled_bool is True)
                 response = Message.from_parts(
@@ -153,7 +153,7 @@ class RequestServer:
 
             elif message.message_id() == Message.REQ_SET_SCREEN_BLANKING_TIMEOUT:
                 self._callback_client.on_request_set_screen_blanking_timeout(
-                    int(message.parameters()[0])
+                    int(message.parameters[0])
                 )
                 response = Message.from_parts(
                     Message.RSP_SET_SCREEN_BLANKING_TIMEOUT, list()
@@ -178,7 +178,7 @@ class RequestServer:
 
             elif message.message_id() == Message.REQ_SET_SCREEN_BACKLIGHT_STATE:
                 self._callback_client.on_request_set_screen_backlight_state(
-                    int(message.parameters()[0])
+                    int(message.parameters[0])
                 )
                 response = Message.from_parts(
                     Message.RSP_SET_SCREEN_BACKLIGHT_STATE, list()
@@ -196,7 +196,7 @@ class RequestServer:
 
             elif message.message_id() == Message.REQ_SET_OLED_CONTROL:
                 self._callback_client.on_request_set_oled_pi_control(
-                    int(message.parameters()[0])
+                    int(message.parameters[0])
                 )
                 response = Message.from_parts(
                     Message.RSP_SET_OLED_CONTROL, list())
@@ -211,7 +211,7 @@ class RequestServer:
 
             elif message.message_id() == Message.REQ_SET_OLED_SPI_BUS:
                 self._callback_client.on_request_set_oled_spi_bus(
-                    int(message.parameters()[0])
+                    int(message.parameters[0])
                 )
                 response = Message.from_parts(Message.RSP_SET_OLED_SPI_BUS)
 
