@@ -294,7 +294,7 @@ class Controller:
         self._publish_server.publish_oled_pi_controlled_state_changed(
             oled_controlled_by_pi)
 
-    def on_oled_spi_state_changed(self, oled_uses_spi0):
+    def on_oled_spi_bus_changed(self, oled_uses_spi0):
         self._publish_server.publish_oled_spi_state_changed(oled_uses_spi0)
 
     ###########################################

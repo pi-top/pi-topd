@@ -299,7 +299,7 @@ class HubManager:
                     "hub_battery_state": self._on_hub_battery_state_changed,
                     "button_press_state": self._on_button_press_state_changed,
                     "oled_pi_controlled_state": self._on_oled_pi_controlled_state_changed,
-                    "oled_spi_state": self._on_oled_spi_state_changed,
+                    "oled_spi_state": self._on_oled_spi_bus_changed,
                     # "buttons_route_to_gpio": self._on_buttons_route_to_gpio_state_changed,
                 })
                 self._active_hub_module.set_speed(10)
@@ -359,8 +359,8 @@ class HubManager:
         self._callback_client.on_oled_pi_controlled_state_changed(
             oled_controlled_by_pi)
 
-    def _on_oled_spi_state_changed(self, oled_uses_spi0):
-        self._callback_client.on_oled_spi_state_changed(oled_uses_spi0)
+    def _on_oled_spi_bus_changed(self, oled_uses_spi0):
+        self._callback_client.on_oled_spi_bus_changed(oled_uses_spi0)
 
     def _on_screen_blank_state_changed(self, blanked_state):
         self._callback_client.on_screen_blank_state_changed(blanked_state)
