@@ -29,9 +29,9 @@ def test_request(test_name, message_request_id, parameters, expected_response_id
         cleanup()
 
     for i in range(len(expected_response_parameters)):
-        if (expected_response_parameters[i] != response.parameters()[i]):
+        if (expected_response_parameters[i] != response.parameters[i]):
             print("Test failed. Unexpected response parameter. Expected: " +
-                  str(expected_response_parameters[i]) + ", got:" + str(response.parameters()[i]))
+                  str(expected_response_parameters[i]) + ", got:" + str(response.parameters[i]))
             cleanup()
 
     print("[Test passed]")

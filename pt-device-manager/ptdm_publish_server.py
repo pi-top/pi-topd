@@ -89,18 +89,6 @@ class PublishServer:
             [connected, new_capacity, new_time, new_wattage],
         )
 
-    def publish_external_display_connected(self):
-        self._send_message(Message.PUB_EXTERNAL_DISPLAY_CONNECTED)
-
-    def publish_external_display_disconnected(self):
-        self._send_message(Message.PUB_EXTERNAL_DISPLAY_DISCONNECTED)
-
-    def publish_native_display_connected(self):
-        self._send_message(Message.PUB_NATIVE_DISPLAY_CONNECTED)
-
-    def publish_native_display_disconnected(self):
-        self._send_message(Message.PUB_NATIVE_DISPLAY_DISCONNECTED)
-
     def publish_screen_blanked(self):
         self._send_message(Message.PUB_SCREEN_BLANKED)
 
@@ -142,6 +130,18 @@ class PublishServer:
             self._send_message(Message.PUB_V3_BUTTON_CANCEL_PRESSED)
         else:
             self._send_message(Message.PUB_V3_BUTTON_CANCEL_RELEASED)
+
+    def publish_oled_pi_controlled_state_changed(self, oled_controlled_by_pi):
+        self._send_message(
+            Message.PUB_OLED_CONTROL_CHANGED,
+            [1 if oled_controlled_by_pi else 0]
+        )
+
+    def publish_oled_spi_state_changed(self, oled_uses_spi0):
+        self._send_message(
+            Message.PUB_OLED_SPI_BUS_CHANGED,
+            [0 if oled_uses_spi0 else 1]
+        )
 
     # Internal functions
     def _send_message(self, message_id, parameters=None):

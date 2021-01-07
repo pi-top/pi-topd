@@ -1,3 +1,9 @@
+pt-device-manager (4.0.5) buster; urgency=medium
+
+  * Add OLED SPI port to PTDM messages
+
+ -- Jorge Capona <jorge@pi-top.com>  Thu, 07 Jan 2021 16:09:54 -0300
+
 pt-device-manager (4.0.4) buster; urgency=medium
 
   * Add missing route for requesting lid open status

@@ -760,91 +760,6 @@ class HubConnection:
             charging_state, relative_state_of_charge, remaining_time, wattage
         )
 
-    def _read_backlight_register(self):
-        PTLogger.debug("Hub: Reading backlight register")
-
-        backlight_settings = self._i2c_device.read_unsigned_byte(
-            Display.DIS__BACKLIGHT)
-
-        # Brightness
-        current_brightness_value = bitwise_ops.get_bits(
-            BacklightRegister.DIS__BACKLIGHT__PERC_ALL, backlight_settings
-        )
-
-        if current_brightness_value < 0:
-            PTLogger.warning(
-                "Invalid brightness value returned from hub: "
-                + str(current_brightness_value)
-            )
-            current_brightness_value = 0
-
-        if current_brightness_value > 16:
-            PTLogger.warning(
-                "Invalid brightness value returned from hub: "
-                + str(current_brightness_value)
-            )
-            current_brightness_value = 16
-
-        self._state.set_brightness(current_brightness_value)
-
-        # Screen blanking
-        screen_blanked = (
-            bitwise_ops.get_bits(
-                BacklightRegister.DIS__BACKLIGHT__EN, backlight_settings
-            )
-            == 0
-        )
-        if screen_blanked:
-            self._state.set_screen_blanked()
-        else:
-            self._state.set_screen_unblanked()
-
-        # Lid state
-        lid_closed = (
-            bitwise_ops.get_bits(
-                BacklightRegister.DIS__BACKLIGHT__LIDSW, backlight_settings
-            )
-            == 0
-        )
-
-        if lid_closed:
-            self._state.set_lid_closed()
-        else:
-            self._state.set_lid_open()
-
-    def _read_display_register(self):
-        PTLogger.debug("Hub: Reading native and external displays register")
-        displays_state = self._i2c_device.read_unsigned_byte(
-            Display.DIS__STATUS)
-
-        native_display_connected = bitwise_ops.get_bits(
-            displays_state, 1)  # last bit
-        external_display_connected = bitwise_ops.get_bits(
-            displays_state, 2
-        )  # 2nd last bit
-
-        if native_display_connected != 0:
-            self._state.set_native_display_connected()
-        else:
-            self._state.set_native_display_disconnected()
-
-        if external_display_connected != 0:
-            self._state.set_external_display_connected()
-        else:
-            self._state.set_external_display_disconnected()
-
-    def _read_display_register_if_min_time_passed(self):
-        # Reset display sleep counter if time has passed
-        if self._display_sleep_counter >= self._display_min_read_sleep_s:
-            self._display_sleep_counter = 0
-
-        # Read display state if counter reset
-        if self._display_sleep_counter == 0:
-            self._read_display_register()
-
-        # Update display counter with sleep time
-        self._display_sleep_counter += self._cycle_sleep_time
-
     def _read_oled_register(self):
         PTLogger.debug("Hub: Reading OLED register")
 
@@ -869,7 +784,7 @@ class HubConnection:
             HardwareControl.CTRL__UI_BUTTON_CTRL
         )
 
-        self._state.set_button_direct_gpio_state(
+        self._state.set_buttons_route_to_gpio_state(
             bitwise_ops.get_bits(
                 UIButtonsRegister.CTRL__UI_BUTTON_CTRL__DIRECT_GPIO, ui_button_state
             )
@@ -962,10 +877,8 @@ class HubConnection:
             PTLogger.debug("Starting poll hub registers")
             self._read_battery_registers_if_min_time_passed()
             self._read_shutdown_control()
-            # self._read_backlight_register()
             self._read_oled_register()
             self._read_ui_buttons_register()
-            # self._read_display_register_if_min_time_passed()
             self._write_cpu_temp_register_if_min_time_passed()
             PTLogger.debug("Finished poll hub registers")
 

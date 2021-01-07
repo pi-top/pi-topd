@@ -12,6 +12,8 @@ class MessageID(IntEnum):
     body_reboot = 5
     title_unsupported = 6
     body_unsupported = 7
+    title_spi_bus_active = 8
+    body_spi_bus_active = 9
 
 
 messages_en = {
@@ -26,7 +28,11 @@ messages_en = {
     MessageID.body_reboot: "Recently detected hardware requires a system settings modification.\nPlease reboot to enable hardware support.",
 
     MessageID.title_unsupported: "Hardware Incompatible",
-    MessageID.body_unsupported: "Recently detected hardware is not supported on your system"
+    MessageID.body_unsupported: "Recently detected hardware is not supported on your system",
+
+    MessageID.title_spi_bus_active: "SPI bus changed",
+    MessageID.body_spi_bus_active: "OLED is now set to use SPI0, but SPI1 is still active. "
+    "To reset this, please reboot. For more information, please see the pi-top knowledge base.",
 }
 
 # TODO: Get system language, and swap if not english etc.
@@ -67,11 +73,11 @@ class NotificationManager:
         PTLogger.info("pt-notify-send command: " + str(cmd))
         return cmd
 
-    def _show_message(self, message_title_id, message_text_id, icon_name):
+    def _show_message(self, message_title_id, message_text_id, icon_name, action_text=None, action=None):
 
         try:
             cmd = self._notify_send_command(
-                message_title_id, message_text_id, icon_name)
+                message_title_id, message_text_id, icon_name, action_text=action_text, action=action)
             notification_output = getoutput(cmd)
 
             PTLogger.info("Notification output:" + notification_output)
@@ -120,3 +126,12 @@ class NotificationManager:
         message_text_id = MessageID.body_unsupported
         icon_name = "computer-fail"
         self._show_message(message_title_id, message_text_id, icon_name)
+
+    def display_old_spi_bus_still_active_message(self):
+        PTLogger.info("Displaying old SPI bus is still active message")
+        message_title_id = MessageID.title_spi_bus_active
+        message_text_id = MessageID.body_spi_bus_active
+        icon_name = "messagebox_info"
+        open_knowledge_base_cmd = "chromium-browser --new-window https://knowledgebase.pi-top.com/"
+        self._show_message(message_title_id, message_text_id,
+                           icon_name, "Learn More", open_knowledge_base_cmd)
