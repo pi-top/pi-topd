@@ -17,7 +17,7 @@ try:
         if device_version in ["pi_top", "pi_top_ceed"]:
             run_command(
                 "/usr/lib/pt-device-manager/poweroff-legacy",
-                timeout=5
+                timeout=15
             )
         elif device_version in ["pi_top_3", "pi_top_4"]:
             run_command(
