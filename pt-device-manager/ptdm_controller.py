@@ -184,13 +184,13 @@ class Controller:
     def on_request_set_oled_pi_control(self, is_pi_controlled):
         self._hub_manager.set_oled_pi_control_state(is_pi_controlled)
 
-    def on_request_get_oled_spi_in_use(self):
+    def on_request_get_oled_spi_bus(self):
         if self._hub_manager.get_oled_is_using_spi0():
             return 0
         else:
             return 1
 
-    def on_request_set_oled_spi_in_use(self, spi_port_number):
+    def on_request_set_oled_spi_bus(self, spi_port_number):
         use_spi0 = spi_port_number == 0
         self._hub_manager.set_oled_use_spi0(use_spi0)
 
