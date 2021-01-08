@@ -27,7 +27,7 @@ class RequestServer:
 
         try:
             self._zmq_socket.bind("tcp://*:3782")
-            PTLogger.info("Responder server ready.")
+            PTLogger.info("Request server ready...")
 
         except zmq.error.ZMQError as e:
             PTLogger.error("Error starting the request server: " + str(e))
