@@ -41,22 +41,22 @@ messages = messages_en
 
 class NotificationManager:
     def __init__(self):
-        self._battery_warning_notification_id = -1
+        self.__battery_warning_notification_id = -1
 
-    def _is_battery_notification(self, message_title_id):
+    def __is_battery_notification(self, message_title_id):
         low_battery = message_title_id == MessageID.title_low_battery
         critical_battery = message_title_id == MessageID.title_critical_battery
         return low_battery or critical_battery
 
-    def _notify_send_command(self, message_title_id, message_text_id, icon_name, timeout=0, action_text=None, action=None):
+    def __notify_send_command(self, message_title_id, message_text_id, icon_name, timeout=0, action_text=None, action=None):
         cmd = "/usr/bin/pt-notify-send "
 
         cmd += "--print-id "
         cmd += "--expire-time=" + str(timeout) + " "
 
-        if self._battery_warning_notification_id != -1:
+        if self.__battery_warning_notification_id != -1:
             cmd += "--replace=" + \
-                str(self._battery_warning_notification_id) + " "
+                str(self.__battery_warning_notification_id) + " "
 
         cmd += "--icon=" + icon_name + " "
 
@@ -73,16 +73,16 @@ class NotificationManager:
         PTLogger.info("pt-notify-send command: " + str(cmd))
         return cmd
 
-    def _show_message(self, message_title_id, message_text_id, icon_name, action_text=None, action=None):
+    def __show_message(self, message_title_id, message_text_id, icon_name, action_text=None, action=None):
 
         try:
-            cmd = self._notify_send_command(
+            cmd = self.__notify_send_command(
                 message_title_id, message_text_id, icon_name, action_text=action_text, action=action)
             notification_output = getoutput(cmd)
 
             PTLogger.info("Notification output:" + notification_output)
-            if notification_output.isnumeric() and self._is_battery_notification(message_title_id):
-                self._battery_warning_notification_id = int(
+            if notification_output.isnumeric() and self.__is_battery_notification(message_title_id):
+                self.__battery_warning_notification_id = int(
                     notification_output)
             else:
                 PTLogger.warning("Notification output was not a valid id")
@@ -92,40 +92,40 @@ class NotificationManager:
 
     def clear_battery_warning_message(self):
         PTLogger.debug("Attempting to clear battery warning message if needed")
-        if self._battery_warning_notification_id != -1:
+        if self.__battery_warning_notification_id != -1:
             PTLogger.debug("Clearing battery warning message")
             cmd = "/usr/bin/pt-notify-send --close=" + \
-                str(self._battery_warning_notification_id)
+                str(self.__battery_warning_notification_id)
             getoutput(cmd)
-            self._battery_warning_notification_id = -1
+            self.__battery_warning_notification_id = -1
 
     def display_critical_battery_warning_message(self):
         PTLogger.info("Displaying critical battery warning message")
         message_title_id = MessageID.title_critical_battery
         message_text_id = MessageID.body_critical_battery
         icon_name = "notification-battery-low"
-        self._show_message(message_title_id, message_text_id, icon_name)
+        self.__show_message(message_title_id, message_text_id, icon_name)
 
     def display_low_battery_warning_message(self):
         PTLogger.info("Displaying low battery warning message")
         message_title_id = MessageID.title_low_battery
         message_text_id = MessageID.body_low_battery
         icon_name = "notification-battery-low"
-        self._show_message(message_title_id, message_text_id, icon_name)
+        self.__show_message(message_title_id, message_text_id, icon_name)
 
     def display_reboot_message(self):
         PTLogger.info("Displaying reboot message")
         message_title_id = MessageID.title_reboot
         message_text_id = MessageID.body_reboot
         icon_name = "dialog-information"
-        self._show_message(message_title_id, message_text_id, icon_name)
+        self.__show_message(message_title_id, message_text_id, icon_name)
 
     def display_unsupported_hardware_message(self):
         PTLogger.info("Displaying unsupported hardware message")
         message_title_id = MessageID.title_unsupported
         message_text_id = MessageID.body_unsupported
         icon_name = "computer-fail"
-        self._show_message(message_title_id, message_text_id, icon_name)
+        self.__show_message(message_title_id, message_text_id, icon_name)
 
     def display_old_spi_bus_still_active_message(self):
         PTLogger.info("Displaying old SPI bus is still active message")
@@ -133,5 +133,5 @@ class NotificationManager:
         message_text_id = MessageID.body_spi_bus_active
         icon_name = "messagebox_info"
         open_knowledge_base_cmd = "chromium-browser --new-window https://knowledgebase.pi-top.com/"
-        self._show_message(message_title_id, message_text_id,
-                           icon_name, "Learn More", open_knowledge_base_cmd)
+        self.__show_message(message_title_id, message_text_id,
+                            icon_name, "Learn More", open_knowledge_base_cmd)
