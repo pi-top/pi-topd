@@ -1,12 +1,10 @@
 from pitopcommon.common_ids import DeviceID
 from pitopcommon.logger import PTLogger
-from pitopcommon.command_runner import run_command
 
 from pthub3 import pthub3
 from pthub2 import pthub2
 from pthub import pthub
 
-from glob import glob
 from time import sleep
 from os import path
 from os import remove
@@ -27,7 +25,7 @@ class HubManager:
     def connect_to_hub(self):
 
         # Enable I2C for hub checking
-        run_command("raspi-config nonint do_i2c 0", timeout=3)
+        self._callback_client.on_i2c_state_required(True)
 
         # Attempt to connect to a v3 hub first, then v2, and finally v1.
         # This is because we can positively identify v2 and v3 on i2c.
@@ -54,10 +52,11 @@ class HubManager:
             PTLogger.warning("Could not initialise v2 hub")
 
         PTLogger.info("Attempting to find pi-topHUB v1...")
-        spi_was_enabled = (len(glob("/dev/spidev0*")) > 0)
+
+        spi_was_enabled = self._callback_client.on_spi0_state_requested()
         # Enable SPI for hub checking
         if not spi_was_enabled:
-            run_command("raspi-config nonint do_spi 0", timeout=3)
+            self._callback_client.on_spi0_state_required(True)
 
         if pthub.initialise() is True:
             self._active_hub_module = pthub
@@ -69,7 +68,7 @@ class HubManager:
 
             # Disable SPI if it was not already running
             if not spi_was_enabled:
-                run_command("raspi-config nonint do_spi 1", timeout=3)
+                self._callback_client.on_spi0_state_required(False)
 
         PTLogger.error("Could not connect to a hub!")
 
