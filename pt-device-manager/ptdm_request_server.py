@@ -210,9 +210,13 @@ class RequestServer:
                 )
 
             elif message.message_id() == Message.REQ_SET_OLED_SPI_BUS:
-                self._callback_client.on_request_set_oled_spi_bus(
-                    int(message.parameters[0])
-                )
+                # Operation takes a little while. We need to return a response ASAP
+                # so we put this into a thread
+                Thread(
+                    target=self._callback_client.on_request_set_oled_spi_bus,
+                    args=[int(message.parameters[0])]
+                ).start()
+
                 response = Message.from_parts(Message.RSP_SET_OLED_SPI_BUS)
 
             else:

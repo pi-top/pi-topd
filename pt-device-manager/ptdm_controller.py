@@ -193,20 +193,20 @@ class Controller:
         else:
             return 1
 
-    def on_request_set_oled_spi_bus(self, spi_port_number):
-        def enable_spi_dtoverlay_if_required_in_background(spi_port_number):
-            PTLogger.info(f"Will use SPI port {spi_port_number}")
-            if spi_port_number == 0:
-                run_command_background("dtparam spi=on")
-                self._notification_manager.display_old_spi_bus_still_active_message()
-            else:
-                run_command_background("dtparam spi=off")
-                if not path.exists("/dev/spidev1.0"):
-                    run_command_background(
-                        f"dtoverlay spi{spi_port_number}-1cs")
+    def on_request_set_oled_spi_bus(self, spi_bus):
+        PTLogger.info(f"OLED SPI bus requested to be changed to use {spi_bus}")
 
-        enable_spi_dtoverlay_if_required_in_background(spi_port_number)
-        self._hub_manager.set_oled_use_spi0(spi_port_number == 0)
+        if spi_bus == 0:
+            run_command_background("dtparam spi=on")
+            self._notification_manager.display_old_spi_bus_still_active_message()
+
+        else:
+            run_command_background("dtparam spi=off")
+            if not path.exists("/dev/spidev1.0"):
+                run_command_background(
+                    f"dtoverlay spi{spi_bus}-1cs")
+
+        self._hub_manager.set_oled_use_spi0(spi_bus == 0)
 
     ###########################################
     # Idle Monitor callback methods
