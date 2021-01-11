@@ -59,6 +59,7 @@ class HubConnection:
     def start(self):
         if self._main_thread is not None:
             self._run_polling_thread = True
+            self._poll_hub()
             self._main_thread.start()
         else:
             PTLogger.error(
