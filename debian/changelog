@@ -1,3 +1,11 @@
+pt-device-manager (4.0.7) buster; urgency=medium
+
+  * Handle OLED SPI bus notification in thread
+  * Move all GPIO interface operations to InterfaceManager
+  * Initialize internal state before polling hub
+
+ -- Jorge Capona <jorge@pi-top.com>  Mon, 11 Jan 2021 13:10:09 -0300
+
 pt-device-manager (4.0.6) buster; urgency=medium
 
   * Perform SPI bus change in background

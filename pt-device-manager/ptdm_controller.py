@@ -1,9 +1,7 @@
 # Instantiates and coordinates between the other classes
 from pitopcommon.logger import PTLogger
 from pitopcommon.common_ids import DeviceID
-from pitopcommon.command_runner import run_command_background
 
-from os import path
 from systemd.daemon import notify
 from time import sleep
 
@@ -15,6 +13,7 @@ class Controller:
         power_manager,
         hub_manager,
         idle_monitor,
+        interface_manager,
         notification_manager,
         peripheral_manager,
         request_server,
@@ -26,6 +25,7 @@ class Controller:
         self._power_manager = power_manager
         self._hub_manager = hub_manager
         self._idle_monitor = idle_monitor
+        self._interface_manager = interface_manager
         self._notification_manager = notification_manager
         self._peripheral_manager = peripheral_manager
         self._request_server = request_server
@@ -81,6 +81,17 @@ class Controller:
             PTLogger.warning(
                 "Unknown host device, despite successfully initialising a hub")
             return False
+
+        if self.device_id == DeviceID.pi_top_4:
+            PTLogger.info(
+                "Running on a pi-top [4]. Configuring SPI bus for OLED...")
+
+            spi_bus_to_use = self._hub_manager.get_oled_spi_bus()
+            PTLogger.info(f"Hub says to use SPI bus {spi_bus_to_use}")
+
+            if spi_bus_to_use is not None:
+                self._interface_manager.spi0 = (spi_bus_to_use == 0)
+                self._interface_manager.spi1 = (spi_bus_to_use == 1)
 
         # Check if any peripherals need to be set up
         self._peripheral_manager.auto_initialise_peripherals()
@@ -188,23 +199,19 @@ class Controller:
         self._hub_manager.set_oled_pi_control_state(is_pi_controlled)
 
     def on_request_get_oled_spi_bus(self):
-        if self._hub_manager.get_oled_use_spi0():
-            return 0
-        else:
-            return 1
+        return self._hub_manager.get_oled_spi_bus()
 
     def on_request_set_oled_spi_bus(self, spi_bus):
         PTLogger.info(f"OLED SPI bus requested to be changed to use {spi_bus}")
 
         if spi_bus == 0:
-            run_command_background("dtparam spi=on")
+            self._interface_manager.spi0 = True
+            # self._interface_manager.spi1 = False  # Can't be done?
             self._notification_manager.display_old_spi_bus_still_active_message()
 
         else:
-            run_command_background("dtparam spi=off")
-            if not path.exists("/dev/spidev1.0"):
-                run_command_background(
-                    f"dtoverlay spi{spi_bus}-1cs")
+            self._interface_manager.spi0 = False
+            self._interface_manager.spi1 = True
 
         self._hub_manager.set_oled_use_spi0(spi_bus == 0)
 
@@ -221,6 +228,18 @@ class Controller:
     ###########################################
     # Hub Manager callback methods
     ###########################################
+
+    def on_i2c_state_required(self, enabled):
+        self._interface_manager.i2c = enabled
+
+    def on_spi0_state_required(self, enabled):
+        self._interface_manager.spi0 = enabled
+
+    def on_spi0_state_requested(self):
+        return self._interface_manager.spi0
+
+    def on_spi1_state_required(self, enabled):
+        self._interface_manager.spi1 = enabled
 
     def on_hub_shutdown_requested(self):
         self._publish_server.publish_shutdown_requested()

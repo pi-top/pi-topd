@@ -14,6 +14,7 @@
 from ptdm_controller import Controller
 from ptdm_hub_manager import HubManager
 from ptdm_idle_monitor import IdleMonitor
+from ptdm_interface_manager import InterfaceManager
 from ptdm_notification_manager import NotificationManager
 from ptdm_peripheral_manager import PeripheralManager
 from ptdm_publish_server import PublishServer
@@ -51,6 +52,7 @@ publish_server = PublishServer()
 power_manager = PowerManager()
 hub_manager = HubManager()
 idle_monitor = IdleMonitor()
+interface_manager = InterfaceManager()
 notification_manager = NotificationManager()
 peripheral_manager = PeripheralManager()
 request_server = RequestServer()
@@ -62,6 +64,7 @@ controller = Controller(
     power_manager,
     hub_manager,
     idle_monitor,
+    interface_manager,
     notification_manager,
     peripheral_manager,
     request_server,
