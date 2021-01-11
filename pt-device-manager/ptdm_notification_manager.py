@@ -1,6 +1,8 @@
 from pitopcommon.logger import PTLogger
+
 from subprocess import getoutput
 from enum import IntEnum
+from threading import Thread
 
 
 class MessageID(IntEnum):
@@ -73,6 +75,13 @@ class NotificationManager:
         PTLogger.info("pt-notify-send command: " + str(cmd))
         return cmd
 
+    def __show_message_in_thread(self, message_title_id, message_text_id, icon_name, action_text=None, action=None):
+        Thread(
+            target=self.__show_message,
+            args=[message_title_id, message_text_id,
+                  icon_name, action_text, action]
+        ).start()
+
     def __show_message(self, message_title_id, message_text_id, icon_name, action_text=None, action=None):
 
         try:
@@ -101,37 +110,47 @@ class NotificationManager:
 
     def display_critical_battery_warning_message(self):
         PTLogger.info("Displaying critical battery warning message")
-        message_title_id = MessageID.title_critical_battery
-        message_text_id = MessageID.body_critical_battery
-        icon_name = "notification-battery-low"
-        self.__show_message(message_title_id, message_text_id, icon_name)
+
+        self.__show_message(
+            message_title_id=MessageID.title_critical_battery,
+            message_text_id=MessageID.body_critical_battery,
+            icon_name="notification-battery-low",
+        )
 
     def display_low_battery_warning_message(self):
         PTLogger.info("Displaying low battery warning message")
-        message_title_id = MessageID.title_low_battery
-        message_text_id = MessageID.body_low_battery
-        icon_name = "notification-battery-low"
-        self.__show_message(message_title_id, message_text_id, icon_name)
+
+        self.__show_message(
+            message_title_id=MessageID.title_low_battery,
+            message_text_id=MessageID.body_low_battery,
+            icon_name="notification-battery-low",
+        )
 
     def display_reboot_message(self):
         PTLogger.info("Displaying reboot message")
-        message_title_id = MessageID.title_reboot
-        message_text_id = MessageID.body_reboot
-        icon_name = "dialog-information"
-        self.__show_message(message_title_id, message_text_id, icon_name)
+
+        self.__show_message(
+            message_title_id=MessageID.title_reboot,
+            message_text_id=MessageID.body_reboot,
+            icon_name="dialog-information",
+        )
 
     def display_unsupported_hardware_message(self):
         PTLogger.info("Displaying unsupported hardware message")
-        message_title_id = MessageID.title_unsupported
-        message_text_id = MessageID.body_unsupported
-        icon_name = "computer-fail"
-        self.__show_message(message_title_id, message_text_id, icon_name)
+
+        self.__show_message(
+            message_title_id=MessageID.title_unsupported,
+            message_text_id=MessageID.body_unsupported,
+            icon_name="computer-fail",
+        )
 
     def display_old_spi_bus_still_active_message(self):
         PTLogger.info("Displaying old SPI bus is still active message")
-        message_title_id = MessageID.title_spi_bus_active
-        message_text_id = MessageID.body_spi_bus_active
-        icon_name = "messagebox_info"
         open_knowledge_base_cmd = "chromium-browser --new-window https://knowledgebase.pi-top.com/"
-        self.__show_message(message_title_id, message_text_id,
-                            icon_name, "Learn More", open_knowledge_base_cmd)
+        self.__show_message_in_thread(
+            message_title_id=MessageID.title_spi_bus_active,
+            message_text_id=MessageID.body_spi_bus_active,
+            icon_name="messagebox_info",
+            action_text="Learn More",
+            action=open_knowledge_base_cmd,
+        )
