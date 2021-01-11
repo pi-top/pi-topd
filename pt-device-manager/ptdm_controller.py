@@ -83,11 +83,17 @@ class Controller:
             return False
 
         if self.device_id == DeviceID.pi_top_4:
+            PTLogger.info(
+                "Running on a pi-top [4]. Configuring SPI bus for OLED...")
+
             # Get OLED SPI bus; enable appropriate interface
-            use_spi0 = self._hub_manager.get_oled_use_spi0()
-            if use_spi0 is not None:
-                self._interface_manager.spi0 = use_spi0
-                self._interface_manager.spi1 = not use_spi0
+            # TODO - need to ensure that we have polled for it!
+            spi_bus_to_use = self._hub_manager.get_oled_spi_bus()
+            PTLogger.info(f"Hub says to use SPI bus {spi_bus_to_use}")
+
+            if spi_bus_to_use is not None:
+                self._interface_manager.spi0 = (spi_bus_to_use == 0)
+                self._interface_manager.spi1 = (spi_bus_to_use == 1)
 
         # Check if any peripherals need to be set up
         self._peripheral_manager.auto_initialise_peripherals()
@@ -195,10 +201,7 @@ class Controller:
         self._hub_manager.set_oled_pi_control_state(is_pi_controlled)
 
     def on_request_get_oled_spi_bus(self):
-        if self._hub_manager.get_oled_use_spi0():
-            return 0
-        else:
-            return 1
+        return self._hub_manager.get_oled_spi_bus()
 
     def on_request_set_oled_spi_bus(self, spi_bus):
         PTLogger.info(f"OLED SPI bus requested to be changed to use {spi_bus}")

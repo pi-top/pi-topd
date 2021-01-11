@@ -266,6 +266,18 @@ class HubManager:
                 "Attempted to call disable_hdmi_to_i2s_audio when there was no active hub"
             )
 
+    def get_oled_spi_bus(self):
+        if self._hub_connected():
+            if self.get_oled_use_spi0():
+                return 0
+            else:
+                return 1
+        else:
+            PTLogger.warning(
+                "Attempted to call get_oled_spi_state when there was no active hub"
+            )
+            return None
+
     def get_oled_use_spi0(self):
         if self._hub_connected():
             return self._active_hub_module.get_oled_use_spi0()
