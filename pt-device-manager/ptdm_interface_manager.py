@@ -9,7 +9,7 @@ _TIMEOUT = 10
 class InterfaceManager:
     @property
     def i2c(self):
-        return run_command("raspi-config nonint get_i2c", timeout=_TIMEOUT).strip() == 0
+        return run_command("raspi-config nonint get_i2c", timeout=_TIMEOUT).strip() == "0"
 
     @i2c.setter
     def i2c(self, enabled):
@@ -26,7 +26,7 @@ class InterfaceManager:
 
     @property
     def spi0(self):
-        return run_command("raspi-config nonint get_spi", timeout=_TIMEOUT).strip() == 0
+        return run_command("raspi-config nonint get_spi", timeout=_TIMEOUT).strip() == "0"
 
     @spi0.setter
     def spi0(self, enabled):
@@ -34,10 +34,10 @@ class InterfaceManager:
             if self.spi0:
                 print("SPI0 is already enabled")
             else:
-                run_command("dtparam spi=on", timeout=_TIMEOUT)
+                run_command("raspi-config nonint do_spi 0", timeout=_TIMEOUT)
         else:
             if self.spi0:
-                run_command("dtparam spi=off", timeout=_TIMEOUT)
+                run_command("raspi-config nonint do_spi 1", timeout=_TIMEOUT)
             else:
                 print("SPI0 is already disabled")
 
