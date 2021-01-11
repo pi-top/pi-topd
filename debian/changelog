@@ -1,5 +1,12 @@
+pt-device-manager (4.0.6) buster; urgency=medium
+
+  * Perform SPI bus change in background
+
+ -- Mike Roberts <mike@pi-top.com>  Mon, 11 Jan 2021 12:49:17 +0000
+
 pt-device-manager (4.0.5) buster; urgency=medium
 
+  * Increase legacy poweroff timeout to 15s
   * Add OLED SPI port to PTDM messages
 
  -- Jorge Capona <jorge@pi-top.com>  Thu, 07 Jan 2021 16:09:54 -0300
