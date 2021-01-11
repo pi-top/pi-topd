@@ -59,7 +59,7 @@ class InterfaceManager:
         PTLogger.debug("Getting SPI1 state...")
         enabled = path.exists("/dev/spidev1.0")
         PTLogger.debug(f"SPI1 state: {'enabled' if enabled else 'disabled'}")
-        return
+        return enabled
 
     @spi1.setter
     def spi1(self, enabled):
