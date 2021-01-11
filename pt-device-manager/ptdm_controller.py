@@ -86,8 +86,6 @@ class Controller:
             PTLogger.info(
                 "Running on a pi-top [4]. Configuring SPI bus for OLED...")
 
-            # Get OLED SPI bus; enable appropriate interface
-            # TODO - need to ensure that we have polled for it!
             spi_bus_to_use = self._hub_manager.get_oled_spi_bus()
             PTLogger.info(f"Hub says to use SPI bus {spi_bus_to_use}")
 
