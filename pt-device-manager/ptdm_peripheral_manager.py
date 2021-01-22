@@ -296,9 +296,10 @@ class PeripheralManager:
         detected_peripherals = list()
 
         for address in addresses:
-            current_peripheral = Peripheral(addr=int(address, 16))
-            if current_peripheral.id != PeripheralID.unknown:
-                detected_peripherals.append(current_peripheral)
+            if isinstance(address, int):
+                current_peripheral = Peripheral(addr=int(address, 16))
+                if current_peripheral.id != PeripheralID.unknown:
+                    detected_peripherals.append(current_peripheral)
 
         return detected_peripherals
 
@@ -376,10 +377,12 @@ class PeripheralManager:
                 self.attempt_disable_peripheral_by_name(peripheral.name)
 
         for address in addresses:
-            current_peripheral = Peripheral(addr=int(address, 16))
+            if isinstance(address, int):
+                current_peripheral = Peripheral(addr=int(address, 16))
 
-            if current_peripheral.id != PeripheralID.unknown:
-                self.attempt_enable_peripheral_by_name(current_peripheral.name)
+                if current_peripheral.id != PeripheralID.unknown:
+                    self.attempt_enable_peripheral_by_name(
+                        current_peripheral.name)
 
     def configure_hifiberry(self):
         if I2S.get_current_state() is True:
