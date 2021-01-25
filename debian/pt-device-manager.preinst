@@ -47,7 +47,12 @@ case "$1" in
        fi
        ;;
 
-       install | abort-upgrade)
+       install)
+       if previous_version_is_earlier_than "2.14.2"; then
+              create_expanded_fs_breadcrumb
+       fi
+       ;;
+       abort-upgrade)
        ;;
 
 \
