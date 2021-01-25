@@ -11,7 +11,7 @@ IFS=$'\n\t'
 previous_version_is_earlier_than() {
        local version_to_check_against="${1}"
        # Is new install or version is earlier than upgrade check
-       [[ -z "${previous_version}" ]] && return 0
+       [[ -z "${previous_version}" ]] && return 1
        dpkg --compare-versions "${previous_version}" lt "${version_to_check_against}" && return 0
        return 1
 }
