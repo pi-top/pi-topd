@@ -37,7 +37,7 @@ disable_overlays_in_config_txt() {
 case "$1" in
        install | upgrade)
        shift
-       previous_version="${1:0}"
+       previous_version="${1:-}"
 
        if previous_version_is_earlier_than "4.1.0"; then
               create_expanded_fs_breadcrumb
