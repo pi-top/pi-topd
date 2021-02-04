@@ -1,3 +1,9 @@
+pt-device-manager (4.1.0) buster; urgency=medium
+
+  * Fix boot animation for non pi-topOS systems
+
+ -- Jorge Capona <jorge@pi-top.com>  Thu, 04 Feb 2021 11:11:10 -0300
+
 pt-device-manager (4.0.7) buster; urgency=medium
 
   * Handle OLED SPI bus notification in thread

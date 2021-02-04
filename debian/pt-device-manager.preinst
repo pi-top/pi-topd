@@ -33,12 +33,13 @@ disable_overlays_in_config_txt() {
        sudo sed -i "/dtparam=i2c1_baudrate/d" /boot/config.txt
 }
 
-case "$1" in
-       upgrade)
-       shift
-       previous_version="${1}"
 
-       if previous_version_is_earlier_than "2.14.2"; then
+case "$1" in
+       install | upgrade)
+       shift
+       previous_version="${1:-}"
+
+       if previous_version_is_earlier_than "4.1.0"; then
               create_expanded_fs_breadcrumb
        fi
 
@@ -47,7 +48,7 @@ case "$1" in
        fi
        ;;
 
-       install | abort-upgrade)
+       abort-upgrade)
        ;;
 
 \
