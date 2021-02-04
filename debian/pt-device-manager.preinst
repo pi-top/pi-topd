@@ -33,12 +33,20 @@ disable_overlays_in_config_txt() {
        sudo sed -i "/dtparam=i2c1_baudrate/d" /boot/config.txt
 }
 
+is_pi_top_os() {
+    if [[ -f "/etc/pt-issue" ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 case "$1" in
        upgrade)
        shift
        previous_version="${1}"
 
-       if previous_version_is_earlier_than "2.14.2"; then
+       if previous_version_is_earlier_than "4.1.0"; then
               create_expanded_fs_breadcrumb
        fi
 
@@ -47,7 +55,13 @@ case "$1" in
        fi
        ;;
 
-       install | abort-upgrade)
+       install)
+       if ! is_pi_top_os; then
+              create_expanded_fs_breadcrumb
+       fi
+       ;;
+
+       abort-upgrade)
        ;;
 
 \
