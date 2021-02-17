@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from pitopcommon.logger import PTLogger
 from pitopcommon.common_ids import DeviceID
 from . import pthub_i2c

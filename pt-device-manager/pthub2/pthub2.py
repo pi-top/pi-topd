@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from pitopcommon.logger import PTLogger
 from .pthub2_state import State
 from .pthub2_connection import HubConnection

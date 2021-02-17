@@ -65,4 +65,11 @@ Provides:
  python3-pt-pulse,
  python3-pt-speaker,
 Description: pi-top Device Manager
- Core pi-top service for interfacing with pi-top hardware
+ Core pi-top service for interfacing with pi-top hardware.
+ Provides support for management of all pi-top units.
+ Depending on which pi-top device you are using, it is possible
+ to communicate with the device's onboard interfaces, such as power
+ and display.
+ .
+ Additional functionality is provided to communicate with the system,
+ such as automatically blanking the display after a timeout.
