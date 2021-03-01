@@ -118,6 +118,11 @@ class IdleMonitor:
                     "connections been added to X server access control list?"
                 )
                 break
+            except FileNotFoundError:
+                PTLogger.warning(
+                    "Suggested dependency ‘xprintidle’ not found."
+                    "Unable to support display blanking based on user idle time.")
+                break
 
             xprintidle_resp_str = xprintidle_resp.decode("utf-8")
 
