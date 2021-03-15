@@ -377,12 +377,17 @@ class PeripheralManager:
                 self.attempt_disable_peripheral_by_name(peripheral.name)
 
         for address in addresses:
-            if isinstance(address, int):
-                current_peripheral = Peripheral(addr=int(address, 16))
+            try:
+                address = int(address, 16)
+            except ValueError:
+                PTLogger.debug(
+                    f"Can't convert address {address} to integer, skipping initialisation.")
+                continue
 
-                if current_peripheral.id != PeripheralID.unknown:
-                    self.attempt_enable_peripheral_by_name(
-                        current_peripheral.name)
+            current_peripheral = Peripheral(addr=address)
+            if current_peripheral.id != PeripheralID.unknown:
+                self.attempt_enable_peripheral_by_name(
+                    current_peripheral.name)
 
     def configure_hifiberry(self):
         if I2S.get_current_state() is True:
