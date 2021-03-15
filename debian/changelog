@@ -1,3 +1,10 @@
+pt-device-manager (4.1.1) buster; urgency=medium
+
+  * Fix peripheral auto initialisation (#102)
+  * Cast address to integer to determine if valid (#103)
+
+ -- pi-top <deb-maintainers@pi-top.com>  Mon, 15 Mar 2021 18:03:23 +0000
+
 pt-device-manager (4.1.0) buster; urgency=medium
 
   * Fix boot animation for non pi-topOS systems
