@@ -296,10 +296,15 @@ class PeripheralManager:
         detected_peripherals = list()
 
         for address in addresses:
-            if isinstance(address, int):
-                current_peripheral = Peripheral(addr=int(address, 16))
-                if current_peripheral.id != PeripheralID.unknown:
-                    detected_peripherals.append(current_peripheral)
+            try:
+                address = int(address, 16)
+            except ValueError:
+                PTLogger.debug(
+                    f"Can't convert address {address} to integer, skipping.")
+                continue
+            current_peripheral = Peripheral(addr=address)
+            if current_peripheral.id != PeripheralID.unknown:
+                detected_peripherals.append(current_peripheral)
 
         return detected_peripherals
 
@@ -383,7 +388,6 @@ class PeripheralManager:
                 PTLogger.debug(
                     f"Can't convert address {address} to integer, skipping initialisation.")
                 continue
-
             current_peripheral = Peripheral(addr=address)
             if current_peripheral.id != PeripheralID.unknown:
                 self.attempt_enable_peripheral_by_name(
