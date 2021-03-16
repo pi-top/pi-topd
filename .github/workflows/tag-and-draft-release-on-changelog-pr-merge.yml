@@ -115,31 +115,6 @@ jobs:
             The SDK and its related CI workflows are still in active development and subject to breaking changes.
             However, this release is regarded as "fairly stable" and the SDK itself should work in most of the detailed use-cases.
 
-      - name: Download Python artifact
-        uses: actions/download-artifact@v2
-        with:
-            name: "${{ env.GITHUB_REPOSITORY_NAME }}-#${{ env.GITHUB_SHA_SHORT }}-py"
-            path: "./py"
-
-      - name: Get Python wheel filename
-        id: get_py_whl_filename
-        run: |
-          cd ./py
-          WHL_NAME=$(ls | grep "^pitop-.*.whl$")
-          echo "::set-output name=filename::$WHL_NAME"
-
-      # More info:
-      # https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-      - name: Upload Python wheel
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./py/${{ steps.get_py_whl_filename.outputs.filename }}
-          asset_name: ${{ steps.get_py_whl_filename.outputs.filename }}
-          asset_content_type: text/plain
-
       - name: Download Debian binary artifacts
         uses: actions/download-artifact@v2
         with:
