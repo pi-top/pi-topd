@@ -98,7 +98,6 @@ jobs:
       - name: Get source package name
         id: get_src_name
         run: |
-          cd ./deb-src
           SRC_NAME=$(grep "^Source:" debian/control | awk '{print $2}')
           echo "::set-output name=src_name::$SRC_NAME"
 
