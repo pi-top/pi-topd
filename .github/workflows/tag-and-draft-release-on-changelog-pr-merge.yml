@@ -79,7 +79,7 @@ jobs:
 
   create-draft-release:
     runs-on: ubuntu-20.04
-    needs: [ build-debian, build-python ]
+    needs: build-debian
     steps:
       - name: GitHub Environment Variables Action
         uses: FranzDiebold/github-env-vars-action@v1.2.1
