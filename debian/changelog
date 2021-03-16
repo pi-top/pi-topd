@@ -1,16 +1,9 @@
-pt-device-manager (4.1.2) buster; urgency=medium
-
-  [ Mike Roberts ]
-  * Ignore non-existent Python artifacts
-
- -- pi-top <deb-maintainers@pi-top.com>  Tue, 16 Mar 2021 13:20:36 +0000
-
 pt-device-manager (4.1.1) buster; urgency=medium
 
   * Fix peripheral auto initialisation (#102)
   * Cast address to integer to determine if valid (#103)
 
- -- pi-top <deb-maintainers@pi-top.com>  Tue, 16 Mar 2021 13:05:38 +0000
+ -- pi-top <deb-maintainers@pi-top.com>  Tue, 16 Mar 2021 13:20:36 +0000
 
 pt-device-manager (4.1.0) buster; urgency=medium
 
