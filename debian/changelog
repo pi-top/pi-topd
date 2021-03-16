@@ -1,36 +1,9 @@
-pt-device-manager (4.1.2) buster; urgency=medium
-
-  [ Mike Roberts ]
-  * Add GitHub workflow files from SDK
-  * build-debian-packages doesn't depend on tests
-  * oops..
-  * Architecture: any --> all
-  * Fix Lintian warnings
-  * Allow external sources when testing shell scripts
-
-  [ Jorge Capona ]
-  * Fix peripheral auto initialisation (#102)
-  * Cast address to integer to determine if valid (#103)
-
-  [ Mike Roberts ]
-  * Update changelog bump CI script
-
-  [ github-actions[bot] ]
-  * [CI] Update debian/changelog for next release (#100)
-  * Update 'draft release' CI workflow
-
-  [ github-actions[bot] ]
-  * [CI] Update debian/changelog for next release (#104)
-  * Drop dependency on undefined build-python
-
- -- pi-top <deb-maintainers@pi-top.com>  Tue, 16 Mar 2021 12:54:31 +0000
-
 pt-device-manager (4.1.1) buster; urgency=medium
 
   * Fix peripheral auto initialisation (#102)
   * Cast address to integer to determine if valid (#103)
 
- -- pi-top <deb-maintainers@pi-top.com>  Tue, 16 Mar 2021 12:50:58 +0000
+ -- pi-top <deb-maintainers@pi-top.com>  Tue, 16 Mar 2021 12:54:31 +0000
 
 pt-device-manager (4.1.0) buster; urgency=medium
 
