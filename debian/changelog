@@ -1,11 +1,6 @@
 pt-device-manager (4.1.2) buster; urgency=medium
 
-  [ Mike Roberts ]
-  * CI: Comment out Python deploy steps
-  * Standards-Version: 4.5.1
-
-  [ Jorge Capona ]
-  * Enable pi-top [4] UART when pi-topPULSE is connected (#109)
+  * Enable pi-top [4] UART when pi-topPULSE is connected
 
  -- pi-top <deb-maintainers@pi-top.com>  Wed, 17 Mar 2021 15:25:51 +0000
 
