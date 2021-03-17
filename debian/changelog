@@ -1,3 +1,9 @@
+pt-device-manager (4.1.2) buster; urgency=medium
+
+  * Enable pi-top [4] UART when pi-topPULSE is connected
+
+ -- pi-top <deb-maintainers@pi-top.com>  Wed, 17 Mar 2021 15:25:51 +0000
+
 pt-device-manager (4.1.1) buster; urgency=medium
 
   * Fix peripheral auto initialisation (#102)
