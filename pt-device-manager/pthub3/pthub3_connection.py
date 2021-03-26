@@ -757,8 +757,9 @@ class HubConnection:
             time_until_full_mins if power_cable_connected else time_until_empty_mins
         )
 
+        capacity = 100 if charging_state == 2 else relative_state_of_charge
         self._state.set_battery_state(
-            charging_state, relative_state_of_charge, remaining_time, wattage
+            charging_state, capacity, remaining_time, wattage
         )
 
     def _read_oled_register(self):
