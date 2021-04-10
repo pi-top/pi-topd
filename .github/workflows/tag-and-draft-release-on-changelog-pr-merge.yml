@@ -10,7 +10,6 @@ jobs:
     outputs:
       should_run: ${{ steps.check_should_run.outputs.should_run }}
     steps:
-
       - name: Set 'should run' variable
         id: check_should_run
         env:
@@ -24,24 +23,9 @@ jobs:
           fi
           echo "::set-output name=should_run::${conditions_met}"
 
-  add-version-tag:
-    needs: [ check-should-run ]
-    if: needs.check-should-run.outputs.should_run == 'true'
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2.2.0
-        with:
-          fetch-depth: 0
-
-      - name: Create and push Debian version tag
-        run: |
-          new_version="$(head -n1 debian/changelog | awk '{print $2}' | cut -d'-' -f1 | sed "s/(//g" | sed "s/)//g")"
-          git tag --force "v${new_version}"
-          git push --force --tags
-
   build-debian:
-    needs: [ add-version-tag ]
+    needs: check-should-run
+    if: needs.check-should-run.outputs.should_run == 'true'
     runs-on: ubuntu-20.04
     steps:
       - name: GitHub Environment Variables Action
@@ -49,8 +33,6 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v2.2.0
-        with:
-          fetch-depth: 0
 
       - name: Build Debian package
         run: |
@@ -58,6 +40,7 @@ jobs:
           docker run --rm \
             --volume ${{ github.workspace }}:/src \
             --volume /tmp/artifacts/bin:/build \
+            -e LINTIAN_TAGS_TO_SUPPRESS="package-supports-alternative-init-but-no-init.d-script" \
             pitop/deb-build:latest
 
       - name: Separate Debian source package files from binary
@@ -86,34 +69,6 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v2.2.0
-        with:
-          fetch-depth: 0
-
-      - name: Get Debian version
-        id: get_deb_version
-        run: |
-          DEB_VER=$(head -n1 debian/changelog | awk '{print $2}' | cut -d'-' -f1 | sed "s/(//g" | sed "s/)//g")
-          echo "::set-output name=deb_ver::$DEB_VER"
-
-      - name: Get source package name
-        id: get_src_name
-        run: |
-          SRC_NAME=$(grep "^Source:" debian/control | awk '{print $2}')
-          echo "::set-output name=src_name::$SRC_NAME"
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: "v${{ steps.get_deb_version.outputs.deb_ver }}"
-          release_name: "v${{ steps.get_deb_version.outputs.deb_ver }}"
-          draft: true
-          prerelease: false
-          body: |
-            The SDK and its related CI workflows are still in active development and subject to breaking changes.
-            However, this release is regarded as "fairly stable" and the SDK itself should work in most of the detailed use-cases.
 
       - name: Download Debian binary artifacts
         uses: actions/download-artifact@v2
@@ -127,87 +82,21 @@ jobs:
             name: "${{ env.GITHUB_REPOSITORY_NAME }}-#${{ env.GITHUB_SHA_SHORT }}-deb-src"
             path: "./deb-src/"
 
-      - name: Get main package filename
-        id: get_deb_main_pkg_filename
+      - name: Determine version
         run: |
-          cd ./deb
-          PKG_NAME=$(ls | grep ".*.deb$")
-          echo "::set-output name=filename::$PKG_NAME"
+          sudo apt install -y dpkg-dev
+          echo "VERSION=$(dpkg-parsechangelog -Sversion)" >> $GITHUB_ENV
 
-      - name: Upload main Debian package
-        uses: actions/upload-release-asset@v1
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: "v${{ env.VERSION }}"
+          name: "v${{ env.VERSION }}"
+          draft: true
+          prerelease: false
+          body: ${{ secrets.GH_RELEASE_BODY_TEXT }}
+          files: |
+            ./deb/*
+            ./deb-src/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./deb/${{ steps.get_deb_main_pkg_filename.outputs.filename }}
-          asset_name: ${{ steps.get_deb_main_pkg_filename.outputs.filename }}
-          asset_content_type: application/vnd.debian.binary-package
-
-      - name: Get dsc filename
-        id: get_dsc_filename
-        run: |
-          cd ./deb-src
-          DSC_FILENAME=$(ls | grep "^${{ steps.get_src_name.outputs.src_name }}_.*.dsc$")
-          echo "::set-output name=filename::$DSC_FILENAME"
-
-      - name: Upload dsc filename
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./deb-src/${{ steps.get_dsc_filename.outputs.filename }}
-          asset_name: ${{ steps.get_dsc_filename.outputs.filename }}
-          asset_content_type: text/plain
-
-      - name: Get buildinfo filename
-        id: get_buildinfo_filename
-        run: |
-          cd ./deb-src
-          BUILDINFO_FILENAME=$(ls | grep "^${{ steps.get_src_name.outputs.src_name }}_.*.buildinfo$")
-          echo "::set-output name=filename::$BUILDINFO_FILENAME"
-
-      - name: Upload buildinfo filename
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./deb-src/${{ steps.get_buildinfo_filename.outputs.filename }}
-          asset_name: ${{ steps.get_buildinfo_filename.outputs.filename }}
-          asset_content_type: text/plain
-
-      - name: Get changes filename
-        id: get_changes_filename
-        run: |
-          cd ./deb-src
-          CHANGES_FILENAME=$(ls | grep "^${{ steps.get_src_name.outputs.src_name }}_.*.changes$")
-          echo "::set-output name=filename::$CHANGES_FILENAME"
-
-      - name: Upload changes filename
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./deb-src/${{ steps.get_changes_filename.outputs.filename }}
-          asset_name: ${{ steps.get_changes_filename.outputs.filename }}
-          asset_content_type: text/plain
-
-      - name: Get source filename
-        id: get_source_filename
-        run: |
-          cd ./deb-src
-          SOURCE_FILENAME=$(ls | grep "^${{ steps.get_src_name.outputs.src_name }}_.*.tar.xz$")
-          echo "::set-output name=filename::$SOURCE_FILENAME"
-
-      - name: Upload source filename
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./deb-src/${{ steps.get_source_filename.outputs.filename }}
-          asset_name: ${{ steps.get_source_filename.outputs.filename }}
-          asset_content_type: text/plain
