@@ -1,3 +1,11 @@
+pt-device-manager (4.1.3) buster; urgency=medium
+
+  * Use 100% battery capacity if high enough (#111)
+  * Add alsa-utils dependency
+  * Add raspi-config dependency
+
+ -- pi-top <deb-maintainers@pi-top.com>  Mon, 12 Apr 2021 13:21:18 +0000
+
 pt-device-manager (4.1.2) buster; urgency=medium
 
   * Enable pi-top [4] UART when pi-topPULSE is connected
