@@ -301,28 +301,29 @@ class HubManager:
 
     def _register_client(self):
         if self._hub_connected():
+            __c = self._callback_client
             if self._active_hub_module.__name__ == "pthub3.pthub3":
                 self._active_hub_module.register_client({
-                    "hub_brightness": self._on_hub_brightness_changed,
-                    "screen_blank_state": self._on_screen_blank_state_changed,
-                    "lid_open_state": self._on_lid_open_state_changed,
-                    "hub_shutdown_requested": self._on_hub_shutdown_requested,
-                    "hub_battery_state": self._on_hub_battery_state_changed,
-                    "button_press_state": self._on_button_press_state_changed,
-                    "oled_pi_controlled_state": self._on_oled_pi_controlled_state_changed,
-                    "oled_spi_state": self._on_oled_spi_bus_changed,
-                    # "buttons_route_to_gpio": self._on_buttons_route_to_gpio_state_changed,
+                    "hub_brightness": __c.on_hub_brightness_changed,
+                    "screen_blank_state": __c.on_screen_blank_state_changed,
+                    "lid_open_state": __c.on_lid_open_state_changed,
+                    "hub_shutdown_requested": __c.on_hub_shutdown_requested,
+                    "hub_battery_state": __c.on_hub_battery_state_changed,
+                    "button_press_state": __c.on_button_press_state_changed,
+                    "oled_pi_controlled_state": __c.on_oled_pi_controlled_state_changed,
+                    "oled_spi_state": __c.on_oled_spi_bus_changed,
+                    # "buttons_route_to_gpio": __c.on_buttons_route_to_gpio_state_changed,
                 })
                 self._active_hub_module.set_speed(10)
             else:
                 self._active_hub_module.register_client(
-                    self._on_hub_brightness_changed,
-                    self._on_screen_blanked,
-                    self._on_screen_unblanked,
-                    self._on_lid_opened,
-                    self._on_lid_closed,
-                    self._on_hub_shutdown_requested,
-                    self._on_hub_battery_state_changed,
+                    __c.on_hub_brightness_changed,
+                    __c.on_screen_blanked,
+                    __c.on_screen_unblanked,
+                    __c.on_lid_opened,
+                    __c.on_lid_closed,
+                    __c.on_hub_shutdown_requested,
+                    __c.on_hub_battery_state_changed,
                 )
 
     def _write_device_serial_numbers_to_file(self):
@@ -346,47 +347,3 @@ class HubManager:
         with open(serial_numbers_file, "w") as output_file:
             json_dump(json_data, output_file)
             output_file.write("\n")
-
-    # Hub callbacks
-
-    def _on_hub_shutdown_requested(self):
-        self._callback_client.on_hub_shutdown_requested()
-
-    def _on_hub_brightness_changed(self, new_value):
-        self._callback_client.on_hub_brightness_changed(new_value)
-
-    def _on_hub_battery_state_changed(
-        self, charging_state, capacity, time_remaining, wattage
-    ):
-        self._callback_client.on_hub_battery_state_changed(
-            charging_state, capacity, time_remaining, wattage
-        )
-
-    def _on_button_press_state_changed(self, button_pressed, is_pressed):
-        self._callback_client.on_button_press_state_changed(
-            button_pressed, is_pressed)
-
-    def _on_oled_pi_controlled_state_changed(self, oled_controlled_by_pi):
-        self._callback_client.on_oled_pi_controlled_state_changed(
-            oled_controlled_by_pi)
-
-    def _on_oled_spi_bus_changed(self, oled_uses_spi0):
-        self._callback_client.on_oled_spi_bus_changed(oled_uses_spi0)
-
-    def _on_screen_blank_state_changed(self, blanked_state):
-        self._callback_client.on_screen_blank_state_changed(blanked_state)
-
-    def _on_screen_blanked(self):
-        self._callback_client.on_screen_blanked()
-
-    def _on_screen_unblanked(self):
-        self._callback_client.on_screen_unblanked()
-
-    def _on_lid_open_state_changed(self, lid_open_state):
-        self._callback_client.on_lid_open_state_changed(lid_open_state)
-
-    def _on_lid_opened(self):
-        self._callback_client.on_lid_opened()
-
-    def _on_lid_closed(self):
-        self._callback_client.on_lid_closed()
