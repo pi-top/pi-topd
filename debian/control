@@ -26,6 +26,8 @@ Depends:
 # Hub management
  python3-smbus,
  python3-spidev,
+# Hardware interface management for devices and peripherals
+ raspi-config,
 Suggests:
 # Command line tools
  python3-pitop,
