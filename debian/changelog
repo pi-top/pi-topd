@@ -1,8 +1,6 @@
 pt-device-manager (4.1.3) buster; urgency=medium
 
-  [ Mike Roberts ]
   * Use 100% battery capacity if high enough (#111)
-  * Update CI workflow files from sys-oled
   * Add alsa-utils dependency
   * Add raspi-config dependency
 
