@@ -199,6 +199,11 @@ def _check_and_set_serial_config():
     return reboot_required
 
 
+def _initialise_v3_hub_pulse():
+    UART_reboot = _check_and_set_serial_config()
+    return UART_reboot
+
+
 def _initialise_v2_hub_pulse():
 
     if HDMI.set_as_audio_output() is False:
@@ -247,6 +252,7 @@ def enable_device():
     is_pi_top_ceed = (_host_device_id == DeviceID.pi_top_ceed)
     hub_is_v1 = (is_pi_top or is_pi_top_ceed)
     is_pi_top_3 = (_host_device_id == DeviceID.pi_top_3)
+    is_pi_top_4 = (_host_device_id == DeviceID.pi_top_4)
 
     if is_pi_top_3:
         reboot_required = _initialise_v2_hub_pulse()
@@ -255,6 +261,9 @@ def enable_device():
 
     elif hub_is_v1 or (_host_device_id == DeviceID.unknown):
         reboot_required = _initialise_v1_hub_pulse()
+
+    elif is_pi_top_4:
+        reboot_required = _initialise_v3_hub_pulse()
 
     else:
         PTLogger.error("Error - unrecognised device ID '" + str(_host_device_id) +

@@ -1,3 +1,24 @@
+pt-device-manager (4.1.3) buster; urgency=medium
+
+  * Use 100% battery capacity if high enough (#111)
+  * Add alsa-utils dependency
+  * Add raspi-config dependency
+
+ -- pi-top <deb-maintainers@pi-top.com>  Mon, 12 Apr 2021 13:21:18 +0000
+
+pt-device-manager (4.1.2) buster; urgency=medium
+
+  * Enable pi-top [4] UART when pi-topPULSE is connected
+
+ -- pi-top <deb-maintainers@pi-top.com>  Wed, 17 Mar 2021 15:25:51 +0000
+
+pt-device-manager (4.1.1) buster; urgency=medium
+
+  * Fix peripheral auto initialisation (#102)
+  * Cast address to integer to determine if valid (#103)
+
+ -- pi-top <deb-maintainers@pi-top.com>  Tue, 16 Mar 2021 13:20:36 +0000
+
 pt-device-manager (4.1.0) buster; urgency=medium
 
   * Fix boot animation for non pi-topOS systems
