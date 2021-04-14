@@ -1,12 +1,7 @@
 pt-device-manager (4.1.4) buster; urgency=medium
 
-  [ Mike Roberts ]
-  * Use latest CI workflows
-  * Hub manager uses callback directly (#113)
-  * Look for setup.py in workspace
-
-  [ Jorge Capona ]
-  * Use env var to determine if battery messages are logged (#114)
+  * Hub manager uses callback directly
+  * Use environment variable to determine if battery messages are logged
 
  -- pi-top <deb-maintainers@pi-top.com>  Wed, 14 Apr 2021 16:54:16 +0000
 
