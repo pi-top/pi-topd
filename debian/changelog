@@ -1,3 +1,10 @@
+pt-device-manager (4.1.4) buster; urgency=medium
+
+  * Hub manager uses callback directly
+  * Use environment variable to determine if battery messages are logged
+
+ -- pi-top <deb-maintainers@pi-top.com>  Wed, 14 Apr 2021 16:54:16 +0000
+
 pt-device-manager (4.1.3) buster; urgency=medium
 
   * Use 100% battery capacity if high enough (#111)
