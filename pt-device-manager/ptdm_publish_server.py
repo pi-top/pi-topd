@@ -3,6 +3,7 @@ from pitopcommon.ptdm import Message
 import zmq
 import traceback
 from threading import Lock
+from os import getenv
 
 
 # Creates a server for clients to connect to,
@@ -13,6 +14,8 @@ class PublishServer:
         self._shutting_down = False
         self._zmq_context = None
         self._zmq_socket = None
+        self._enable_battery_logging = getenv(
+            "PT_LOG_BATTERY_CHANGE", "0") == "1"
 
     def start_listening(self):
         PTLogger.debug("Opening publisher socket...")
@@ -87,7 +90,7 @@ class PublishServer:
         self._send_message(
             Message.PUB_BATTERY_STATE_CHANGED,
             [connected, new_capacity, new_time, new_wattage],
-        )
+            log_to_journal=self._enable_battery_logging)
 
     def publish_screen_blanked(self):
         self._send_message(Message.PUB_SCREEN_BLANKED)
@@ -144,7 +147,7 @@ class PublishServer:
         )
 
     # Internal functions
-    def _send_message(self, message_id, parameters=None):
+    def _send_message(self, message_id, parameters=None, log_to_journal=True):
         if parameters is None:
             parameters = list()
         message = Message.from_parts(message_id, parameters)
@@ -157,8 +160,9 @@ class PublishServer:
             )
             return
 
-        PTLogger.info("Publishing message: " +
-                      message.message_friendly_string())
+        if log_to_journal:
+            PTLogger.info("Publishing message: " +
+                          message.message_friendly_string())
 
         try:
             self._socket_lock.acquire()
