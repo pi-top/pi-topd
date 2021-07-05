@@ -1,3 +1,951 @@
+pt-device-manager (4.1.5) buster; urgency=medium
+
+  [ Ben P ]
+  * Add empty daemon
+  * Add classes
+  * Move service into debian.
+  * Initial commit
+  * Add a bit more logic
+
+  [ Mike Roberts ]
+  * Removed extra systemd service
+  * Removed .pyc files; added to gitignore
+
+  [ Ben P ]
+  * Re-arrange files and move to modules rather than classes for the time-being
+  * Remove renamed file
+  * Use Python3, other small changes for prototype
+  * Partially working sample
+  * Add test client
+  * Change port number
+  * Add dependency for pyzmq
+  * Add further logic to IPC servers. Add thread to request server. Update test client
+
+  [ Mike Roberts ]
+  * Migrated pt-hub-controller to python3-pt-hub/pthub.py. Still needs testing, but increment/decrement brightness works
+
+  [ Ben P ]
+  * Change info messages to debug. Add signal handling and keep-alive loop in controller. Implement test get_brightness msg
+  * Update install file list
+  * Add Python dependency
+  * Add Python dependency
+  * Move files to /usr/lib/pt-device-manager
+  * Remove unused module
+  * Attempt to remove lintian warnings
+  * Attempt to remove lintian warnings
+  * Send logging output to the journal
+  * Add some messaging functions to the publish server
+  * Add logic for processing requests
+  * Add testings
+  * Improve message handling
+  * Use controller object as callback. Catch zmq exceptions. Refactor
+  * Remove renamed file
+  * Convert to classes for consistency
+  * Route messages in controller. Tidy up
+  * Add logic to detect hubs and initialise them. Tidy exception handling.
+  * Rename method
+  * Fix logging levels
+  * Fix syntax error
+  * Add message file to install
+
+  [ Mike Roberts ]
+  * Now PEP8 compliant (with 2 exceptions). Removed python3-pt-hub folder, as this has its own repository now
+  * Added all relevant publish messages for hub
+
+  [ Ben P ]
+  * Changed message definitions
+
+  [ Mike Roberts ]
+  * Updated to use PUB_SCREEN_BLANKED message
+
+  [ Ben P ]
+  * Fix issues importing modules
+  * Fix syntax error
+  * Wire up start and stop for hub manager. Use device id instead of hub info
+  * Style
+  * Fix syntax error
+  * This package replaces pt-battery and pt-hub-controller
+
+  [ Mike Roberts ]
+  * Pass logger into hub's initialise()
+  * Added method name to logger when in debug mode
+  * Added missing self to print message in logger
+  * No longer printing everything regardless of log level
+  * And again - sorry
+  * Don't always print debugs
+
+  [ Ben P ]
+  * Register client for callback. Improve logging and message handling
+  * Add sleeps between tests
+  * Add methods for incrementing and decrementing brightness; and screen blanking/unblanking
+  * Return rather than raise error on connecting servers
+
+  [ Mike Roberts ]
+  * Added lid message functionality
+  * Removed redundant set logging function
+
+  [ Ben P ]
+  * Add DISPLAY env variable to systemd service
+
+  [ Mike Roberts ]
+  * Added shutdown client to capture low battery events. Waiting on pi-topHUB repo to send repeated events when capacity is not changing
+  * Improved readability
+  * Tidied up initialising counters
+  * Added pt-brightness, pt-device-manager-resp-test for testing that all emits are working as expected, and did a first pass at porting pt-peripherals-daemon to pt-peripheral-manager
+  * Fixed reference to sed_inplace
+  * Executable resp test
+  * Moved tests outside of debug folder so that imports will be picked up
+  * PeripheralManager consts are now not self.
+  * Removed test.py
+  * Added common and shutdown client to install file
+  * PublishServer consts are now not self.
+  * ShutdownManager consts are now not self.
+  * Added self to RequestServer's __init__
+  * Added threading import to peripheral manager
+  * Fixed self references in peripheral mgr and function calls in initialise
+  * Fixed more self references in peripheral mgr
+  * Fixed typo
+  * Hopefully fixed all selfs
+  * Fixed reference to self AGAIN
+  * Fixe subprocess call and is_initialised() call
+  * Added sleep import to peripheral manager; fixed reference to process_battery_state()
+  * Moved thread declaration to init of RequestServer
+  * Fixed parsing of check_output in peripheral manager - now decoding into UTF-8, which was previously happening via '-*- coding: utf-8 -*-'.
+  * Fixed self reference in shutdown client
+  * Actually half-stable!
+  * Publish test script now working, added desktop message service ready to be tested as part of peripherals
+  * Added logic for low battery shutdown warnings
+  * Attempting to fix issues with package - added systemd service for desktop message service
+  * Fixed spaces in rules file
+  * Stabbing in the dark: Volume 1
+  * Some stuff
+  * Fixed desktop message service systemd file
+  * Fixed os imports in peripheral manager
+  * Desktop messaging service now exits cleanly
+  * Updated device ID on req test to handle both devices
+
+  [ Ben P ]
+  * Fix issues with lid messages. Add Poweroff systemd service
+  * Add dh override so that the poweroff executable binary doesn't cause problems in packaging.
+  * Add dh override so that the poweroff executable binary doesn't cause problems in packaging.
+  * Add dh override so that the poweroff executable binary doesn't cause problems in packaging.
+  * Add dh override so that the poweroff executable binary doesn't cause problems in packaging.
+  * Add dh override so that the poweroff executable binary doesn't cause problems in packaging.
+  * Don't start the shutdown script on install
+  * Add dependency, update description of service
+  * Fix test
+  * Fix code flow. Don't pass publish server into other classes
+
+  [ Mike Roberts ]
+  * Migrated files to ptdm_client
+
+  [ Ben P ]
+  * Removed references to peripheral state files/breadcrumbs, as now this information is sent via published messages.
+  * Added missing selfs
+
+  [ Mike Roberts ]
+  * Removed pt-desktop-message-service
+  * Removed message service from install file
+  * Removed migrated files from install file
+  * Stripped poweroff
+  * Added shlibs to dependencies for poweroff
+  * Removed override_dh_shlibdeps, see what happens
+  * Test
+  * Test
+  * Test
+  * Testing install - hopefully will not hang any longer
+  * Fixed typo
+  * Migrated I2S files from pt-peripheral-cfg
+  * Removed 'dh_installinit --noscripts --name=pt-poweroff' from rules file to try and get pt-poweroff to enable automatically
+  * Removed 'override_dh_installinit' from rules
+  * Added 'dh_installinit --noscripts' in 'override_dh_installinit' in rules file
+  * Removed 'override_dh_systemd_start'
+  * Let's try override_dh_systemd_enable
+  * pt-device-message -> pt-device-manager
+
+  [ Ben P ]
+  * Emit and get battery messages to/from the dashboard
+  * Wire up peripheral-based messages from device manager
+  * Update v2 hub name
+  * Add further support for v2 hub. Remove false positive v1 hub detection. Remove event/message params where possible
+  * Allow pt-brightness to turn on backlight
+  * Device manager replaces pt-peripheral-cfg
+
+  [ Mike Roberts ]
+  * Added Idle Monitor
+
+  [ Ben P ]
+  * Start/stop idle monitor
+  * Add logging
+
+  [ Mike Roberts ]
+  * Added pt-xhost-fix.service
+
+  [ Ben P ]
+  * Change the poll frequency for idletime monitor to increase responsivity for unblanking the screen
+  * Add traceback logs on errors. Add logging around errors from pt-idletime
+  * Check types being sent over the wire to catch bugs as early as possible
+  * Merge battery messages into a single message
+  * Get battery state now returns all battery params
+  * Add reboot service
+
+  [ Mike Roberts ]
+  * Added pt-battery helper script
+
+  [ Ben P ]
+  * Improve shutdown logic so as not to close while reading/writing on a socket
+
+  [ Mike Roberts ]
+  * Added idle monitor to package
+
+  [ Ben P ]
+  * Some fixes around shutdown logic. No longer spam publish messages to info log
+  * Respond to screen blanking timeout messages, and save timeout to config file
+
+  [ Mike Roberts ]
+  * Update pt-xhost-fix.service
+  * Update pt-xhost-fix.service
+  * Added Breaks to control file
+  * Added disabling of xscreensaver, if appropriate, to postinst
+
+  [ Ben P ]
+  * Add first iteration of shutdown logic
+  * Unblank the screen when shutting down
+  * Fix typo
+  * Ensure DISPLAY environment var is set
+  * Disable screen blanking if timeout set to zero
+  * Just unblank screen on shutdown
+  * Fix postinst script
+
+  [ Mike Roberts ]
+  * Overhauled pt-brightness to accommodate screen blanking and unblanking
+  * Updated pt-brightness, moved unblanking on stop
+
+  [ Ben P ]
+  * Add poweroff-v2 to power off the v2 hub after the OS shuts down
+  * Add timeouts to pt-brightness and pt-battery
+  * Tidy up
+  * Fix filename
+  * Rename ptdm_client to ptcommon, update packages, references correspondingly. Remove some python enums to simplify code
+  * Move i2cdevice into common python lib
+  * Test removing other services
+  * Test removing overrides
+  * Restore
+  * Move install init in between enable and start systemd calls (https://wiki.debian.org/Teams/pkg-systemd/Packaging)
+  * Make syntax consistent
+  * Test: Simplify systemd starting
+
+  [ Mike Roberts ]
+  * New attempt at rules file
+  * Fixed tabs in rules file
+  * Try again
+  * Fixed tabs in rules file
+  * Trying compatability level 11
+  * Updated build depends version of debhelper
+  * Compat level 10
+  * With added rules
+  * ..
+  * Fixed tabs in rules file
+  * Can it be?
+  * Fixed UART configuration issue by adding missing import line
+
+  [ Ben P ]
+  * Don't propagate messages from the journal log
+  * Add support for v2 speaker detection
+  * Use command line args for the logging parameters
+  * Attempt to detect a v2 hub FIRST, then fallback on v1 as we cannot positively detect a CEED
+
+  [ Mike Roberts ]
+  * Now using ptcommon for logger
+  * Fixed bug which would not allow for --help menu
+
+  [ Ben P ]
+  * Add logic to handle changing device ids. The peripheral and shutdown managers are not started until the hub manager has informed what device we're running on. No longer publish device id changed messages. If the device id changes from two known devices (e.g. SD Card swap) then reboot.
+  * Promote logic reading device id from the v1 hub code into the device manager's hub manager. Add more logging. Improve error handling for servers
+  * When the device id changes, write the new value to the device id file
+
+  [ Matt Simons ]
+  * Update pt-xhost-fix.service
+
+  [ Ben P ]
+  * Move to Mode 1 shutdown (hub powers down when it detects the pi has shutdown
+  * When shutting down, stop the polling thread, to prevent continual detection-shutdown loop
+  * Persist systemd logs
+  * Add logic to set HDMI audio multiplexer in v2 hub
+
+  [ Mike Roberts ]
+  * Work in progress
+  * Now working with v1 speaker on v1 hub
+  * Now passing logger to speaker module in initialise()
+  * Added v2_hub_hdmi_to_i2s_required return from initialise(), scaffolded code to process the response for v2 hubs
+  * Initialise and enable now separated
+
+  [ Ben P ]
+  * Move configuration logic from the peripheral manager into the Pulse library; returning flags indicating what is required from the peripheral manager
+  * Rename method names to be clearer
+
+  [ Mike Roberts ]
+  * Updated peripheral manager to accommodate initialise and enable_device functions in speaker code
+  * Updated references to get counter class from ptcommon
+
+  [ Ben P ]
+  * Enable the v2 speaker on v2 hub
+
+  [ Mike Roberts ]
+  * Moved poweroffs to pt-device-manager directory, renamed v2 poweroff and updated systemd service
+  * Executable poweroff-v2
+  * Made v1 poweroff executable
+  * No longer passing in None logger from poweroff-v2
+
+  [ Ben P ]
+  * Move to static PTLogger
+
+  [ Mike Roberts ]
+  * Migrated to two power off systemd services
+
+  [ Ben P ]
+  * Adjust logging
+  * Switched logic so we give the device a chance to identify itself. This permits hot swapping an sdcard from v1 to v2 without reboot
+  * Fix low battery warning message, add logging on publish (except battery)
+  * Ensure that we don't call shutdown twice, as the second call hangs
+  * If the battery capacity is 0%, i.e. the battery has been removed altogther, we should not shutdown or show warnings
+
+  [ Mike Roberts ]
+  * Added logic for detecting coming from reboot to determine device ID
+  * Revert "Added logic for detecting coming from reboot to determine device ID"
+
+  [ Matt Simons ]
+  * Ensure reboot message is shown on first boot if pt-desktop installed
+
+  [ Mike Roberts ]
+  * Updated import method
+
+  [ Ben P ]
+  * Use flexible brightness scales: 16 point for pi-top v2 and 10 point for v1
+  * Remove complex device id logic related to tracking and determining the type of hub. Now we simply assume that if we connect to a v1 hub and a battery we are on a pi-top, and if we connect to a v1 hub but can't connect to a battery, we're on a ceed. This allows us to remove much of the logic around saving the device id after reboot and rebooting if the device id changes.
+
+  [ Mike Roberts ]
+  * Fix xhost systemd service for first boots
+  * Unblank screen on brightness changes
+
+  [ Ben ]
+  * Update changelog
+  * Update control
+  * Update copyright
+
+  [ Ben P ]
+  * Set audio to 3.5mm if not yet set
+  * Set audio to 3.5mm if not yet set
+
+  [ Mike Roberts ]
+  * Delete pt-capture-reboot.service
+  * Added unsupported hardware message
+  * Unblank on messages and key events
+
+  [ Ben ]
+  * Update changelog
+  * Update control
+
+  [ Mike Roberts ]
+  * Added detailed report from import errors
+  * Moved package file contents to submodule
+  * Moved most systemd services to submodule
+  * Fixed submodule
+  * Using new file structure in install file. Symlinked service files
+  * Fixed links to pt-device-manager subdirectory in install file
+
+  [ Ben P ]
+  * Update changelog
+
+  [ Mike Roberts ]
+  * Updated submodule
+  * Updated changelog for v1.0.4
+  * Fixed changelog for v1.0.4
+  * Added pt-input to Recommends
+
+  [ Ben P ]
+  * Start the systemd service AFTER pt-update-installer so that any updates to the service are realised when the service starts
+
+  [ Mike Roberts ]
+  * Updated submodule
+  * Added pt-devices to install file
+
+  [ Ben P ]
+  * Fixed (or ignored where applicable) Lintian errors
+
+  [ Mike Roberts ]
+  * Updated submodule - testing new default values on feature branch
+  * Updated submodule
+
+  [ Matt Simons ]
+  * Add missing python dependencies
+
+  [ Mike Roberts ]
+  * Update pt-xhost-fix.service
+  * Updated submodule for I2C enabling; added raspi-config to control file
+  * Updated submodule
+  * Updated submodule
+  * Updated submodule
+  * Updated submodule
+  * Updated hub v1 package name
+  * Update control
+  * Update control
+  * Updated Jenkinsfile to push to non-free component
+  * Bulk operating - updated copyright dates, added separation to lines in control files and added Stretch entry to all changelogs
+  * Update control
+  * Removed versions from dependencies
+  * Updated submodule
+  * Updated submodule
+  * Updated submodule
+  * Delete preinst
+  * Updated submodule
+  * Updated submodule
+
+  [ Ben P ]
+  * Updated submodule reference to latest fix
+  * Updated package description
+
+  [ Mike Roberts ]
+  * Updated submodule
+  * Updated submodule
+  * Updated submodule
+  * Updated changelog
+  * Updated submodule
+  * Updated package install list
+  * Updated submodule
+  * Updated submodule
+  * Updated submodule
+  * Updated submodule
+  * Migrated pt-xhost-fix systemd service to lightdm config setting
+  * Fixed install file
+  * Fixed rules file
+  * Fix symlink to systemd service
+  * Fixed postinst
+  * Fixed postinst - make xhost fix script executable
+  * Now call xprintidle to get user idle time
+  * Updated submodule
+  * Updated submodule
+  * Update postinst
+  * Update postinst
+  * Update postinst
+  * Updated submodule
+  * Updated changelog ready for release
+  * Symlinked postinst, updated submodule
+  * Updated submodule
+  * Manual handling of enabling/disabling systemd service
+  * Bump version in changelog
+  * Updated dependencies
+
+  [ ItsChoudhry ]
+  * Updated submodule - more shutdown logging
+
+  [ Ben P ]
+  * Update changelog
+
+  [ Mike Roberts ]
+  * Updated submodule
+  * Prevent repeat instantiation of devices
+  * Fix common issues
+  * Update changelog for v1.0.7-2
+  * Point submodule to private repo
+  * Add private Device Management repo; point to it
+  * Update submodule
+  * Updated submodule
+
+  [ Choudhry Amjad ]
+  * Add Bluetooth keyboard, OLED control and buttons functionality; update poweroff
+
+  [ m-roberts ]
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Add legacy systemd service
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Add hub v3 dependency
+
+  [ ItsChoudhry ]
+  * :sparkles: Update submodule
+  * :see_no_evil: Updating .gitignore
+
+  [ Mike Roberts ]
+  * ✨ Hub v3 enable/disable sys menu systemd service
+  * Update submodule
+  * Publish to Sirius repo
+  * 🔥 Comment out Bluetooth code, remove bluetool dep
+  * ♻️ Implement BTManager using Python3 DBus Bluez API
+
+  [ Ben P ]
+  * Move bluetooth signal monitor to a new thread
+  * Stop the thread cleanly if bluetooth is unavailable
+  * Increase the delay between attempts to start bluetooth
+  * Add more logging
+
+  [ Mike Roberts ]
+  * Update submodule (#50)
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Move pt-device-manager service to private repo
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Handle OLED systemd service in maintainer scripts; fix syntax
+  * Update submodule ;Add .DS_ Store to gitignore
+  * Recommend oled library
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+
+  [ Tom Jennings ]
+  * Manage systemd services from rules file
+
+  [ Mike Roberts ]
+  * Rename postinst to pt-device-manager.postinst
+  * Update submodule
+
+  [ Ben P ]
+  * Once we are connected to the hub, read serial numbers from MCU and write to a file, to be collected by the registration service
+  * Update submodule
+
+  [ Mike Roberts ]
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Improve rules file
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update rules file based on raspberrypi-sys-mods
+  * Skip override_dh_installinit
+  * Add shlibs dependencies to control file
+  * Add substvars to resolve shlibs dependency
+  * Try substvars directly in rules file
+  * Remove substvars file and remove override_dh_shlibdeps - handled directly in rules file
+  * Update submodule
+  * Re-add override_dh_shlibdeps (with comments), try suppress override_dh_strip
+  * Re-add override_dh_strip, add comments
+  * Move xhost workaround to pt-display dependency
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update directory reference from poweroff to shutdown
+  * Update submodule
+  * Update submodule
+  * Remove python3-pt-proto-plus dependency
+  * Remove unnecessarily specified shlibs
+  * Add python3-pygame dependency for startup audio
+  * Bump changelog to v2.0.0
+  * Force disconnect before trying to connect after pairing
+  * Add support for publishing display state changes; bump to v2.1.0
+  * Update submodule
+  * Dummy
+  * Revert "Dummy"
+  * Many improvements; bump to v2.2.0
+  * Update submodule
+
+  [ Ben P ]
+  * Move the keyboard autoconnect logic into the BTKBManager class, and into its own thread which can be signalled when necessary
+  * Update changelog
+  * Update submodule: Fix bug pairing keyboards which have a hexadecimal letter in their MAC address. The MAC address read from the hub register is in lower-case, but bluez returns MAC addresses in upper-case
+  * Update changelog
+  * Update submodule: Only run the bt keyboard manager if we're on a pi-top[4]
+  * Fix path to tests
+  * Update submodule: fix tests
+  * Update submodule: fix tests
+  * Update submodule: Fix issues with pt-devices. Add pt-host to provide an easy way to discover the host device
+  * Improve error handling around the oled start-up animation
+
+  [ ItsChoudhry ]
+  * Update changelog
+
+  [ Ben P ]
+  * Use nose to run unit tests
+  * Use nose to run unit tests
+
+  [ Mike Roberts ]
+  * Add pre-commit config; run pre-commit
+
+  [ Ben P ]
+  * Update submodule
+  * Update submodule
+  * Use jenkins method for unit testing
+
+  [ Mike Roberts ]
+  * Add pre-commit check
+  * Urgency=medium, distro=Buster
+  * Fix changelog package name
+  * Fix changelog package name
+  * Fix pre-commit dir error
+  * Attempt to fix Jenkinsfile
+  * Attempt to fix Jenkinsfile
+  * Apply linting
+
+  [ Ben P ]
+  * Attempt to prevent poweroff being started on upgrade
+  * Attempt to prevent poweroff being started on upgrade
+  * Attempt to prevent poweroff being started on upgrade
+  * Change pt-desktop dependency to pt-notifications
+
+  [ Mike Roberts ]
+  * Update submodule
+  * Update submodule
+
+  [ ItsChoudhry ]
+  * Update submodule
+
+  [ Ben P ]
+  * Allow device manager to exit cleanly on non-pi-top hardware
+  * Give CEEDs a little longer to connect
+  * Fix bug: Sometimes the device Id is passed as an int
+  * Fix I2S audio switching
+  * Precommit fixes
+
+  [ Mike Roberts ]
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Update submodule
+
+  [ Choudhry Amjad ]
+  * Refactor shutdown service to handle different host devices better
+
+  [ ItsChoudhry ]
+  * Fix changelog
+
+  [ Mike Roberts ]
+  * Remove pt-notifications-service requirement in systemd service
+  * Remove DISPLAY env from systemd service
+  * Bump changelog
+  * Update device ID names to match branding
+  * Update pt-devices response
+  * 'pi-top[4]' --> 'pi-top [4]'
+  * Fix pt-host output
+  * Temporarily disable tests to get a build out
+  * Fix pt-host output
+  * Improve device ID writing function
+  * Bump changelog
+  * pt-poweroff: strip device host ID string
+  * Bump changelog
+  * Bump changelog
+  * Bump changelog
+  * Remove unused battery functions from hub manager
+
+  [ Ben P ]
+  * Update changelog
+  * Rename pt-display package to pt-os-mods
+  * Fix line endings
+  * Update submodule and re-enable unit tests
+  * Add ability to explicitly add a setting to config.txt, rather than set the value of settings with the same name. This is important for adding NEW dtparam= lines, rather than editing existing ones, to add multiple device tree options
+
+  [ Choudhry Amjad ]
+  * Add reboot service
+
+  [ Mike Roberts ]
+  * Add reboot service into rules file
+  * Bump changelog
+  * Fix changelog formatting
+  * Continue fixing changelog format
+  * Continue fixing changelog format
+  * Reduce 'battery warning message' noise in log output
+  * Reduce output noise from RPi's polling lxpanel plugin
+
+  [ ItsChoudhry ]
+  * Add latest commits to changelog
+
+  [ Mike Roberts ]
+  * Set default screen blanking timeout to 5 mins
+
+  [ ItsChoudhry ]
+  * Update changelog
+
+  [ Ben P ]
+  * Only modify /boot/config.txt if the host hardware has changed, otherwise preserve any user changes
+
+  [ Mike Roberts ]
+  * Post OS build errors to Slack #os-builds
+  * Try new Jenkinsfile (#83)
+  * No longer override stripping
+  * Updated Jenkinsfile
+  * Compat level 11
+  * Use kwargs for setting up logging
+  * Fix Lintian errors
+  * Remove unused Bluetooth keyboard functions
+  * Shutdown mode 4 if /tmp/pt-poweroff.reboot exists
+  * Bump changelog
+  * Add dpkg triggers
+  * Remove startup sound
+  * Remove startup sound dependency
+  * Add postinst for dpkg trigger
+
+  [ Jorge Capona ]
+  * Bump changelog
+  * Remove audio configuration change on start
+
+  [ Mike Roberts ]
+  * Set Hifiberry driver as new audio output when necessary
+  * Set Hifiberry explicitly in ALSA
+  * Add dependency descriptions
+  * Loop startup animation when expanding filesystem
+  * Robust host device management
+  * Use command runner to call pt-host
+
+  [ Jorge Capona ]
+  * Remove extra character from pt-oled-startup-anim
+
+  [ Mike Roberts ]
+  * Remove apparently unnecessary baudrate reduction for pi-top 1
+  * Fix tests
+  * Bump changelog
+  * Architecture: all
+  * Add Lintian override for testing
+  * Move pt-os-mods to recommends
+  * oops
+  * oops..
+  * Make wiringpi optional until we rewrite legacy poweroff script in Python
+  * Update submodule
+  * Update submodule
+  * Update submodule
+  * Add missing timeout
+
+  [ Jorge Capona ]
+  * Bump changelog
+
+  [ Mike Roberts ]
+  * Add breadcrumb patch for upgrading
+  * Move breadcrumb fix to preinst
+
+  [ Jorge Capona ]
+  * Don't create expandedFs breadcrumb on chroot
+  * Bump changelog
+
+  [ Mike Roberts ]
+  * Bump changelog
+  * Bump compat level; use dh_installsystemd
+  * Replace poweroff-legacy with Python implementation
+  * Use debhelper-compat (= 12)
+  * Try and use dh-sequence-python3 build dependency
+  * Suppress new Lintian warnings
+  * Add 1.0 debian format
+  * Use multi-user.target; upgrade package
+  * Remove unused line; fix changelog date
+  * Remove unused Lintian override
+  * Remove obsolete pyversions file
+  * Refactor dependencies (#86)
+  * Remove config editing functionality
+  * Remove line
+  * Remove config editing functionality 2
+  * Bump submodule
+  * Update submodule
+  * Update submodule
+  * Define replacing pt-os-mods
+  * Update Lintian overrides
+
+  [ Jorge Capona ]
+  * Bump changelog
+  * Update pre-commit yaml
+
+  [ Mike Roberts ]
+  * Suggests python3-pitop
+  * Remove submodules
+  * Disable tests
+  * Attempt to fix copyright file issue
+  * Attempt to fix copyright file issue 2
+  * Remove config from Jenkinsfile
+  * Add hub modules to install file
+  * Update hub dependencies
+  * ptcommon -> pitop.core
+  * Migrate peripheral libs
+  * Remove submodules (#88)
+  * Shutdown manager -> power manager
+  * Simplify install file
+  * Add support for charging sounds (#89)
+
+  [ Jorge Capona ]
+  * Update dependency pitop.core -> pitop.utils
+  * ptcommon -> pitop.utils
+  * pitop.core -> pitop.utils
+  * Fix relative imports
+
+  [ Mike Roberts ]
+  * Update triggers
+  * pitop.utils -> pitopcommon
+  * Bash strict mode
+  * Move sys_config from common library
+  * Add pt-i2s
+  * Add Lintian override
+  * Move sys_config file
+  * Remove unused file
+  * Move files
+  * Remove unused Lintian override
+  * Fix import
+  * Fix flake8 errors
+  * Fix things
+  * Don't log directly to journal
+  * Update shutdown and reboot services to use latest common lib
+  * Fix
+  * Add SDK dpkg trigger
+  * Add PulseAudio support
+  * Add PulseAudio support (#91)
+  * Bump changelog
+  * Make all systemd services unbuffered
+  * Provide packages we want to remove
+  * Update dependencies
+  * Add 'request-restart-pt-device-manager' dpkg trigger for pt-os-mods
+  * Revert "Add 'request-restart-pt-device-manager' dpkg trigger for pt-os-mods"
+  * Add lid open request message (#92)
+  * Bump changelog
+  * 15s timeout for poweroff-legacy
+
+  [ Jorge Capona ]
+  * Add OLED SPI port to PTDM messages (#93)
+
+  [ Mike Roberts ]
+  * Improve request server logging
+  * Workaround fix for OLED SPI bus setting by moving commands to background (#94)
+  * Bump changelog
+  * Handle SPI bus change in thread wrapper
+  * Fix private scope in notification manager
+  * Handle OLED SPI bus notification in thread (#95)
+  * Fix SPI bus management (#96)
+  * Move pt-bt-kb stuff to sys-oled
+  * Handle I2C reserved addresses (UU)
+
+  [ Jorge Capona ]
+  * Fix boot animation for non pi-topOS systems (#99)
+
+  [ Mike Roberts ]
+  * Add GitHub workflow files from SDK
+  * build-debian-packages doesn't depend on tests
+  * oops..
+  * Architecture: any --> all
+  * Fix Lintian warnings
+  * Allow external sources when testing shell scripts
+
+  [ Jorge Capona ]
+  * Fix peripheral auto initialisation (#102)
+  * Cast address to integer to determine if valid (#103)
+
+  [ Mike Roberts ]
+  * Update changelog bump CI script
+
+  [ github-actions[bot] ]
+  * [CI] Update debian/changelog for next release (#100)
+  * Update 'draft release' CI workflow
+
+  [ github-actions[bot] ]
+  * [CI] Update debian/changelog for next release (#104)
+  * Drop dependency on undefined build-python
+
+  [ github-actions[bot] ]
+  * [CI] Update debian/changelog for next release (#105)
+  * Drop unused 'cd'
+
+  [ m-roberts ]
+  * Bump debian/changelog with proposed change for next release
+
+  [ Mike Roberts ]
+  * Update changelog
+  * Ignore non-existent Python artifacts
+
+  [ github-actions[bot] ]
+  * [CI] Update debian/changelog for next release (#107)
+  * CI: Comment out Python deploy steps
+  * Standards-Version: 4.5.1
+
+  [ Jorge Capona ]
+  * Enable pi-top [4] UART when pi-topPULSE is connected (#109)
+
+  [ github-actions[bot] ]
+  * [CI] Update debian/changelog for next release (#108)
+
+  [ Mike Roberts ]
+  * Use 100% battery capacity if high enough (#111)
+  * Update CI workflow files from sys-oled
+  * Add alsa-utils dependency
+  * Add raspi-config dependency
+
+  [ github-actions[bot] ]
+  * [CI] Update debian/changelog for next release (#110)
+  * Use latest CI workflows
+  * Hub manager uses callback directly (#113)
+  * Look for setup.py in workspace
+
+  [ Jorge Capona ]
+  * Use env var to determine if battery messages are logged (#114)
+
+  [ github-actions[bot] ]
+  * [CI] Update debian/changelog for next release (#112)
+
+  [ Mike Roberts ]
+  * Remove Jenkinsfile
+  * Revert "Remove Jenkinsfile"
+  * Workflow: create draft release manually
+  * Update workflow files
+  * Update workflow files
+
+ -- pi-top <deb-maintainers@pi-top.com>  Mon, 05 Jul 2021 10:26:39 +0000
+
 pt-device-manager (4.1.4) buster; urgency=medium
 
   * Hub manager uses callback directly
