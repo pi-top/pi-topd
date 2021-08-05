@@ -1,5 +1,5 @@
-from pitopcommon.logger import PTLogger
-from pitopcommon.i2c_device import I2CDevice
+from pitop.common.logger import PTLogger
+from pitop.common.i2c_device import I2CDevice
 from threading import Thread
 from time import sleep
 

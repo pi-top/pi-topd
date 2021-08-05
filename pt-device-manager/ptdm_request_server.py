@@ -1,6 +1,6 @@
-from pitopcommon.logger import PTLogger
-from pitopcommon.ptdm import Message
-from pitopcommon.common_ids import DeviceID
+from pitop.common.logger import PTLogger
+from pitop.common.ptdm import Message
+from pitop.common.common_ids import DeviceID
 from threading import Thread
 from time import sleep
 import traceback

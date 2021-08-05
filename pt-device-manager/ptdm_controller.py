@@ -1,6 +1,6 @@
 # Instantiates and coordinates between the other classes
-from pitopcommon.logger import PTLogger
-from pitopcommon.common_ids import DeviceID
+from pitop.common.logger import PTLogger
+from pitop.common.common_ids import DeviceID
 
 from systemd.daemon import notify
 from time import sleep

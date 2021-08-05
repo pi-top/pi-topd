@@ -1,5 +1,5 @@
-from pitopcommon.logger import PTLogger
-from pitopcommon.common_ids import DeviceID
+from pitop.common.logger import PTLogger
+from pitop.common.common_ids import DeviceID
 from . import pthub_i2c
 from . import pthub_spi
 

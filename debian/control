@@ -15,10 +15,8 @@ Depends:
  ${python3:Depends},
 # Configure sound settings
  alsa-utils,
-# Used for 'ischroot' command in preinst
- debianutils (>= 4.8.6.1),
-# Common functions
- python3-pitopcommon,
+# Common functions and command-line tools
+ python3-pitop,
 # Journal handling
  python3-systemd,
 # System state change communication
@@ -29,8 +27,6 @@ Depends:
 # Hardware interface management for devices and peripherals
  raspi-config,
 Suggests:
-# Command line tools
- python3-pitop,
 # Low battery warnings
  pt-notifications,
 # User idle time

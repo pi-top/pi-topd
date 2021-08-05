@@ -4,9 +4,9 @@
 
 from math import pow
 from smbus import SMBus
-from pitopcommon.logger import PTLogger
-from pitopcommon.common_ids import DeviceID
-from pitopcommon.sys_info import get_debian_version
+from pitop.common.logger import PTLogger
+from pitop.common.common_ids import DeviceID
+from pitop.common.sys_info import get_debian_version
 from sys_config import (
     I2S,
     UART,

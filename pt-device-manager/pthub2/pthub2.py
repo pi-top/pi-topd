@@ -1,7 +1,7 @@
-from pitopcommon.logger import PTLogger
+from pitop.common.logger import PTLogger
 from .pthub2_state import State
 from .pthub2_connection import HubConnection
-from pitopcommon.common_ids import DeviceID
+from pitop.common.common_ids import DeviceID
 
 
 def initialise():

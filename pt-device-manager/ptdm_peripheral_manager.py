@@ -4,14 +4,14 @@ from sys_config import (
     Hifiberry,
     System
 )
-from pitopcommon.file_ops import touch_file
-from pitopcommon.current_session_info import get_user_using_first_display
-from pitopcommon.common_ids import (
+from pitop.common.file_ops import touch_file
+from pitop.common.current_session_info import get_user_using_first_display
+from pitop.common.common_ids import (
     DeviceID,
     Peripheral,
     PeripheralID
 )
-from pitopcommon.logger import PTLogger
+from pitop.common.logger import PTLogger
 from importlib import import_module
 from os import path
 from subprocess import call
