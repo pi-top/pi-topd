@@ -31,39 +31,6 @@ Suggests:
  pt-notifications,
 # User idle time
  xprintidle,
-Breaks:
- pt-os-mods (<< 8),
-Replaces:
- pt-os-mods (<< 8),
- pt-hub,
- pt-pma,
- pt-pulse,
- pt-speaker,
- python3-pt-hub-v1,
- python3-pt-hub-v2,
- python3-pt-hub-v3,
- python3-pt-pulse,
- python3-pt-speaker,
-Conflicts:
- pt-hub,
- pt-pma,
- pt-pulse,
- pt-speaker,
- python3-pt-hub-v1,
- python3-pt-hub-v2,
- python3-pt-hub-v3,
- python3-pt-pulse,
- python3-pt-speaker,
-Provides:
- pt-hub,
- pt-pma,
- pt-pulse,
- pt-speaker,
- python3-pt-hub-v1,
- python3-pt-hub-v2,
- python3-pt-hub-v3,
- python3-pt-pulse,
- python3-pt-speaker,
 Description: pi-top Device Manager
  Core pi-top service for interfacing with pi-top hardware.
  Provides support for management of all pi-top units.
