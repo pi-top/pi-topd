@@ -6,7 +6,6 @@ from math import pow
 from smbus import SMBus
 from pitop.common.logger import PTLogger
 from pitop.common.common_ids import DeviceID
-from pitop.common.sys_info import get_debian_version
 from sys_config import (
     I2S,
     UART,
@@ -169,24 +168,6 @@ def _check_and_set_I2S_config(i2s_required):
 def _check_and_set_serial_config():
 
     reboot_required = False
-
-    version = get_debian_version()
-    if isinstance(version, int):
-        if int(version) > 8:
-            PTLogger.debug(
-                "UART baud rate does not need to be configured for ptpulse...")
-        else:
-            if UART.boot_config_correctly_configured(expected_clock_val=1627604, expected_baud_val=460800) is True:
-                PTLogger.debug("Baud rate is already configured for ptpulse")
-            else:
-                PTLogger.debug(
-                    "Baud rate NOT already configured for ptpulse, configuring...")
-                UART.configure_in_boot_config(
-                    init_uart_clock=1627604, init_uart_baud=460800)
-                reboot_required = True
-    else:
-        PTLogger.warning(
-            "Unable to detect OS version - cannot determine if UART baud rate needs to be configured for ptpulse...")
 
     if UART.enabled() is True:
         PTLogger.debug("UART is already enabled")
