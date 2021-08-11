@@ -11,7 +11,7 @@ i2c_address = 0x11
 PWR__SHUTDOWN_CTRL = 0xA0
 PWR__SHUTDOWN_CTRL__MODE5 = 0x28
 
-device_version_file = "/etc/pi-top/pt-device-manager/device_version"
+device_version_file = "/etc/pi-top/pi-topd/device_version"
 
 try:
     device_version = ""

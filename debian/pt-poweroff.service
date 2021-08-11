@@ -9,7 +9,7 @@ Documentation=https://knowledgebase.pi-top.com/knowledge
 Type=oneshot
 Environment="PYTHONUNBUFFERED=1"
 Environment="PYTHONDONTWRITEBYTECODE=1"
-ExecStart=/usr/lib/pt-device-manager/pt-poweroff
+ExecStart=/usr/lib/pi-topd/pt-poweroff
 
 [Install]
 WantedBy=halt.target poweroff.target

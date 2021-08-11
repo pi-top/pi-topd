@@ -13,7 +13,7 @@ class IdleMonitor:
 
     DEFAULT_CYCLE_SLEEP_TIME = 5
     SENSITIVE_CYCLE_SLEEP_TIME = 0.2
-    CONFIG_FILE_DIR = "/etc/pi-top/pt-device-manager/"
+    CONFIG_FILE_DIR = "/etc/pi-top/pi-topd/"
     CONFIG_FILE = CONFIG_FILE_DIR + "screen-timeout"
 
     def __init__(self):

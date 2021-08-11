@@ -1,4 +1,4 @@
-pt-device-manager (4.1.4) buster; urgency=medium
+pi-topd (4.1.4) buster; urgency=medium
 
   * Hub manager uses callback directly
   * Use environment variable to determine if battery messages are logged

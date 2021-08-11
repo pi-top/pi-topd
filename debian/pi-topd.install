@@ -1,0 +1,6 @@
+pi-topd/*                                         /usr/lib/pi-topd
+# Include system restore to ensure that I2S plays nice with the speaker
+files/hifiberry-alsactl.restore                   /etc/pi-top/.i2s-vol/
+# Include xhost modification to allow root user to access running X server
+files/pt-xhost-local-root.conf                    /etc/lightdm/lightdm.conf.d/
+files/pt-i2s                                      /usr/bin/

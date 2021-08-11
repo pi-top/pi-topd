@@ -44,7 +44,7 @@ class PowerManager:
 
         mp3_name = "charger-connected.mp3" if is_now_charging else "charger-disconnected.mp3"
         system(
-            "omxplayer --no-keys --vol -1500 -o local /usr/lib/pt-device-manager/assets/%s" % mp3_name)
+            "omxplayer --no-keys --vol -1500 -o local /usr/lib/pi-topd/assets/%s" % mp3_name)
 
     def set_battery_charging(self, new_value):
         previous_value = self._battery_charging

@@ -1,6 +1,6 @@
-# pi-top Device Management
+# pi-top System Daemon
 
-Python-based daemon for detecting, configuring and communicating with pi-top hardware/peripherals
+Python-based daemon for detecting, configuring and communicating with pi-top hardware/peripherals.
 
 ## Table of Contents
 * [What is in this repository?](#repo-contents)
@@ -13,7 +13,7 @@ Python-based daemon for detecting, configuring and communicating with pi-top har
 ## <a name="repo-contents"></a> What is in this repository?
 
 ### How do I install pi-top hardware support?
-The code in this repository forms the basis of the `pt-device-manager` software package, available for install on both pi-topOS and Raspbian. On the latest versions of pi-topOS, this package is pre-installed. On other platforms such as Raspbian, it is **NOT** recommended to install this package directly.
+The code in this repository forms the basis of the `pi-topd` software package, available for install on both pi-topOS and Raspbian. On the latest versions of pi-topOS, this package is pre-installed. On other platforms such as Raspbian, it is **NOT** recommended to install this package directly.
 
 ![Dependency tree for pi-top device software](
 https://static.pi-top.com/images/pt-devices-debtree.png "Dependency tree for pi-top device software")
@@ -30,10 +30,10 @@ However, this design also allows for specific hardware requirements to only inst
 sudo apt install pt-hub pt-speaker
 </pre>
 
-As both the packages `pt-hub` and `pt-pulse` have dependencies on the pt-device-manager, the `pt-device-manager` package will also be installed and enabled. It is not recommended to install any of the Python 3 libraries directly if you require plug-and-play functionality.
+As both the packages `pt-hub` and `pt-pulse` have dependencies on the pi-topd, the `pi-topd` package will also be installed and enabled. It is not recommended to install any of the Python 3 libraries directly if you require plug-and-play functionality.
 
 ### Summary
-`pt-device-manager` is a Python 3 program that when installed and run on a pi-top device enables detection, configuration and management of pi-top hardware. This includes hubs (e.g. pi-top or pi-topCEED) as well as peripherals (pi-topPULSE, pi-topSPEAKER). The actual work of communicating with each hardware device is handled by software equivalent to 'device drivers' in separate repositories. However the pt-device-manager takes care of loading and initialising these drivers in a pattern akin to a _plugin_ architecture.
+`pi-topd` is a Python 3 program that when installed and run on a pi-top device enables detection, configuration and management of pi-top hardware. This includes hubs (e.g. pi-top or pi-topCEED) as well as peripherals (pi-topPULSE, pi-topSPEAKER). The actual work of communicating with each hardware device is handled by software equivalent to 'device drivers' in separate repositories. However the pi-topd takes care of loading and initialising these drivers in a pattern akin to a _plugin_ architecture.
 
 The responsibilities of the device manager include:
 
@@ -46,7 +46,7 @@ The responsibilities of the device manager include:
 * Shutting down the OS when required.
 
 #### Extra required configuration
-##### Dependencies - pt-device-manager
+##### Dependencies - pi-topd
 * python3-pt-common
   * Common class of Python operations (see this repo)
 * python3-pip
@@ -60,7 +60,7 @@ The responsibilities of the device manager include:
 * xprintidle, x11-xserver-utils, lightdm
   * Used for user idle time. Requires additional configuration (see below)
 
-##### Recommends - pt-device-manager
+##### Recommends - pi-topd
 * pt-notifications
   * Used, if available, for providing GUI-based instructions/information to the user, particularly to notify if a system reconfiguration is required
 
@@ -90,7 +90,7 @@ If you would like to do this manually, write the following to `/etc/lightdm/ligh
     [Seat:*]
     session-setup-script=xhost +SI:localuser:root
 
-NOTE: `pt-device-manager` does this automatically for you during the installation process.
+NOTE: `pi-topd` does this automatically for you during the installation process.
 
 #### Supported device drivers and repositories
 
@@ -120,12 +120,12 @@ The following is a summary of relevant device details:
 
 ### Contents
 
-#### Directory: `pt-device-manager`
-##### pt-device-manager
+#### Directory: `pi-topd`
+##### pi-topd
 This Python script is the brain of the pi-top device management on pi-topOS. See [How it works](#how-it-works) for more information.
 
 ##### ptdm_*
-These Python modules are used by pt-device-manager.
+These Python modules are used by pi-topd.
 
 
 #### Directory: `library/pitopcommon`
@@ -133,14 +133,14 @@ These Python modules are used by pt-device-manager.
 These files are shared by multiple components in pi-top device management. `python3-pt-common` installs these files to `/usr/lib/python3/dist-packages/`, where they can be imported and used by the components that require them.
 
 ##### ptdm_*
-These Python modules are used by pt-device-manager.
+These Python modules are used by pi-topd.
 
 #### Directory: `tools`
 ##### pt-brightness, pt-battery
-These Python scripts are pt-device-manager messaging clients. They send messages to the device management service to adjust the screen settings or query the battery status on a pi-top device.
+These Python scripts are pi-topd messaging clients. They send messages to the device management service to adjust the screen settings or query the battery status on a pi-top device.
 
 ##### pt-i2s
-Used by pt-device-manager to switch I2S on/off on the Raspberry Pi, specifically when targeting pi-topSPEAKER/pi-topPULSE. This is **only** used in conjunction with pi-topHUB v1, as I2S is handled automatically on pi-topHUB v2. To configure for I2S, a custom `asound.conf` file is used to enable mixing multiple audio sources. As well as this, some settings in `/boot/config.txt` are altered:
+Used by pi-topd to switch I2S on/off on the Raspberry Pi, specifically when targeting pi-topSPEAKER/pi-topPULSE. This is **only** used in conjunction with pi-topHUB v1, as I2S is handled automatically on pi-topHUB v2. To configure for I2S, a custom `asound.conf` file is used to enable mixing multiple audio sources. As well as this, some settings in `/boot/config.txt` are altered:
 
 * `dtoverlay=hifiberry-dac` - enables I2S audio on subsequent boots
 * `#dtparam=audio=on` - disables default sound driver
@@ -150,7 +150,7 @@ Disabling I2S reverses these changes.
 
 #### Directory: `assets`
 ##### hifiberry-alsactl.restore
-This file exposes a soundcard device configuration to the operating system, enabling volume control. It is used by `pt-device-manager` when it detects that I2S has been enabled via the daemon for the first time, whereby it reboots to enable. This operation is only required once, so a 'breadcrumb' file is created to indicate that this has been completed. This is **only** used in conjunction with pi-topHUB v1, as I2S is handled automatically on pi-topHUB v2.
+This file exposes a soundcard device configuration to the operating system, enabling volume control. It is used by `pi-topd` when it detects that I2S has been enabled via the daemon for the first time, whereby it reboots to enable. This operation is only required once, so a 'breadcrumb' file is created to indicate that this has been completed. This is **only** used in conjunction with pi-topHUB v1, as I2S is handled automatically on pi-topHUB v2.
 **NOTE: this will only work if the default audio driver is disabled (this is handled automatically with 'pt-i2s'**
 
 #### Directory: `poweroff`
@@ -159,46 +159,46 @@ These programs (written in C and Python respectively) are used to send a message
 ##### poweroff-v{1,2}.service
 These are systemd services for the poweroff programs, which ensure that they are always run when the OS is shutting down.
 These are typically put in `/lib/system/systemd/`, and enabled by running `sudo systemctl enable poweroff-v1.service` and `sudo systemctl enable poweroff-v1.service` in the terminal.
-These services require the `poweroff-v1` and `poweroff-v2` files to be executable and put in `/usr/lib/pt-device-manager`, although this can be easily changed as desired.
+These services require the `poweroff-v1` and `poweroff-v2` files to be executable and put in `/usr/lib/pi-topd`, although this can be easily changed as desired.
 
 #### Directory: `tests`
-##### pt-device-manager-req-test
+##### pi-topd-req-test
 This Python script tests that the device manager is able to respond to requests for information such as the getting current device and brightness level as well as pinging, setting brightness and blanking/unblanking the screen.
 
-##### pt-device-manager-resp-test
+##### pi-topd-resp-test
 This Python script tests that the device manager is able to emit all of its publishing events, that reflect a system state change, such as battery level, brightness, lid opened/closed and peripheral connection state.
 
 ## <a name="control"></a> Controlling the device manager
 
-pt-device-manager is intended to be a systemd service which starts with the OS and stops on shutdown. However for diagnostic or debugging purposes it can be useful to start and stop it, or to run it standalone.
+pi-topd is intended to be a systemd service which starts with the OS and stops on shutdown. However for diagnostic or debugging purposes it can be useful to start and stop it, or to run it standalone.
 
 Checking the current status of the device manager (with example output):
 
 <pre style="background-color: #002b36; color: #FFFFFF;">
-sudo systemctl status pt-device-manager
+sudo systemctl status pi-topd
 
-<span style="color:#E0E0E0"><span style="color:#859900">●</span> pt-device-manager.service - pi-top device auto-detection and configuration daemon
-     Loaded: loaded (/lib/systemd/system/pt-device-manager.service; enabled)
+<span style="color:#E0E0E0"><span style="color:#859900">●</span> pi-topd.service - pi-top device auto-detection and configuration daemon
+     Loaded: loaded (/lib/systemd/system/pi-topd.service; enabled)
      Active: <span style="color:#859900">active (running)</span> since Tue 2017-10-17 15:55:43 UTC; 1s ago
  Main PID: 15974 (pt-device-manag)
-     CGroup: /system.slice/pt-device-manager.service
-                     └─15974 /usr/bin/python3 /usr/lib/pt-device-manager/pt-device-manager</span>
+     CGroup: /system.slice/pi-topd.service
+                     └─15974 /usr/bin/python3 /usr/lib/pi-topd/pi-topd</span>
 </pre>
 
 Starting/stopping the device manager:
 
 <pre style="background-color: #002b36; color: #FFFFFF;">
-sudo systemctl start pt-device-manager
-sudo systemctl stop pt-device-manager
+sudo systemctl start pi-topd
+sudo systemctl stop pi-topd
 </pre>
 
 Stopping and disabling the service, and then running standalone:
 
 <pre style="background-color: #002b36; color: #FFFFFF;">
-sudo systemctl stop pt-device-manager
-sudo systemctl disable pt-device-manager
-cd /usr/lib/pt-device-manager
-sudo ./pt-device-manager --no-journal --log-level 20
+sudo systemctl stop pi-topd
+sudo systemctl disable pi-topd
+cd /usr/lib/pi-topd
+sudo ./pi-topd --no-journal --log-level 20
 </pre>
 
 **Note** when running the device manager standalone, the above two command line parameters are useful:
@@ -209,12 +209,12 @@ sudo ./pt-device-manager --no-journal --log-level 20
 
 ## <a name="logging"></a> Logging
 
-As the pt-device-manager runs as a systemd service, it logs to the system journal. This can be viewed using commands such as:
+As the pi-topd runs as a systemd service, it logs to the system journal. This can be viewed using commands such as:
 
 <pre style="background-color: #002b36; color: #FFFFFF;">
-sudo journalctl -u pt-device-manager
-sudo journalctl -u pt-device-manager --no-pager
-sudo journalctl -u pt-device-manager -b
+sudo journalctl -u pi-topd
+sudo journalctl -u pi-topd --no-pager
+sudo journalctl -u pi-topd -b
 </pre>
 
 ## <a name="support"></a> Support

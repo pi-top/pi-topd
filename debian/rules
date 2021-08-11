@@ -4,6 +4,6 @@
 	dh $@
 
 override_dh_installsystemd:
-	dh_installsystemd --name=pt-device-manager
+	dh_installsystemd --name=pi-topd
 	dh_installsystemd --name=pt-poweroff --no-start --no-stop-on-upgrade
 	dh_installsystemd --name=pt-reboot --no-start --no-stop-on-upgrade
