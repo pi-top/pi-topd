@@ -28,7 +28,7 @@ try:
     # Get the current power control register
     shutdown_control = hub.read_unsigned_byte(PWR__SHUTDOWN_CTRL)
 
-    if isfile("/tmp/pt-poweroff.reboot"):
+    if isfile("/tmp/.com.pi-top.pt-poweroff.poweroff-type.reboot"):
         # Set shutdown mode to 4
         shutdown_control = shutdown_control | PWR__SHUTDOWN_CTRL__MODE4
     else:
