@@ -26,7 +26,7 @@ class _SystemCalls:
 
     I2CDETECT_CMD_ARR = ["/usr/sbin/i2cdetect", "-y", "1"]
 
-    PTI2S_CMD = "/usr/bin/pt-i2s"
+    PTI2S_CMD = "/usr/lib/pi-topd/scripts/pt-i2s"
     I2S_ENABLE_CMD_ARR = [PTI2S_CMD, "enable"]
     I2S_DISABLE_CMD_ARR = [PTI2S_CMD, "disable"]
 

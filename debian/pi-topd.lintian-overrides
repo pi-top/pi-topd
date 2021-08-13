@@ -1,4 +1,3 @@
-pi-topd: binary-without-manpage usr/bin/pt-i2s
 pi-topd: systemd-service-file-refers-to-unusual-wantedby-target lib/systemd/system/pt-poweroff.service halt.target
 pi-topd: systemd-service-file-refers-to-unusual-wantedby-target lib/systemd/system/pt-poweroff.service poweroff.target
 pi-topd: systemd-service-file-refers-to-unusual-wantedby-target lib/systemd/system/pt-reboot.service reboot.target
