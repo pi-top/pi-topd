@@ -13,7 +13,7 @@ from pitop.common.common_ids import (
 )
 from pitop.common.logger import PTLogger
 from importlib import import_module
-from os import path
+from os import path, makedirs
 from subprocess import call
 from threading import Thread
 from time import sleep
@@ -25,7 +25,8 @@ from time import sleep
 class PeripheralManager:
     _loop_delay_seconds = 3
     _i2s_config_file_path = "/usr/share/pi-topd/hifiberry-alsactl.restore"
-    _i2s_configured_file_path = "/etc/pi-top/.i2s-vol/configured"
+    # TODO: move to pi-topd internal state config
+    _i2s_configured_file_path = "/var/lib/pi-topd/.i2s-vol-configured"
 
     def __init__(self):
         self._callback_client = None
@@ -398,6 +399,7 @@ class PeripheralManager:
             if path.isfile(self._i2s_configured_file_path) is False:
                 call(("/usr/sbin/alsactl", "-f",
                       self._i2s_config_file_path, "restore"))
+                makedirs(path.dirname(self._i2s_configured_file_path))
                 touch_file(self._i2s_configured_file_path)
                 System.reboot_system()
             else:
