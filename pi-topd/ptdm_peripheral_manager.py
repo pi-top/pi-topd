@@ -24,7 +24,7 @@ from time import sleep
 
 class PeripheralManager:
     _loop_delay_seconds = 3
-    _i2s_config_file_path = "/etc/pi-top/.i2s-vol/hifiberry-alsactl.restore"
+    _i2s_config_file_path = "/usr/share/pi-topd/hifiberry-alsactl.restore"
     _i2s_configured_file_path = "/etc/pi-top/.i2s-vol/configured"
 
     def __init__(self):
