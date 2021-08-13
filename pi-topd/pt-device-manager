@@ -86,8 +86,7 @@ successful_start = controller.start()
 notify("STOPPING=1")
 
 if not successful_start:
-    PTLogger.error(
-        "Unable to start pi-top device manager's central controller")
+    PTLogger.error("Unable to start pi-topd")
     controller.stop()
 
 # Exiting with 1 will cause systemd service to restart - we should only do this if we failed to determine a device ID
