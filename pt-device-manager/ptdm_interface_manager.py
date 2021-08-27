@@ -1,5 +1,5 @@
-from pitopcommon.logger import PTLogger
-from pitopcommon.command_runner import run_command
+from pitop.common.logger import PTLogger
+from pitop.common.command_runner import run_command
 
 from os import path
 

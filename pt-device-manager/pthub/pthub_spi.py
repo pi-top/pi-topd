@@ -5,9 +5,9 @@ from time import sleep
 from distutils.version import StrictVersion
 from platform import uname
 
-from pitopcommon.logger import PTLogger
-from pitopcommon.counter import Counter
-from pitopcommon.common_ids import DeviceID
+from pitop.common.logger import PTLogger
+from pitop.common.counter import Counter
+from pitop.common.common_ids import DeviceID
 
 _spi_handler = None
 _main_thread = None

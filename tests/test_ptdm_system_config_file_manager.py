@@ -4,8 +4,8 @@ import unittest
 from unittest.mock import patch, Mock, mock_open, MagicMock
 
 mock_common_ids = MagicMock()
-sys.modules["pitopcommon.common_ids"] = mock_common_ids
-sys.modules["pitopcommon.logger"] = Mock()
+sys.modules["pitop.common.common_ids"] = mock_common_ids
+sys.modules["pitop.common.logger"] = Mock()
 
 
 class ConfigManagerTestCase(unittest.TestCase):

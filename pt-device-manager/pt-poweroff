@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from pitopcommon.command_runner import run_command
+from pitop.common.command_runner import run_command
 
 from os.path import exists
 

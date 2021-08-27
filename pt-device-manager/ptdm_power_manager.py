@@ -1,6 +1,6 @@
-from pitopcommon.logger import PTLogger
-from pitopcommon.common_ids import DeviceID
-from pitopcommon.counter import Counter
+from pitop.common.logger import PTLogger
+from pitop.common.common_ids import DeviceID
+from pitop.common.counter import Counter
 from os import system
 from os import path
 

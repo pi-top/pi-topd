@@ -22,7 +22,7 @@ from ptdm_request_server import RequestServer
 from ptdm_power_manager import PowerManager
 from ptdm_config_manager import ConfigManager
 
-from pitopcommon.logger import PTLogger
+from pitop.common.logger import PTLogger
 
 from systemd.daemon import notify
 

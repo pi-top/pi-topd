@@ -4,7 +4,7 @@
 # control of the oled and turns off the amp
 # Only needed for the pt[4]
 
-from pitopcommon.i2c_device import I2CDevice
+from pitop.common.i2c_device import I2CDevice
 from os.path import exists
 
 i2c_address = 0x11
