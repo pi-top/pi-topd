@@ -10,18 +10,17 @@ repos:
     - id: check-added-large-files
     - id: check-symlinks
 
--   repo: https://github.com/jumanjihouse/pre-commit-hooks
-    rev: 2.1.5
+-   repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.7.2.1
     hooks:
     - id: shellcheck
       args: [-x]
-    - id: shfmt
 
--   repo: git://github.com/detailyang/pre-commit-shell
-    rev: 1.0.5
+-   repo: git://github.com/pecigonzalo/pre-commit-shfmt
+    sha: master
     hooks:
-    - id: shell-lint
-      args: [-x]
+    - id: shell-fmt
+      args: ["--indent=4"]
 
 -   repo: https://github.com/pre-commit/mirrors-autopep8
     rev: v1.5.7

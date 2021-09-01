@@ -28,7 +28,7 @@ Depends:
  raspi-config,
 Suggests:
 # Low battery warnings
- pt-os-notifications,
+ notify-send-ng,
 # User idle time
  xprintidle,
 Description: pi-top System Daemon

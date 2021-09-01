@@ -51,7 +51,7 @@ class NotificationManager:
         return low_battery or critical_battery
 
     def __notify_send_command(self, message_title_id, message_text_id, icon_name, timeout=0, action_text=None, action=None):
-        cmd = "/usr/bin/pt-notify-send "
+        cmd = "/usr/bin/notify-send "
 
         cmd += "--print-id "
         cmd += "--expire-time=" + str(timeout) + " "
