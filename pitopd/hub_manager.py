@@ -16,6 +16,7 @@ class HubManager:
 
     def __init__(self):
         self._callback_client = None
+        self._active_hub_module = None
 
     def initialise(self, callback_client):
         self._callback_client = callback_client
