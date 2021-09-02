@@ -1,4 +1,4 @@
-pi-topd (5.0.0) bullseye; urgency=medium
+pi-topd (5.0.0-1) bullseye; urgency=medium
 
   * Refactor as pybuild package
 
