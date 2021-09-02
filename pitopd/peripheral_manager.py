@@ -10,6 +10,7 @@ from pitop.common.logger import PTLogger
 
 import pitopd.ptpulse as ptpulse_cfg
 import pitopd.ptspeaker as ptspeaker_cfg
+from pitopd.utils import get_project_root
 
 from .sys_config import I2C, I2S, Hifiberry, System
 
@@ -19,7 +20,7 @@ class PeripheralManager:
     detect, initialise, and communicate with the corresponding peripheral."""
 
     _loop_delay_seconds = 3
-    _i2s_config_file_path = "/usr/share/pi-topd/hifiberry-alsactl.restore"
+    _i2s_config_file_path = f"{get_project_root()}/files/hifiberry-alsactl.restore"
     # TODO: move to pi-topd internal state config
     _i2s_configured_file_path = "/var/lib/pi-topd/.i2s-vol-configured"
 
