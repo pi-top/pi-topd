@@ -4,7 +4,7 @@ from time import sleep
 
 from pitop.common.counter import Counter
 from pitop.common.logger import PTLogger
-from smbus import SMBus
+from smbus2 import SMBus
 
 _battery_state_handler = None
 _main_thread = None

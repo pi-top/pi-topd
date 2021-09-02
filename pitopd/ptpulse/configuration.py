@@ -6,7 +6,7 @@ from math import pow
 
 from pitop.common.common_ids import DeviceID
 from pitop.common.logger import PTLogger
-from smbus import SMBus
+from smbus2 import SMBus
 
 from pitopd.sys_config import HDMI, I2S, UART
 
