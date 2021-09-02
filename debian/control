@@ -15,15 +15,6 @@ Depends:
  ${python3:Depends},
 # Configure sound settings
  alsa-utils,
-# Common functions and command-line tools
- python3-pitop,
-# Journal handling
- python3-systemd,
-# System state change communication
- python3-zmq,
-# Hub management
- python3-smbus,
- python3-spidev,
 # Hardware interface management for devices and peripherals
  raspi-config,
 Suggests:

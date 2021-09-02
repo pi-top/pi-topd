@@ -1,4 +1,10 @@
-pi-topd (4.1.4) buster; urgency=medium
+pi-topd (5.0.0) bullseye; urgency=medium
+
+  * Refactor as pybuild package
+
+ -- pi-top <deb-maintainers@pi-top.com>  Thu, 02 Sep 2021 01:28:03 +0000
+
+pt-device-manager (4.1.4) buster; urgency=medium
 
   * Hub manager uses callback directly
   * Use environment variable to determine if battery messages are logged

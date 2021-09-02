@@ -1,0 +1,32 @@
+class Display:
+    DIS__TEST_MODE = 0xD0
+    DIS__BACKLIGHT = 0xD1
+    DIS__STATUS = 0xD2
+    DIS__MUX_CTRL = 0xD3
+    DIS__MK42_WIDTH = 0xD4
+    DIS__MK42_HEIGHT = 0xD5
+    DIS__MK42_REFRESH = 0xD6
+    DIS__EXT_WIDTH = 0xD7
+    DIS__EXT_HEIGHT = 0xD8
+    DIS__EXT_REFRESH = 0xD9
+    DIS__TRIGGER_CONFIG = 0xDA
+
+
+class BacklightRegister:
+    # Bits
+    DIS__BACKLIGHT__PERC_B1 = 0x01
+    DIS__BACKLIGHT__PERC_B2 = 0x02
+    DIS__BACKLIGHT__PERC_B3 = 0x04
+    DIS__BACKLIGHT__PERC_B4 = 0x08
+    DIS__BACKLIGHT__PERC_B5 = 0x10
+    DIS__BACKLIGHT__LIDSW = 0x40
+    DIS__BACKLIGHT__EN = 0x80
+
+    # Combinations
+    DIS__BACKLIGHT__PERC_ALL = (
+        DIS__BACKLIGHT__PERC_B1
+        | DIS__BACKLIGHT__PERC_B2
+        | DIS__BACKLIGHT__PERC_B3
+        | DIS__BACKLIGHT__PERC_B4
+        | DIS__BACKLIGHT__PERC_B5
+    )

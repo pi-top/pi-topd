@@ -1,0 +1,9 @@
+recursive-include pitopd/files/ *
+recursive-include pitopd/assets/ *
+
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
+recursive-exclude * *~
+recursive-exclude * .coverage
+recursive-exclude * .DS_Store
+recursive-exclude * .ropeproject

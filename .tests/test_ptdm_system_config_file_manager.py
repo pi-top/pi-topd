@@ -1,7 +1,8 @@
-from ptdm_config_manager import ConfigManager
 import sys
 import unittest
-from unittest.mock import patch, Mock, mock_open, MagicMock
+from unittest.mock import MagicMock, Mock, mock_open, patch
+
+from pitopd.config_manager import ConfigManager
 
 mock_common_ids = MagicMock()
 sys.modules["pitop.common.common_ids"] = mock_common_ids
@@ -26,7 +27,8 @@ class ConfigManagerTestCase(unittest.TestCase):
         self.mock_open_method.start()
 
         mock_common_ids.DeviceID.__getitem__.side_effect = [
-            mock_common_ids.DeviceID.pi_top_4]
+            mock_common_ids.DeviceID.pi_top_4
+        ]
 
         # Run
 
@@ -49,7 +51,8 @@ class ConfigManagerTestCase(unittest.TestCase):
         self.mock_open_method.start()
 
         mock_common_ids.DeviceID.__getitem__.side_effect = [
-            mock_common_ids.DeviceID.unknown]
+            mock_common_ids.DeviceID.unknown
+        ]
 
         # Run
 

@@ -7,7 +7,7 @@ Documentation=https://knowledgebase.pi-top.com/knowledge
 Type=oneshot
 Environment="PYTHONUNBUFFERED=1"
 Environment="PYTHONDONTWRITEBYTECODE=1"
-ExecStart=/usr/lib/pi-topd/pt-reboot
+ExecStart=/usr/bin/pt-reboot
 
 [Install]
 WantedBy=reboot.target
