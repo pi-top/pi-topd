@@ -1,14 +1,8 @@
 pt-device-manager (4.1.5) bullseye; urgency=medium
 
-  * Update workflow files
-  * Update workflow files
-  * New workflows (#116)
-  * Update master workflow files
-  * Update master workflow files
   * Bullseye release (#119)
-  * Updated master workflow files
   * Depend on notify-send-ng; use notify-send command
-  * Updated master workflow files
+  * Update master workflow files
 
  -- pi-top <deb-maintainers@pi-top.com>  Wed, 01 Sep 2021 20:47:48 +0000
 
