@@ -1,3 +1,11 @@
+pt-device-manager (4.1.5) bullseye; urgency=medium
+
+  * Bullseye release (#119)
+  * Depend on notify-send-ng; use notify-send command
+  * Update master workflow files
+
+ -- pi-top <deb-maintainers@pi-top.com>  Wed, 01 Sep 2021 20:47:48 +0000
+
 pt-device-manager (4.1.4) buster; urgency=medium
 
   * Hub manager uses callback directly
