@@ -11,8 +11,7 @@ from .interface_manager import InterfaceManager
 from .notification_manager import NotificationManager
 from .peripheral_manager import PeripheralManager
 from .power_manager import PowerManager
-from .publish_server import PublishServer
-from .request_server import RequestServer
+from .server import PublishServer, RequestServer
 
 
 class Controller:
@@ -29,7 +28,6 @@ class Controller:
         self._request_server = RequestServer()
         self._config_manager = ConfigManager()
 
-        # Initialise
         self._power_manager.initialise(self)
         self._hub_manager.initialise(self)
         self._idle_monitor.initialise(self)
