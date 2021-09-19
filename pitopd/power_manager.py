@@ -1,4 +1,3 @@
-from os import path
 from subprocess import run
 
 from pitop.common.common_ids import DeviceID
@@ -6,6 +5,8 @@ from pitop.common.counter import Counter
 from pitop.common.logger import PTLogger
 
 from pitopd.utils import get_project_root
+
+from . import state
 
 # Handles safe shutdown when the hub is communicating
 # that its battery capacity is below a threshold set by ptdm_controller
@@ -42,7 +43,7 @@ class PowerManager:
 
     def play_battery_charging_state_change_sound(self, is_now_charging):
         # Only play sound if desired
-        if path.isfile("/etc/pi-top/.silentCharge"):
+        if state.get("sound", "charging_sound", fallback="true") == "false":
             return
 
         file_prefix = "" if is_now_charging else "dis"
