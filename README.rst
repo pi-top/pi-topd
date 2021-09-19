@@ -50,7 +50,7 @@ More Information
 Please refer to the `More Info`_ documentation in this repository
 for more information about the application.
 
-.. _More Info: https://github.com/pi-top/pi-topd/blob/master/docs/README.md
+.. _More Info: https://github.com/pi-top/pi-topd/blob/master/docs/more-info.md
 
 ------------
 Contributing
