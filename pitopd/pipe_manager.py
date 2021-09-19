@@ -1,4 +1,5 @@
 from enum import Enum
+from pathlib import Path
 
 from pitop.common.logger import PTLogger
 
@@ -19,6 +20,14 @@ def write_to_file(self, pipe_path, text):
 
 
 class PipeManager:
+    def __init__(self):
+        for pipe in Pipes:
+            path = Path(pipe.value)
+
+            if not path.exists():
+                path.mkdir(parents=True, exist_ok=True)
+                path.touch()
+
     # TODO: loop over writing to FIFO, ready for clients to read
     def set_device_id(self, device_id):
         try:
