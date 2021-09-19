@@ -1,5 +1,3 @@
-from json import dump as json_dump
-from os import path, remove
 from time import sleep
 
 from pitop.common.common_ids import DeviceID
@@ -35,7 +33,6 @@ class HubManager:
         if pthub3.initialise() is True:
             self._active_hub_module = pthub3
             PTLogger.info("Connected to pi-topHUB v3")
-            self._write_device_serial_numbers_to_file()
             self._register_client()
             return True
         else:
@@ -323,25 +320,3 @@ class HubManager:
                     __c.on_hub_shutdown_requested,
                     __c.on_hub_battery_state_changed,
                 )
-
-    def _write_device_serial_numbers_to_file(self):
-        PTLogger.info("Writing serial numbers to file")
-
-        serial_device = pthub3.get_serial_id()
-        serial_display = pthub3.get_display_serial_id()
-        serial_battery = pthub3.get_battery_serial_number()
-
-        json_data = {
-            "primary": serial_device,
-            "display": serial_display,
-            "battery": serial_battery,
-        }
-
-        serial_numbers_file = "/etc/pi-top/device_serial_numbers.json"
-
-        if path.exists(serial_numbers_file):
-            remove(serial_numbers_file)
-
-        with open(serial_numbers_file, "w") as output_file:
-            json_dump(json_data, output_file)
-            output_file.write("\n")
