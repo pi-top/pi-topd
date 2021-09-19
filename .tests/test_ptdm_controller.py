@@ -10,7 +10,6 @@ mock_systemd_daemon = Mock()
 mock_common_ids = Mock()
 sys.modules["systemd.daemon"] = mock_systemd_daemon
 sys.modules["pitop.common.common_ids"] = mock_common_ids
-sys.modules["time"].sleep = Mock()
 sys.modules["pitop.common.logger"] = Mock()
 
 

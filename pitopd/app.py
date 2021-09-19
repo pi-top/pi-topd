@@ -4,7 +4,7 @@ from pitop.common.common_ids import DeviceID
 from pitop.common.logger import PTLogger
 from systemd.daemon import notify
 
-from .config_manager import ConfigManager
+from . import state
 from .hub_manager import HubManager
 from .idle_monitor import IdleMonitor
 from .interface_manager import InterfaceManager
@@ -26,7 +26,6 @@ class App:
         self._notification_manager = NotificationManager()
         self._peripheral_manager = PeripheralManager()
         self._request_server = RequestServer()
-        self._config_manager = ConfigManager()
 
         self._power_manager.initialise(self)
         self._hub_manager.initialise(self)
@@ -41,7 +40,7 @@ class App:
 
         PTLogger.info(f"Setting device ID as {self.device_id}")
 
-        self._config_manager.write_device_id_to_file(self.device_id)
+        state.set("device", "type", str(self.device_id.name))
 
         self._peripheral_manager.initialise_device_id(self.device_id)
         self._power_manager.set_device_id(self.device_id)
@@ -52,7 +51,10 @@ class App:
     def start(self):
         PTLogger.info("Starting device manager...")
 
-        last_identified_device_id = self._config_manager.get_last_identified_device_id()
+        last_identified_device_id_str = state.get(
+            "device", "type", fallback=str(DeviceID.unknown.name)
+        )
+        last_identified_device_id = DeviceID[last_identified_device_id_str]
 
         if self._publish_server.start_listening() is False:
             PTLogger.error("Unable to start listening on publish server")
