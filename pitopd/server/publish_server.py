@@ -89,7 +89,7 @@ class PublishServer:
         self._send_message(
             Message.PUB_BATTERY_STATE_CHANGED,
             [connected, new_capacity, new_time, new_wattage],
-            log_to_journal=self._enable_battery_logging,
+            log_message=self._enable_battery_logging,
         )
 
     def publish_screen_blanked(self):
@@ -145,7 +145,7 @@ class PublishServer:
         )
 
     # Internal functions
-    def _send_message(self, message_id, parameters=None, log_to_journal=True):
+    def _send_message(self, message_id, parameters=None, log_message=True):
         if parameters is None:
             parameters = list()
         message = Message.from_parts(message_id, parameters)
@@ -158,7 +158,7 @@ class PublishServer:
             )
             return
 
-        if log_to_journal:
+        if log_message:
             PTLogger.info("Publishing message: " + message.message_friendly_string())
 
         try:

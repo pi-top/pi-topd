@@ -4,7 +4,7 @@ pi-topd (5.0.0-1) bullseye; urgency=medium
 
  -- pi-top <deb-maintainers@pi-top.com>  Thu, 02 Sep 2021 01:28:03 +0000
 
-pt-device-manager (4.1.5) bullseye; urgency=medium
+pt-device-manager (4.1.5-1) bullseye; urgency=medium
 
   * Bullseye release (#119)
   * Depend on notify-send-ng; use notify-send command
