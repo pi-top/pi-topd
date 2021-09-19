@@ -1,17 +1,16 @@
-from os import makedirs, path
 from subprocess import call
 from threading import Thread
 from time import sleep
 
 from pitop.common.common_ids import DeviceID, Peripheral, PeripheralID
 from pitop.common.current_session_info import get_user_using_first_display
-from pitop.common.file_ops import touch_file
 from pitop.common.logger import PTLogger
 
 import pitopd.ptpulse as ptpulse_cfg
 import pitopd.ptspeaker as ptspeaker_cfg
 from pitopd.utils import get_project_root
 
+from . import state
 from .sys_config import I2C, I2S, Hifiberry, System
 
 
@@ -21,8 +20,6 @@ class PeripheralManager:
 
     _loop_delay_seconds = 3
     _i2s_config_file_path = f"{get_project_root()}/files/hifiberry-alsactl.restore"
-    # TODO: move to pi-topd internal state config
-    _i2s_configured_file_path = "/var/lib/pi-topd/.i2s-vol-configured"
 
     def __init__(self):
         self._callback_client = None
@@ -359,10 +356,9 @@ class PeripheralManager:
 
     def configure_hifiberry(self):
         if I2S.get_current_state() is True:
-            if path.isfile(self._i2s_configured_file_path) is False:
+            if state.get("sound", "i2s_configured", fallback="false") == "false":
                 call(("/usr/sbin/alsactl", "-f", self._i2s_config_file_path, "restore"))
-                makedirs(path.dirname(self._i2s_configured_file_path))
-                touch_file(self._i2s_configured_file_path)
+                state.set("sound", "i2s_configured", "true")
                 System.reboot_system()
             else:
                 Hifiberry.set_as_audio_output(user=get_user_using_first_display())

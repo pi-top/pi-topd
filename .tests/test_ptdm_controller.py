@@ -4,7 +4,7 @@ from unittest.mock import Mock
 
 from pitop.common.common_ids import DeviceID
 
-from pitopd.controller import Controller
+from pitopd.app import App
 
 mock_systemd_daemon = Mock()
 mock_common_ids = Mock()
@@ -14,7 +14,7 @@ sys.modules["time"].sleep = Mock()
 sys.modules["pitop.common.logger"] = Mock()
 
 
-class ControllerTestCase(unittest.TestCase):
+class AppTestCase(unittest.TestCase):
     def setUp(self):
 
         # Mock objects and methods
@@ -30,7 +30,7 @@ class ControllerTestCase(unittest.TestCase):
 
         # Create the object under test
 
-        self.controller = Controller(
+        self.controller = App(
             self.mock_publish_server,
             self.mock_power_manager,
             self.mock_hub_manager,

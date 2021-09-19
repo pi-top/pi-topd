@@ -14,7 +14,7 @@ from .power_manager import PowerManager
 from .server import PublishServer, RequestServer
 
 
-class Controller:
+class App:
     def __init__(self):
         self._continue_running = True
 

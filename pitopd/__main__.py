@@ -5,7 +5,7 @@ import click
 from pitop.common.logger import PTLogger
 from systemd.daemon import notify
 
-from .controller import Controller
+from .app import App
 
 
 # TODO: import these functions
@@ -225,17 +225,20 @@ def main(log_level) -> None:
         logger_name="pi-topd", logging_level=log_level, log_to_journal=False
     )
 
-    controller = Controller()
+    app = App()
 
     for sig in [SIGINT, SIGTERM]:
-        signal(sig, lambda x, _: controller.stop())
+        signal(sig, lambda x, _: app.stop())
 
-    successful_start = controller.start()
+    # Blocking
+    successful_start = app.start()
+
+    # After main loop
     notify("STOPPING=1")
 
     if not successful_start:
         PTLogger.error("Unable to start pi-topd")
-        controller.stop()
+        app.stop()
 
     # Exiting with 1 will cause systemd service to restart - we should only do this if we failed to determine a device ID
-    exit(0 if controller.device_id is not None else 1)
+    exit(0 if app.device_id is not None else 1)
