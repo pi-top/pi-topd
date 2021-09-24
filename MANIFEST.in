@@ -1,4 +1,3 @@
-recursive-include pitopd/files/ *
 recursive-include pitopd/assets/ *
 
 recursive-exclude * __pycache__
