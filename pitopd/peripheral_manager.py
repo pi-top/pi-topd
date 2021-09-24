@@ -219,11 +219,8 @@ class PeripheralManager:
                     self._host_device_id == DeviceID.pi_top_ceed
                 )
 
-                if self._host_device_id == DeviceID.pi_top_4:
-                    # TODO: v3 speaker init code - or just use in-built speaker?
-                    pass
-                elif self._host_device_id == DeviceID.pi_top_3:
-                    # CHECK THAT SPEAKER IS V2
+                if self._host_device_id == DeviceID.pi_top_3:
+                    # Check that speaker is v2
                     if peripheral.name == "pi-topSPEAKER-v2":
                         self.enable_v2_hub_v2_speaker(peripheral)
                     else:
