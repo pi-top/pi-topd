@@ -1,9 +1,9 @@
 # Instantiates and coordinates between the other classes
-from pitop.common.logger import PTLogger
-from pitop.common.common_ids import DeviceID
-
-from systemd.daemon import notify
 from time import sleep
+
+from pitop.common.common_ids import DeviceID
+from pitop.common.logger import PTLogger
+from systemd.daemon import notify
 
 
 class Controller:
@@ -79,19 +79,19 @@ class Controller:
         # Stop device manager if no pi-top host detected
         if self.device_id == DeviceID.unknown:
             PTLogger.warning(
-                "Unknown host device, despite successfully initialising a hub")
+                "Unknown host device, despite successfully initialising a hub"
+            )
             return False
 
         if self.device_id == DeviceID.pi_top_4:
-            PTLogger.info(
-                "Running on a pi-top [4]. Configuring SPI bus for OLED...")
+            PTLogger.info("Running on a pi-top [4]. Configuring SPI bus for OLED...")
 
             spi_bus_to_use = self._hub_manager.get_oled_spi_bus()
             PTLogger.info(f"Hub says to use SPI bus {spi_bus_to_use}")
 
             if spi_bus_to_use is not None:
-                self._interface_manager.spi0 = (spi_bus_to_use == 0)
-                self._interface_manager.spi1 = (spi_bus_to_use == 1)
+                self._interface_manager.spi0 = spi_bus_to_use == 0
+                self._interface_manager.spi1 = spi_bus_to_use == 1
 
         # Check if any peripherals need to be set up
         self._peripheral_manager.auto_initialise_peripherals()
@@ -101,7 +101,8 @@ class Controller:
 
         if self.device_id != last_identified_device_id:
             PTLogger.info(
-                f"Host device has changed! Previous pi-top host: {str(last_identified_device_id)}")
+                f"Host device has changed! Previous pi-top host: {str(last_identified_device_id)}"
+            )
 
         if self._peripheral_manager.start() is False:
             PTLogger.error("Unable to start peripheral manager")
@@ -254,9 +255,12 @@ class Controller:
         self._publish_server.publish_brightness_changed(new_value)
 
     def _battery_state_is_fully_defined(self):
-        battery_charging_state, battery_capacity, battery_time, battery_wattage = (
-            self._hub_manager.get_battery_state()
-        )
+        (
+            battery_charging_state,
+            battery_capacity,
+            battery_time,
+            battery_wattage,
+        ) = self._hub_manager.get_battery_state()
         charging_defined = battery_charging_state != -1
         capacity_defined = battery_capacity != -1
         time_defined = battery_time != -1
@@ -307,17 +311,13 @@ class Controller:
 
     def on_button_press_state_changed(self, button_pressed, is_pressed):
         if button_pressed == "Up":
-            self._publish_server.publish_up_button_press_state_changed(
-                is_pressed)
+            self._publish_server.publish_up_button_press_state_changed(is_pressed)
         elif button_pressed == "Down":
-            self._publish_server.publish_down_button_press_state_changed(
-                is_pressed)
+            self._publish_server.publish_down_button_press_state_changed(is_pressed)
         elif button_pressed == "Select":
-            self._publish_server.publish_select_button_press_state_changed(
-                is_pressed)
+            self._publish_server.publish_select_button_press_state_changed(is_pressed)
         elif button_pressed == "Cancel":
-            self._publish_server.publish_cancel_button_press_state_changed(
-                is_pressed)
+            self._publish_server.publish_cancel_button_press_state_changed(is_pressed)
 
     def on_device_id_changed(self, device_id_int):
         # Inform the power manager that the device id has changed, so
@@ -326,7 +326,8 @@ class Controller:
 
     def on_oled_pi_controlled_state_changed(self, oled_controlled_by_pi):
         self._publish_server.publish_oled_pi_controlled_state_changed(
-            oled_controlled_by_pi)
+            oled_controlled_by_pi
+        )
 
     def on_oled_spi_bus_changed(self, oled_uses_spi0):
         self._publish_server.publish_oled_spi_state_changed(oled_uses_spi0)

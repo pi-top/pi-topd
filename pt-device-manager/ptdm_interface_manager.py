@@ -1,8 +1,7 @@
-from pitop.common.logger import PTLogger
-from pitop.common.command_runner import run_command
-
 from os import path
 
+from pitop.common.command_runner import run_command
+from pitop.common.logger import PTLogger
 
 _TIMEOUT = 10
 
@@ -11,8 +10,9 @@ class InterfaceManager:
     @property
     def i2c(self):
         PTLogger.debug("Getting I2C state...")
-        enabled = run_command("raspi-config nonint get_i2c",
-                              timeout=_TIMEOUT).strip() == "0"
+        enabled = (
+            run_command("raspi-config nonint get_i2c", timeout=_TIMEOUT).strip() == "0"
+        )
         PTLogger.debug(f"I2C state: {'enabled' if enabled else 'disabled'}")
         return enabled
 
@@ -34,8 +34,9 @@ class InterfaceManager:
     @property
     def spi0(self):
         PTLogger.debug("Getting SPI0 state...")
-        enabled = run_command("raspi-config nonint get_spi",
-                              timeout=_TIMEOUT).strip() == "0"
+        enabled = (
+            run_command("raspi-config nonint get_spi", timeout=_TIMEOUT).strip() == "0"
+        )
         PTLogger.debug(f"SPI0 state: {'enabled' if enabled else 'disabled'}")
         return enabled
 

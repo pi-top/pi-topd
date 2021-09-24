@@ -1,22 +1,14 @@
-from sys_config import (
-    I2C,
-    I2S,
-    Hifiberry,
-    System
-)
-from pitop.common.file_ops import touch_file
-from pitop.common.current_session_info import get_user_using_first_display
-from pitop.common.common_ids import (
-    DeviceID,
-    Peripheral,
-    PeripheralID
-)
-from pitop.common.logger import PTLogger
 from importlib import import_module
 from os import path
 from subprocess import call
 from threading import Thread
 from time import sleep
+
+from pitop.common.common_ids import DeviceID, Peripheral, PeripheralID
+from pitop.common.current_session_info import get_user_using_first_display
+from pitop.common.file_ops import touch_file
+from pitop.common.logger import PTLogger
+from sys_config import I2C, I2S, Hifiberry, System
 
 # Discovers which peripheral libraries are installed, and uses those to
 # detect, initialise, and communicate with the corresponding peripheral
@@ -64,8 +56,7 @@ class PeripheralManager:
 
     def emit_peripheral_disconnected(self, peripheral_id):
         if self._callback_client is not None:
-            self._callback_client.on_peripheral_disconnected(
-                peripheral_id.value)
+            self._callback_client.on_peripheral_disconnected(peripheral_id.value)
 
     def emit_unsupported_hardware_message(self):
         if self._callback_client is not None:
@@ -133,9 +124,11 @@ class PeripheralManager:
         ptspeaker_cfg = self._custom_imported_modules["ptspeaker"]
         ptspeaker_cfg.initialise(self._host_device_id, peripheral.name)
 
-        enabled, reboot_required, v2_hub_hdmi_to_i2s_required = (
-            ptspeaker_cfg.enable_device()
-        )
+        (
+            enabled,
+            reboot_required,
+            v2_hub_hdmi_to_i2s_required,
+        ) = ptspeaker_cfg.enable_device()
 
         if enabled or reboot_required:
             # Mark as enabled even if a reboot is required
@@ -149,9 +142,11 @@ class PeripheralManager:
         ptspeaker_cfg = self._custom_imported_modules["ptspeaker"]
         ptspeaker_cfg.initialise(self._host_device_id, peripheral.name)
 
-        enabled, reboot_required, v2_hub_hdmi_to_i2s_required = (
-            ptspeaker_cfg.enable_device()
-        )
+        (
+            enabled,
+            reboot_required,
+            v2_hub_hdmi_to_i2s_required,
+        ) = ptspeaker_cfg.enable_device()
 
         if enabled or reboot_required:
             # Mark as enabled even if a reboot is required
@@ -165,9 +160,11 @@ class PeripheralManager:
         ptpulse_cfg = self._custom_imported_modules["ptpulse"]
         ptpulse_cfg.initialise(self._host_device_id, peripheral.name)
 
-        enabled, reboot_required, v2_hub_hdmi_to_i2s_required = (
-            ptpulse_cfg.enable_device()
-        )
+        (
+            enabled,
+            reboot_required,
+            v2_hub_hdmi_to_i2s_required,
+        ) = ptpulse_cfg.enable_device()
 
         if enabled or reboot_required:
             # Mark as enabled even if a reboot is required
@@ -181,9 +178,11 @@ class PeripheralManager:
         ptspeaker_cfg = self._custom_imported_modules["ptspeaker"]
         ptspeaker_cfg.initialise(self._host_device_id, peripheral.name)
 
-        enabled, reboot_required, v2_hub_hdmi_to_i2s_required = (
-            ptspeaker_cfg.enable_device()
-        )
+        (
+            enabled,
+            reboot_required,
+            v2_hub_hdmi_to_i2s_required,
+        ) = ptspeaker_cfg.enable_device()
 
         if enabled is True or reboot_required is True:
             # Mark as enabled even if a reboot is required
@@ -203,9 +202,11 @@ class PeripheralManager:
         ptpulse_cfg = self._custom_imported_modules["ptpulse"]
         ptpulse_cfg.initialise(self._host_device_id, peripheral.name)
 
-        enabled, reboot_required, v2_hub_hdmi_to_i2s_required = (
-            ptpulse_cfg.enable_device()
-        )
+        (
+            enabled,
+            reboot_required,
+            v2_hub_hdmi_to_i2s_required,
+        ) = ptpulse_cfg.enable_device()
 
         if enabled is True or reboot_required is True:
             # Mark as enabled even if a reboot is required
@@ -299,8 +300,7 @@ class PeripheralManager:
             try:
                 address = int(address, 16)
             except ValueError:
-                PTLogger.debug(
-                    f"Can't convert address {address} to integer, skipping.")
+                PTLogger.debug(f"Can't convert address {address} to integer, skipping.")
                 continue
             current_peripheral = Peripheral(addr=address)
             if current_peripheral.id != PeripheralID.unknown:
@@ -360,15 +360,13 @@ class PeripheralManager:
                     enabled_peripheral.id != current_peripheral.id
                     and current_peripheral.id not in enabled_peripheral.compatible_ids
                 ):
-                    PTLogger.debug("Not compatible with " +
-                                   enabled_peripheral.name)
+                    PTLogger.debug("Not compatible with " + enabled_peripheral.name)
                     return
 
             self.update_peripheral_state(current_peripheral, True)
 
         else:
-            PTLogger.debug("Peripheral " +
-                           current_peripheral_name + " already enabled")
+            PTLogger.debug("Peripheral " + current_peripheral_name + " already enabled")
 
     def auto_initialise_peripherals(self):
         addresses = I2C.get_connected_device_addresses()
@@ -386,23 +384,21 @@ class PeripheralManager:
                 address = int(address, 16)
             except ValueError:
                 PTLogger.debug(
-                    f"Can't convert address {address} to integer, skipping initialisation.")
+                    f"Can't convert address {address} to integer, skipping initialisation."
+                )
                 continue
             current_peripheral = Peripheral(addr=address)
             if current_peripheral.id != PeripheralID.unknown:
-                self.attempt_enable_peripheral_by_name(
-                    current_peripheral.name)
+                self.attempt_enable_peripheral_by_name(current_peripheral.name)
 
     def configure_hifiberry(self):
         if I2S.get_current_state() is True:
             if path.isfile(self._i2s_configured_file_path) is False:
-                call(("/usr/sbin/alsactl", "-f",
-                      self._i2s_config_file_path, "restore"))
+                call(("/usr/sbin/alsactl", "-f", self._i2s_config_file_path, "restore"))
                 touch_file(self._i2s_configured_file_path)
                 System.reboot_system()
             else:
-                Hifiberry.set_as_audio_output(
-                    user=get_user_using_first_display())
+                Hifiberry.set_as_audio_output(user=get_user_using_first_display())
 
     def get_peripheral_enabled(self, peripheral):
         return self.get_peripheral_id_enabled(peripheral.id)

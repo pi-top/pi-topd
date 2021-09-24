@@ -1,13 +1,13 @@
-import traceback
 import threading
-from enum import Enum
-from time import sleep
+import traceback
 from distutils.version import StrictVersion
+from enum import Enum
 from platform import uname
+from time import sleep
 
-from pitop.common.logger import PTLogger
-from pitop.common.counter import Counter
 from pitop.common.common_ids import DeviceID
+from pitop.common.counter import Counter
+from pitop.common.logger import PTLogger
 
 _spi_handler = None
 _main_thread = None
@@ -18,31 +18,34 @@ _cycle_sleep_time = 0.25
 
 
 class SPIResponseType(Enum):
-    """A simple state change type class, used by StateChange"""
+    """A simple state change type class, used by StateChange."""
+
     invalid = 0
     device_id = 1
     state = 2
 
 
 class SPIStateChangeType(Enum):
-    """A simple state change type class, used by StateChange"""
-    brightness = 'brightness'
-    screen = 'screen'
-    init = 'init'
+    """A simple state change type class, used by StateChange."""
+
+    brightness = "brightness"
+    screen = "screen"
+    init = "init"
 
 
 class SPIScreenOperations(Enum):
-    """A simple screen operations enum"""
-    blank = 'blank'
-    unblank = 'unblank'
+    """A simple screen operations enum."""
+
+    blank = "blank"
+    unblank = "unblank"
 
     @classmethod
     def has_value(cls, value):
-        return (any(value == item.value for item in cls))
+        return any(value == item.value for item in cls)
 
 
 class StateChange:
-    """A simple state change class"""
+    """A simple state change class."""
 
     def __init__(self, type, operation):
         permitted_types = [item.value for item in SPIStateChangeType]
@@ -53,21 +56,22 @@ class StateChange:
                     self._operation = operation
                 else:
                     PTLogger.error(
-                        "Unable to create class - invalid operation (brightness)")
+                        "Unable to create class - invalid operation (brightness)"
+                    )
             elif type == SPIStateChangeType.screen:
                 self._type = type
                 if SPIScreenOperations.has_value(operation.value):
                     self._operation = operation
                 else:
                     PTLogger.error(
-                        "Unable to create class - invalid operation (screen)")
+                        "Unable to create class - invalid operation (screen)"
+                    )
             elif type == SPIStateChangeType.init:
                 self._type = type
                 if operation is True:
                     self._operation = operation
                 else:
-                    PTLogger.error(
-                        "Unable to create class - invalid operation (init)")
+                    PTLogger.error("Unable to create class - invalid operation (init)")
             else:
                 PTLogger.error("Unable to detect supposedly valid type")
                 PTLogger.error("TYPE: " + str(type.value))
@@ -79,7 +83,6 @@ class StateChange:
 
 
 class SPIHandler:
-
     def __init__(self, state_instance):
         self._shutdown_ctr = Counter(2)
 
@@ -121,7 +124,8 @@ class SPIHandler:
     def transceive_and_process(self):
         state_change_to_send = self.pop_from_queue()
         self._update_state_from_pending_state_change(
-            state_change_to_send)  # Should this be here?
+            state_change_to_send
+        )  # Should this be here?
 
         # Set bits to send according to state variables
         if state_change_to_send is not None:
@@ -174,11 +178,8 @@ class SPIHandler:
             self._state.set_device_id(DeviceID.pi_top_ceed)
 
     def _parity_of(self, int_type):
-        '''
-        Calculates the parity of an integer,
-        returning 0 if there are an even number of set bits,
-        and 1 if there are an odd number
-        '''
+        """Calculates the parity of an integer, returning 0 if there are an
+        even number of set bits, and 1 if there are an odd number."""
         parity = 0
         for bit in bin(int_type)[2:]:
             parity ^= int(bit)
@@ -186,7 +187,7 @@ class SPIHandler:
 
     def _parse_state_to_bits(self):
         br_parity_bits = str(self._parity_of(self._state._brightness))
-        scaled_screen_off = (2 * int(self._state._screen_blanked))
+        scaled_screen_off = 2 * int(self._state._screen_blanked)
         state_bits_val = scaled_screen_off + self._state._shutdown
         state_parity_bits = str(self._parity_of(state_bits_val))
 
@@ -194,10 +195,10 @@ class SPIHandler:
         # bs = bitshifted
         # br = brightness
         # par = parity
-        bs_br_par = (128 * int(br_parity_bits))
-        bs_br = (8 * self._state._brightness)
-        bs_state_par = (4 * int(state_parity_bits))
-        bs_screen_off = (2 * int(self._state._screen_blanked))
+        bs_br_par = 128 * int(br_parity_bits)
+        bs_br = 8 * self._state._brightness
+        bs_state_par = 4 * int(state_parity_bits)
+        bs_screen_off = 2 * int(self._state._screen_blanked)
         bits_to_send = bs_br_par
         bits_to_send += bs_br
         bits_to_send += bs_state_par
@@ -215,6 +216,7 @@ class SPIHandler:
     def _setup_spi(self):
         if self.spi is None:
             from spidev import SpiDev
+
             self.spi = SpiDev()
             self.spi.open(0, 1)
             self.spi.max_speed_hz = 9600
@@ -245,8 +247,13 @@ class SPIHandler:
             # Increment shutdown counter
             self._shutdown_ctr.increment()
 
-            PTLogger.info("Received shutdown indication from hub (" + str(
-                self._shutdown_ctr.current) + " of " + str(self._shutdown_ctr.max) + ")")
+            PTLogger.info(
+                "Received shutdown indication from hub ("
+                + str(self._shutdown_ctr.current)
+                + " of "
+                + str(self._shutdown_ctr.max)
+                + ")"
+            )
 
             if self._shutdown_ctr.maxed():
                 self._shutdown_ctr.reset()
@@ -279,20 +286,19 @@ class SPIHandler:
         self._process_spi_resp_shutdown(spi_shutdown_bit_int)
 
         spi_screen_off_state = int(resp[6])
-        if (spi_screen_off_state == 1):
+        if spi_screen_off_state == 1:
             self._state.set_screen_blanked()
         else:
             self._state.set_screen_unblanked()
 
         spi_lid_state = int(resp[5])
-        if (spi_lid_state == 1):
+        if spi_lid_state == 1:
             self._state.set_lid_open()
         else:
             self._state.set_lid_closed()
 
         spi_brightness_int = int(resp[1:5], 2)
-        screen_is_blanked = (spi_screen_off_state ==
-                             1 and spi_brightness_int == 0)
+        screen_is_blanked = spi_screen_off_state == 1 and spi_brightness_int == 0
         if init or not screen_is_blanked:
             self._state.set_brightness(spi_brightness_int, False)
 
@@ -301,19 +307,29 @@ class SPIHandler:
         return StrictVersion(current_version_name) < StrictVersion("5.0.0")
 
     def _transceive_spi(self, bits_to_send):
-        hex_str_to_send = '0x' + str(hex(bits_to_send))[2:].zfill(2)
-        bin_str_to_send = '{0:b}'.format(int(hex_str_to_send[2:], 16)).zfill(8)
+        hex_str_to_send = "0x" + str(hex(bits_to_send))[2:].zfill(2)
+        bin_str_to_send = "{0:b}".format(int(hex_str_to_send[2:], 16)).zfill(8)
 
         log_brightness = str(int(bin_str_to_send[1:5], 2))
         log_screen = "On" if bin_str_to_send[6] == "0" else "Off"
         log_shutdown = "Shutting down" if bin_str_to_send[7] == "1" else "No shutdown"
 
-        if (bin_str_to_send == "11111111"):
-            PTLogger.debug("Pi sending:   " + bin_str_to_send +
-                           " [ fetch state from hub ]")
+        if bin_str_to_send == "11111111":
+            PTLogger.debug(
+                "Pi sending:   " + bin_str_to_send + " [ fetch state from hub ]"
+            )
         else:
-            PTLogger.debug("Pi sending:   " + bin_str_to_send +
-                           " [" + log_brightness + ", " + log_screen + ", " + log_shutdown + "]")
+            PTLogger.debug(
+                "Pi sending:   "
+                + bin_str_to_send
+                + " ["
+                + log_brightness
+                + ", "
+                + log_screen
+                + ", "
+                + log_shutdown
+                + "]"
+            )
 
         if self.__using_old_kernel():
             # Initiate receiving communication from hub
@@ -323,16 +339,27 @@ class SPIHandler:
         self.spi.cshigh = True
 
         resp_hex = hex(resp[0])
-        resp_hex_str = '0x' + str(resp_hex)[2:].zfill(2)
-        resp_bin_str = '{0:b}'.format(int(resp_hex_str[2:], 16)).zfill(8)
+        resp_hex_str = "0x" + str(resp_hex)[2:].zfill(2)
+        resp_bin_str = "{0:b}".format(int(resp_hex_str[2:], 16)).zfill(8)
 
         log_brightness = str(int(resp_bin_str[1:5], 2))
         log_lid = "Open" if resp_bin_str[5] == "1" else "Closed"
         log_screen = "On" if resp_bin_str[6] == "0" else "Off"
         log_shutdown = "Shutting down" if resp_bin_str[7] == "1" else "No shutdown"
 
-        PTLogger.debug("Hub responds: " + resp_bin_str +
-                       " [" + log_brightness + ", " + log_lid + ", " + log_screen + ", " + log_shutdown + "]")
+        PTLogger.debug(
+            "Hub responds: "
+            + resp_bin_str
+            + " ["
+            + log_brightness
+            + ", "
+            + log_lid
+            + ", "
+            + log_screen
+            + ", "
+            + log_shutdown
+            + "]"
+        )
 
         return resp_bin_str
 
@@ -384,8 +411,13 @@ class SPIHandler:
             if process_state:
                 self._process_spi_resp(resp_bin_str, init=init)
         else:
-            PTLogger.error("Unable to communicate with hub. " + "init: " +
-                           str(init) + ", resp_bin_str: " + str(resp_bin_str))
+            PTLogger.error(
+                "Unable to communicate with hub. "
+                + "init: "
+                + str(init)
+                + ", resp_bin_str: "
+                + str(resp_bin_str)
+            )
 
         return valid
 
@@ -402,40 +434,48 @@ def _append_to_queued_state_change_to_sends(state_change_to_send):
     _spi_handler.queued_changes.append(state_change_to_send)
 
 
-def _add_state_change_to_send_to_stack(state_change_to_send_type, state_change_to_send_operation):
+def _add_state_change_to_send_to_stack(
+    state_change_to_send_type, state_change_to_send_operation
+):
     pending_state_change_to_send = StateChange(
-        state_change_to_send_type, state_change_to_send_operation)
+        state_change_to_send_type, state_change_to_send_operation
+    )
     _add_state_change_to_send_class_to_stack(pending_state_change_to_send)
 
 
 def _add_state_change_to_send_class_to_stack(pending_state_change_to_send):
-    valid_type = (pending_state_change_to_send._type is not None)
-    valid_operation = (pending_state_change_to_send._operation is not None)
+    valid_type = pending_state_change_to_send._type is not None
+    valid_operation = pending_state_change_to_send._operation is not None
     if valid_type and valid_operation:
         _append_to_queued_state_change_to_sends(pending_state_change_to_send)
     else:
-        PTLogger.info(
-            "Unable to process state change - invalid type or operation")
+        PTLogger.info("Unable to process state change - invalid type or operation")
 
 
 def change_brightness_state(brightness_val):
     if is_initialised():
 
-        if (brightness_val > 10):
+        if brightness_val > 10:
             brightness_val = 10
 
-        if brightness_val >= 0 and brightness_val <= 10 and _spi_handler._state.valid_brightness(brightness_val):
-            if (_spi_handler._state._screen_blanked == 1):
+        if (
+            brightness_val >= 0
+            and brightness_val <= 10
+            and _spi_handler._state.valid_brightness(brightness_val)
+        ):
+            if _spi_handler._state._screen_blanked == 1:
                 change_screen_state(SPIScreenOperations.unblank)
 
             _add_state_change_to_send_to_stack(
-                SPIStateChangeType.brightness, brightness_val)
+                SPIStateChangeType.brightness, brightness_val
+            )
 
             if not _main_thread.is_alive():
                 communicate()
         else:
-            PTLogger.info(str(brightness_val) +
-                          " is not a valid brightness - doing nothing")
+            PTLogger.info(
+                str(brightness_val) + " is not a valid brightness - doing nothing"
+            )
 
     else:
         PTLogger.error("Unable to change brightness - run initialise() first!")
@@ -460,13 +500,13 @@ def set_brightness(brightness_val):
 def change_screen_state(spi_screen_operation):
     if is_initialised():
         _add_state_change_to_send_to_stack(
-            SPIStateChangeType.screen, spi_screen_operation)
+            SPIStateChangeType.screen, spi_screen_operation
+        )
 
         if not _main_thread.is_alive():
             communicate()
     else:
-        PTLogger.error(
-            "Unable to change screen state - run initialise() first!")
+        PTLogger.error("Unable to change screen state - run initialise() first!")
 
 
 def blank_screen():
@@ -489,7 +529,8 @@ def start():
         _main_thread.start()
     else:
         PTLogger.error(
-            "Unable to start pi-topHUB SPI communication - run initialise() first!")
+            "Unable to start pi-topHUB SPI communication - run initialise() first!"
+        )
 
 
 def stop():
@@ -500,7 +541,7 @@ def stop():
 
 
 def is_initialised():
-    return (_spi_handler is not None)
+    return _spi_handler is not None
 
 
 def initialise(state_instance):
@@ -531,11 +572,10 @@ def communicate():
 
 
 def _main_thread_loop():
-    '''
-        ///////////////////////////
-        // MAIN CODE STARTS HERE //
-        ///////////////////////////
-    '''
+    """///////////////////////////
+
+    // MAIN CODE STARTS HERE // ///////////////////////////
+    """
 
     while _run_main_thread:
         # Communicate regardless of any queued changes
@@ -546,8 +586,11 @@ def _main_thread_loop():
             communicate()
         sleep(_cycle_sleep_time)
 
-    PTLogger.info("Hub v1 main loop exited. Sending " +
-                  str(len(_spi_handler.queued_changes)) + " remaining queued changes...")
+    PTLogger.info(
+        "Hub v1 main loop exited. Sending "
+        + str(len(_spi_handler.queued_changes))
+        + " remaining queued changes..."
+    )
 
     while len(_spi_handler.queued_changes) > 0:
 

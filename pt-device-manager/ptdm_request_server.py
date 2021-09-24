@@ -1,10 +1,11 @@
-from pitop.common.logger import PTLogger
-from pitop.common.ptdm import Message
-from pitop.common.common_ids import DeviceID
+import traceback
 from threading import Thread
 from time import sleep
-import traceback
+
 import zmq
+from pitop.common.common_ids import DeviceID
+from pitop.common.logger import PTLogger
+from pitop.common.ptdm import Message
 
 
 # Creates a server for clients to connect to, and then responds to
@@ -76,8 +77,7 @@ class RequestServer:
         valid_message_format = False
         try:
             message = Message.from_string(request)
-            PTLogger.debug("Received request: " +
-                           message.message_friendly_string())
+            PTLogger.debug("Received request: " + message.message_friendly_string())
 
             if message.message_id() == Message.REQ_PING:
                 response = Message.from_parts(Message.RSP_PING, list())
@@ -89,32 +89,27 @@ class RequestServer:
                 if isinstance(device_id, DeviceID):
                     device_id = device_id.value
 
-                response = Message.from_parts(
-                    Message.RSP_GET_DEVICE_ID, [device_id])
+                response = Message.from_parts(Message.RSP_GET_DEVICE_ID, [device_id])
 
             elif message.message_id() == Message.REQ_GET_BRIGHTNESS:
                 brightness = self._callback_client.on_request_get_brightness()
                 if brightness is None:
                     brightness = -1
-                response = Message.from_parts(
-                    Message.RSP_GET_BRIGHTNESS, [brightness])
+                response = Message.from_parts(Message.RSP_GET_BRIGHTNESS, [brightness])
 
             elif message.message_id() == Message.REQ_SET_BRIGHTNESS:
                 self._callback_client.on_request_set_brightness(
                     int(message.parameters[0])
                 )
-                response = Message.from_parts(
-                    Message.RSP_SET_BRIGHTNESS, list())
+                response = Message.from_parts(Message.RSP_SET_BRIGHTNESS, list())
 
             elif message.message_id() == Message.REQ_INCREMENT_BRIGHTNESS:
                 self._callback_client.on_request_increment_brightness()
-                response = Message.from_parts(
-                    Message.RSP_INCREMENT_BRIGHTNESS, list())
+                response = Message.from_parts(Message.RSP_INCREMENT_BRIGHTNESS, list())
 
             elif message.message_id() == Message.REQ_DECREMENT_BRIGHTNESS:
                 self._callback_client.on_request_decrement_brightness()
-                response = Message.from_parts(
-                    Message.RSP_DECREMENT_BRIGHTNESS, list())
+                response = Message.from_parts(Message.RSP_DECREMENT_BRIGHTNESS, list())
 
             elif message.message_id() == Message.REQ_BLANK_SCREEN:
                 self._callback_client.on_request_blank_screen()
@@ -122,13 +117,15 @@ class RequestServer:
 
             elif message.message_id() == Message.REQ_UNBLANK_SCREEN:
                 self._callback_client.on_request_unblank_screen()
-                response = Message.from_parts(
-                    Message.RSP_UNBLANK_SCREEN, list())
+                response = Message.from_parts(Message.RSP_UNBLANK_SCREEN, list())
 
             elif message.message_id() == Message.REQ_GET_BATTERY_STATE:
-                charging_state, capacity, time_remaining, wattage = (
-                    self._callback_client.on_request_battery_state()
-                )
+                (
+                    charging_state,
+                    capacity,
+                    time_remaining,
+                    wattage,
+                ) = self._callback_client.on_request_battery_state()
                 response = Message.from_parts(
                     Message.RSP_GET_BATTERY_STATE,
                     [charging_state, capacity, time_remaining, wattage],
@@ -198,8 +195,7 @@ class RequestServer:
                 self._callback_client.on_request_set_oled_pi_control(
                     int(message.parameters[0])
                 )
-                response = Message.from_parts(
-                    Message.RSP_SET_OLED_CONTROL, list())
+                response = Message.from_parts(Message.RSP_SET_OLED_CONTROL, list())
 
             elif message.message_id() == Message.REQ_GET_OLED_SPI_BUS:
                 oled_spi_state = self._callback_client.on_request_get_oled_spi_bus()
@@ -214,15 +210,14 @@ class RequestServer:
                 # so we put this into a thread
                 Thread(
                     target=self._callback_client.on_request_set_oled_spi_bus,
-                    args=[int(message.parameters[0])]
+                    args=[int(message.parameters[0])],
                 ).start()
 
                 response = Message.from_parts(Message.RSP_SET_OLED_SPI_BUS)
 
             else:
                 PTLogger.error("Unsupported request received: " + request)
-                response = Message.from_parts(
-                    Message.RSP_ERR_UNSUPPORTED, list())
+                response = Message.from_parts(Message.RSP_ERR_UNSUPPORTED, list())
 
             valid_message_format = True
 

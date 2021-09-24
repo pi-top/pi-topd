@@ -1,7 +1,7 @@
-from pitop.common.logger import PTLogger
 from pitop.common.common_ids import DeviceID
-from . import pthub_i2c
-from . import pthub_spi
+from pitop.common.logger import PTLogger
+
+from . import pthub_i2c, pthub_spi
 
 _state = None
 
@@ -9,7 +9,6 @@ spi_cycle_sleep_time = pthub_spi._cycle_sleep_time
 
 
 class State:
-
     def __init__(self):
 
         self._brightness = 10
@@ -30,14 +29,16 @@ class State:
         self._shutdown_func = None
         self._battery_state_change_func = None
 
-    def register_client(self,
-                        on_brightness_changed_func=None,
-                        on_screen_blanked_func=None,
-                        on_screen_unblanked_func=None,
-                        on_lid_opened_func=None,
-                        on_lid_closed_func=None,
-                        on_shutdown_requested_func=None,
-                        on_battery_state_changed_func=None):
+    def register_client(
+        self,
+        on_brightness_changed_func=None,
+        on_screen_blanked_func=None,
+        on_screen_unblanked_func=None,
+        on_lid_opened_func=None,
+        on_lid_closed_func=None,
+        on_shutdown_requested_func=None,
+        on_battery_state_changed_func=None,
+    ):
 
         self._brightness_change_func = on_brightness_changed_func
         self._screen_blanked_func = on_screen_blanked_func
@@ -52,8 +53,12 @@ class State:
 
     def emit_battery_state_change(self):
         if callable(self._battery_state_change_func):
-            self._battery_state_change_func(int(self._battery_charging_state), int(
-                self._battery_capacity), int(self._battery_time), int(self._battery_wattage))
+            self._battery_state_change_func(
+                int(self._battery_charging_state),
+                int(self._battery_capacity),
+                int(self._battery_time),
+                int(self._battery_wattage),
+            )
 
     def emit_brightness_change(self):
         if callable(self._brightness_change_func):
@@ -103,7 +108,7 @@ class State:
         if self.valid_brightness(val):
             if self._brightness != val:
                 self._brightness = val
-                if (emit is True):
+                if emit is True:
                     self.emit_brightness_change()
 
     def set_screen_blanked(self):
@@ -132,7 +137,7 @@ class State:
 
     def set_shutdown(self, val):
         if self._shutdown != val:
-            if (val == 1 and self._shutdown_func is not None):
+            if val == 1 and self._shutdown_func is not None:
                 self.emit_shutdown()
 
 
@@ -158,26 +163,31 @@ def initialise():
 
     else:
         PTLogger.info(
-            "Unable to detect pi-topHUB's battery. If host is a CEED this will be established after initial communication")
+            "Unable to detect pi-topHUB's battery. If host is a CEED this will be established after initial communication"
+        )
 
     return True
 
 
-def register_client(on_brightness_changed_func=None,
-                    on_screen_blanked_func=None,
-                    on_screen_unblanked_func=None,
-                    on_lid_opened_func=None,
-                    on_lid_closed_func=None,
-                    on_shutdown_requested_func=None,
-                    on_battery_state_changed_func=None):
+def register_client(
+    on_brightness_changed_func=None,
+    on_screen_blanked_func=None,
+    on_screen_unblanked_func=None,
+    on_lid_opened_func=None,
+    on_lid_closed_func=None,
+    on_shutdown_requested_func=None,
+    on_battery_state_changed_func=None,
+):
 
-    _state.register_client(on_brightness_changed_func,
-                           on_screen_blanked_func,
-                           on_screen_unblanked_func,
-                           on_lid_opened_func,
-                           on_lid_closed_func,
-                           on_shutdown_requested_func,
-                           on_battery_state_changed_func)
+    _state.register_client(
+        on_brightness_changed_func,
+        on_screen_blanked_func,
+        on_screen_unblanked_func,
+        on_lid_opened_func,
+        on_lid_closed_func,
+        on_shutdown_requested_func,
+        on_battery_state_changed_func,
+    )
 
 
 def start():
@@ -231,7 +241,12 @@ def get_device_id():
 
 
 def get_battery_state():
-    return _state._battery_charging_state, _state._battery_capacity, _state._battery_time, _state._battery_wattage
+    return (
+        _state._battery_charging_state,
+        _state._battery_capacity,
+        _state._battery_time,
+        _state._battery_wattage,
+    )
 
 
 def shutdown():
@@ -245,12 +260,14 @@ def shutdown():
 
 def enable_hdmi_to_i2s_audio():
     PTLogger.warning(
-        "V1 hub called to enable HDMI to I2S audio - this hub does not support this")
+        "V1 hub called to enable HDMI to I2S audio - this hub does not support this"
+    )
 
 
 def disable_hdmi_to_i2s_audio():
     PTLogger.warning(
-        "V1 hub called to disable HDMI to I2S audio - this hub does not support this")
+        "V1 hub called to disable HDMI to I2S audio - this hub does not support this"
+    )
 
 
 def set_speed(no_of_polls_per_second=4):
@@ -260,6 +277,7 @@ def set_speed(no_of_polls_per_second=4):
 ######################
 # INTERNAL FUNCTIONS #
 ######################
+
 
 def _start_spi():
     if pthub_spi.is_initialised():

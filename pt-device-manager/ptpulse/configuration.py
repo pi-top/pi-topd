@@ -3,14 +3,11 @@
 #
 
 from math import pow
-from smbus import SMBus
-from pitop.common.logger import PTLogger
+
 from pitop.common.common_ids import DeviceID
-from sys_config import (
-    I2S,
-    UART,
-    HDMI
-)
+from pitop.common.logger import PTLogger
+from smbus import SMBus
+from sys_config import HDMI, I2S, UART
 
 _bus_id = 1
 _device_addr = 0x24
@@ -38,13 +35,20 @@ def _get_addr_for_bit(bit):
 
 
 def _get_bit_string(value):
-    """INTERNAL. Get string representation of an int in binary"""
+    """INTERNAL.
+
+    Get string representation of an int in binary
+    """
 
     return "{0:b}".format(value).zfill(8)
 
 
 def _update_device_state_bit(bit, value):
-    """INTERNAL. Set a particular device state bit to enable or disable a particular function"""
+    """INTERNAL.
+
+    Set a particular device state bit to enable or disable a particular
+    function
+    """
 
     # Bits:  0x0000
     # Index:   3210
@@ -55,12 +59,10 @@ def _update_device_state_bit(bit, value):
 
     try:
         current_state = _read_device_state()
-        PTLogger.debug("Current device state: " +
-                       _get_bit_string(current_state))
+        PTLogger.debug("Current device state: " + _get_bit_string(current_state))
 
     except Exception:
-        PTLogger.warning(
-            "Error: There was a problem getting the current device state")
+        PTLogger.warning("Error: There was a problem getting the current device state")
         return False
 
     # Get the bit mask for the new state
@@ -70,7 +72,9 @@ def _update_device_state_bit(bit, value):
         new_state = ~new_state
 
     # Check if there is anything to do
-    if (value == 1 and (new_state & current_state) != 0) or (value == 0 and (~new_state & ~current_state) != 0):
+    if (value == 1 and (new_state & current_state) != 0) or (
+        value == 0 and (~new_state & ~current_state) != 0
+    ):
         PTLogger.debug("Warning: Mode already set, nothing to send")
         return True
 
@@ -84,7 +88,10 @@ def _update_device_state_bit(bit, value):
 
 
 def _verify_device_state(expected_state):
-    """INTERNAL. Verify that that current device state matches that expected"""
+    """INTERNAL.
+
+    Verify that that current device state matches that expected
+    """
 
     current_state = _read_device_state()
 
@@ -92,13 +99,20 @@ def _verify_device_state(expected_state):
         return True
 
     else:
-        PTLogger.warning("Error: Device write verification failed. Expected: " +
-                         _get_bit_string(expected_state) + " Received: " + _get_bit_string(current_state))
+        PTLogger.warning(
+            "Error: Device write verification failed. Expected: "
+            + _get_bit_string(expected_state)
+            + " Received: "
+            + _get_bit_string(current_state)
+        )
         return False
 
 
 def _write_device_state(state):
-    """INTERNAL. Send the state bits across the I2C bus"""
+    """INTERNAL.
+
+    Send the state bits across the I2C bus
+    """
 
     try:
         PTLogger.debug("Connecting to bus...")
@@ -106,8 +120,7 @@ def _write_device_state(state):
 
         state_to_send = 0x0F & state
 
-        PTLogger.debug("Writing new state:    " +
-                       _get_bit_string(state_to_send))
+        PTLogger.debug("Writing new state:    " + _get_bit_string(state_to_send))
         i2c_bus.write_byte_data(_device_addr, 0, state_to_send)
 
         result = _verify_device_state(state_to_send)
@@ -125,7 +138,11 @@ def _write_device_state(state):
 
 
 def _read_device_state():
-    """INTERNAL. Read from the I2C bus to get the current state of the pulse. Caller should handle exceptions"""
+    """INTERNAL.
+
+    Read from the I2C bus to get the current state of the pulse. Caller
+    should handle exceptions
+    """
 
     try:
         PTLogger.debug("Connecting to bus...")
@@ -142,11 +159,10 @@ def _read_device_state():
 
 
 def _reset_device_state(enable):
-    """Reset the device state bits to the default enabled or disabled state"""
+    """Reset the device state bits to the default enabled or disabled state."""
 
     clean_enable_state = _get_addr_for_bit(_eeprom_bit)
-    clean_disable_state = _get_addr_for_bit(
-        _speaker_bit) | _get_addr_for_bit(_mcu_bit)
+    clean_disable_state = _get_addr_for_bit(_speaker_bit) | _get_addr_for_bit(_mcu_bit)
 
     state_to_send = clean_enable_state if enable else clean_disable_state
     return _write_device_state(state_to_send)
@@ -156,7 +172,7 @@ def _check_and_set_I2S_config(i2s_required):
 
     reboot_required = False
 
-    if (I2S.get_current_state() is not i2s_required):
+    if I2S.get_current_state() is not i2s_required:
         I2S.set_state(i2s_required)
         reboot_required = True
     else:
@@ -176,7 +192,7 @@ def _check_and_set_serial_config():
         UART.set_enable(True)  # UART.configure_in_boot_config(enable_uart=1)
         reboot_required = True
 
-    reboot_required = (UART.remove_serial_from_cmdline() or reboot_required)
+    reboot_required = UART.remove_serial_from_cmdline() or reboot_required
     return reboot_required
 
 
@@ -210,6 +226,7 @@ def _initialise_v1_hub_pulse():
 # EXTERNAL OPERATIONS #
 #######################
 
+
 def initialise(host_device_id, device_name="pi-topPULSE"):
     global _host_device_id
 
@@ -218,8 +235,10 @@ def initialise(host_device_id, device_name="pi-topPULSE"):
 
 def reset_device_state(enable):
     """reset_device_state: Deprecated"""
-    PTLogger.info("'reset_device_state' function has been deprecated, and can likely be removed. "
-                  "If you experience problems, please see documentation for instructions.")
+    PTLogger.info(
+        "'reset_device_state' function has been deprecated, and can likely be removed. "
+        "If you experience problems, please see documentation for instructions."
+    )
     return False
 
 
@@ -229,15 +248,15 @@ def enable_device():
     reboot_required = False
     v2_hub_hdmi_to_i2s_required = False
 
-    is_pi_top = (_host_device_id == DeviceID.pi_top)
-    is_pi_top_ceed = (_host_device_id == DeviceID.pi_top_ceed)
-    hub_is_v1 = (is_pi_top or is_pi_top_ceed)
-    is_pi_top_3 = (_host_device_id == DeviceID.pi_top_3)
-    is_pi_top_4 = (_host_device_id == DeviceID.pi_top_4)
+    is_pi_top = _host_device_id == DeviceID.pi_top
+    is_pi_top_ceed = _host_device_id == DeviceID.pi_top_ceed
+    hub_is_v1 = is_pi_top or is_pi_top_ceed
+    is_pi_top_3 = _host_device_id == DeviceID.pi_top_3
+    is_pi_top_4 = _host_device_id == DeviceID.pi_top_4
 
     if is_pi_top_3:
         reboot_required = _initialise_v2_hub_pulse()
-        if (reboot_required is False):
+        if reboot_required is False:
             v2_hub_hdmi_to_i2s_required = True
 
     elif hub_is_v1 or (_host_device_id == DeviceID.unknown):
@@ -247,10 +266,13 @@ def enable_device():
         reboot_required = _initialise_v3_hub_pulse()
 
     else:
-        PTLogger.error("Error - unrecognised device ID '" + str(_host_device_id) +
-                       "' - unsure how to initialise pi-topPULSE")
+        PTLogger.error(
+            "Error - unrecognised device ID '"
+            + str(_host_device_id)
+            + "' - unsure how to initialise pi-topPULSE"
+        )
 
-    if (reboot_required is False):
+    if reboot_required is False:
         _reset_device_state(True)
         enabled = True
 
@@ -265,44 +287,49 @@ def disable_device():
 
 
 def set_microphone_sample_rate_to_16khz():
-    """Set the appropriate I2C bits to enable 16,000Hz recording on the microphone"""
+    """Set the appropriate I2C bits to enable 16,000Hz recording on the
+    microphone."""
 
     return _update_device_state_bit(_16khz_bit, 1)
 
 
 def set_microphone_sample_rate_to_22khz():
-    """Set the appropriate I2C bits to enable 22,050Hz recording on the microphone"""
+    """Set the appropriate I2C bits to enable 22,050Hz recording on the
+    microphone."""
 
     return _update_device_state_bit(_16khz_bit, 0)
 
 
 # GET STATE
 
+
 def speaker_enabled():
-    """Get whether the speaker is enabled"""
+    """Get whether the speaker is enabled."""
 
     return (_read_device_state() & _get_addr_for_bit(_speaker_bit)) == 0
 
 
 def mcu_enabled():
-    """Get whether the onboard MCU is enabled"""
+    """Get whether the onboard MCU is enabled."""
 
     return (_read_device_state() & _get_addr_for_bit(_mcu_bit)) == 0
 
 
 def eeprom_enabled():
-    """Get whether the eeprom is enabled"""
+    """Get whether the eeprom is enabled."""
 
     return (_read_device_state() & _get_addr_for_bit(_eeprom_bit)) != 0
 
 
 def microphone_sample_rate_is_16khz():
-    """Get whether the microphone is set to record at a sample rate of 16,000Hz"""
+    """Get whether the microphone is set to record at a sample rate of
+    16,000Hz."""
 
     return (_read_device_state() & _get_addr_for_bit(_16khz_bit)) != 0
 
 
 def microphone_sample_rate_is_22khz():
-    """Get whether the microphone is set to record at a sample rate of 22,050Hz"""
+    """Get whether the microphone is set to record at a sample rate of
+    22,050Hz."""
 
     return (_read_device_state() & _get_addr_for_bit(_16khz_bit)) == 0

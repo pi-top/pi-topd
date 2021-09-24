@@ -1,9 +1,10 @@
+import traceback
+from os import getenv
+from threading import Lock
+
+import zmq
 from pitop.common.logger import PTLogger
 from pitop.common.ptdm import Message
-import zmq
-import traceback
-from threading import Lock
-from os import getenv
 
 
 # Creates a server for clients to connect to,
@@ -14,8 +15,7 @@ class PublishServer:
         self._shutting_down = False
         self._zmq_context = None
         self._zmq_socket = None
-        self._enable_battery_logging = getenv(
-            "PT_LOG_BATTERY_CHANGE", "0") == "1"
+        self._enable_battery_logging = getenv("PT_LOG_BATTERY_CHANGE", "0") == "1"
 
     def start_listening(self):
         PTLogger.debug("Opening publisher socket...")
@@ -68,8 +68,7 @@ class PublishServer:
 
     def publish_peripheral_disconnected(self, peripheral_id: int):
         PublishServer._check_type(peripheral_id, int)
-        self._send_message(
-            Message.PUB_PERIPHERAL_DISCONNECTED, [peripheral_id])
+        self._send_message(Message.PUB_PERIPHERAL_DISCONNECTED, [peripheral_id])
 
     def publish_unsupported_hardware(self):
         self._send_message(Message.PUB_UNSUPPORTED_HARDWARE)
@@ -90,7 +89,8 @@ class PublishServer:
         self._send_message(
             Message.PUB_BATTERY_STATE_CHANGED,
             [connected, new_capacity, new_time, new_wattage],
-            log_message=self._enable_battery_logging)
+            log_message=self._enable_battery_logging,
+        )
 
     def publish_screen_blanked(self):
         self._send_message(Message.PUB_SCREEN_BLANKED)
@@ -136,14 +136,12 @@ class PublishServer:
 
     def publish_oled_pi_controlled_state_changed(self, oled_controlled_by_pi):
         self._send_message(
-            Message.PUB_OLED_CONTROL_CHANGED,
-            [1 if oled_controlled_by_pi else 0]
+            Message.PUB_OLED_CONTROL_CHANGED, [1 if oled_controlled_by_pi else 0]
         )
 
     def publish_oled_spi_state_changed(self, oled_uses_spi0):
         self._send_message(
-            Message.PUB_OLED_SPI_BUS_CHANGED,
-            [0 if oled_uses_spi0 else 1]
+            Message.PUB_OLED_SPI_BUS_CHANGED, [0 if oled_uses_spi0 else 1]
         )
 
     # Internal functions
@@ -161,8 +159,7 @@ class PublishServer:
             return
 
         if log_message:
-            PTLogger.info("Publishing message: " +
-                          message.message_friendly_string())
+            PTLogger.info("Publishing message: " + message.message_friendly_string())
 
         try:
             self._socket_lock.acquire()
@@ -170,8 +167,7 @@ class PublishServer:
                 return
 
             self._zmq_socket.send_string(message.to_string())
-            PTLogger.debug("Published message: " +
-                           message.message_friendly_string())
+            PTLogger.debug("Published message: " + message.message_friendly_string())
 
         except zmq.error.ZMQError as e:
             PTLogger.error("Communication error in publish server: " + str(e))

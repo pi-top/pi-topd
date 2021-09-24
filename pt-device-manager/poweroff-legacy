@@ -1,18 +1,19 @@
 #!/usr/bin/python3
 from distutils.version import StrictVersion
 from platform import uname
-from spidev import SpiDev
 from time import sleep
+
+from spidev import SpiDev
 
 # Script to send a poweroff command to the pi-top hub. Typically this
 # is launched by systemd responding to halt.target/poweroff.target, to
 # ensure the hub shuts down after the Raspberry Pi
 
-MASK_SHUTDOWN = 0x01    # 00000001
+MASK_SHUTDOWN = 0x01  # 00000001
 MASK_SCREEN_OFF = 0x02  # 00000010
 MASK_LID_CLOSED = 0x04  # 00000100
 MASK_BRIGHTNESS = 0x78  # 01111000
-MASK_PARITY = 0x80      # 10000000
+MASK_PARITY = 0x80  # 10000000
 
 
 screen_off = False
@@ -28,7 +29,7 @@ def using_old_kernel():
 def parity7(data):
     p = False
     for _ in range(7):
-        if (data & 1):
+        if data & 1:
             p = not p
 
         data = data >> 1
@@ -86,7 +87,7 @@ sleep(5)  # Let other things finish first
 
 spi = setup_spi_obj()
 
-resp = send_data(spi, 0xff)
+resp = send_data(spi, 0xFF)
 
 brightness = resp & MASK_BRIGHTNESS >> 3
 print(f"Current brightness = {brightness}")

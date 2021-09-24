@@ -1,14 +1,14 @@
-from ptdm_controller import Controller
-from pitop.common.common_ids import DeviceID
 import sys
 import unittest
 from unittest.mock import Mock
+
+from pitop.common.common_ids import DeviceID
+from ptdm_controller import Controller
 
 mock_systemd_daemon = Mock()
 mock_common_ids = Mock()
 sys.modules["systemd.daemon"] = mock_systemd_daemon
 sys.modules["pitop.common.common_ids"] = mock_common_ids
-sys.modules["time"].sleep = Mock()
 sys.modules["pitop.common.logger"] = Mock()
 
 
@@ -180,8 +180,7 @@ class ControllerTestCase(unittest.TestCase):
         self.mock_peripheral_manager.initialise_device_id.assert_called_with(
             DeviceID.pi_top_3
         )
-        self.mock_power_manager.set_device_id.assert_called_with(
-            DeviceID.pi_top_3)
+        self.mock_power_manager.set_device_id.assert_called_with(DeviceID.pi_top_3)
 
     def test_controller_starts_peripheral_manager(self):
 

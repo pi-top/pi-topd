@@ -1,7 +1,8 @@
-from pitop.common.logger import PTLogger
-from pitop.common.i2c_device import I2CDevice
 from threading import Thread
 from time import sleep
+
+from pitop.common.i2c_device import I2CDevice
+from pitop.common.logger import PTLogger
 
 
 class HubRegisters:
@@ -76,8 +77,7 @@ class HubConnection:
             self._i2c_device = I2CDevice("/dev/i2c-1", 0x10)
             self._i2c_device.connect()
         except Exception as e:
-            PTLogger.warning(
-                "Unable to read from hub (v2) over i2c: " + str(e))
+            PTLogger.warning("Unable to read from hub (v2) over i2c: " + str(e))
             return False
 
         return True
@@ -144,8 +144,7 @@ class HubConnection:
             PTLogger.debug("Hub: set_brightness")
 
             if value < 0 or value > 16:
-                PTLogger.warning(
-                    "Invalid brightness value provided: " + str(value))
+                PTLogger.warning("Invalid brightness value provided: " + str(value))
                 return
 
             backlight_settings = self._i2c_device.read_unsigned_byte(
@@ -160,8 +159,7 @@ class HubConnection:
             # Set the new brightness value into those bits
             backlight_settings = backlight_settings | value
 
-            self._i2c_device.write_byte(
-                HubRegisters.DIS__BACKLIGHT, backlight_settings)
+            self._i2c_device.write_byte(HubRegisters.DIS__BACKLIGHT, backlight_settings)
 
         except Exception as e:
             PTLogger.error("Error setting brightness: " + str(e))
@@ -175,8 +173,7 @@ class HubConnection:
             )
             self._i2c_device.write_byte(
                 HubRegisters.DIS__BACKLIGHT,
-                backlight_settings & (
-                    ~BacklightRegister.DIS__BACKLIGHT__EN & 0xFF),
+                backlight_settings & (~BacklightRegister.DIS__BACKLIGHT__EN & 0xFF),
             )
 
         except Exception as e:
@@ -225,8 +222,7 @@ class HubConnection:
             )
 
         except Exception as e:
-            PTLogger.error(
-                "Error enabling hdmi audio (multiplexer): " + str(e))
+            PTLogger.error("Error enabling hdmi audio (multiplexer): " + str(e))
 
     def disable_hdmi_audio(self):
 
@@ -241,8 +237,7 @@ class HubConnection:
             )
 
         except Exception as e:
-            PTLogger.error(
-                "Error disabling hdmi audio (multiplexer): " + str(e))
+            PTLogger.error("Error disabling hdmi audio (multiplexer): " + str(e))
 
     ########################
     # Internal methods
@@ -288,10 +283,8 @@ class HubConnection:
 
         # Get values from the hub
 
-        current_ma = self._i2c_device.read_signed_word(
-            HubRegisters.BAT__CURRENT)
-        voltage_v = self._i2c_device.read_signed_word(
-            HubRegisters.BAT__VOLTAGE)
+        current_ma = self._i2c_device.read_signed_word(HubRegisters.BAT__CURRENT)
+        voltage_v = self._i2c_device.read_signed_word(HubRegisters.BAT__VOLTAGE)
         relative_state_of_charge = self._i2c_device.read_unsigned_byte(
             HubRegisters.BAT__RSOC
         )
@@ -352,15 +345,15 @@ class HubConnection:
 
         if current_brightness_value < 0:
             PTLogger.warning(
-                "Invalid brightness value returned from hub: " +
-                str(current_brightness_value)
+                "Invalid brightness value returned from hub: "
+                + str(current_brightness_value)
             )
             current_brightness_value = 0
 
         if current_brightness_value > 16:
             PTLogger.warning(
-                "Invalid brightness value returned from hub: " +
-                str(current_brightness_value)
+                "Invalid brightness value returned from hub: "
+                + str(current_brightness_value)
             )
             current_brightness_value = 16
 
@@ -377,8 +370,7 @@ class HubConnection:
 
         # Lid state
 
-        lid_closed = (backlight_settings &
-                      BacklightRegister.DIS__BACKLIGHT__LIDSW) == 0
+        lid_closed = (backlight_settings & BacklightRegister.DIS__BACKLIGHT__LIDSW) == 0
 
         if lid_closed is True:
             self._state.set_lid_closed()

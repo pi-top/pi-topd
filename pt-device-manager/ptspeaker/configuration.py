@@ -1,13 +1,12 @@
-from pitop.common.logger import PTLogger
-from pitop.common.common_ids import DeviceID
-from sys_config import HDMI
-from sys_config import I2C
-from sys_config import I2S
-from pitop.common.current_session_info import get_user_using_first_display
-from os import path
-from smbus import SMBus
 import traceback
+from os import path
 from sys import exit
+
+from pitop.common.common_ids import DeviceID
+from pitop.common.current_session_info import get_user_using_first_display
+from pitop.common.logger import PTLogger
+from smbus import SMBus
+from sys_config import HDMI, I2C, I2S
 
 _BUS_ID = 1
 _I2C_BUS = None
@@ -44,8 +43,7 @@ def _set_write_to_v1_speaker_enabled(address, enable):
     if enable:
         PTLogger.info("Enabling write to pi-topSPEAKER (" + str(address) + ")")
     else:
-        PTLogger.info(
-            "Disabling write to pi-topSPEAKER (" + str(address) + ")")
+        PTLogger.info("Disabling write to pi-topSPEAKER (" + str(address) + ")")
 
     try:
         _I2C_BUS = SMBus(_BUS_ID)
@@ -71,8 +69,7 @@ def _parse_v1_speaker_playback_mode_file(mode):
                     array = line.split()
                     if len(array) < 4:
                         PTLogger.info(
-                            "Error parsing line " +
-                            str(index) + " - exiting..."
+                            "Error parsing line " + str(index) + " - exiting..."
                         )
                         exit(0)
                     else:
@@ -85,16 +82,14 @@ def _parse_v1_speaker_playback_mode_file(mode):
                             )
                         else:
                             _I2C_BUS.write_byte_data(
-                                _v1_i2c_addr, int(
-                                    array[2], 16), int(array[3], 16)
+                                _v1_i2c_addr, int(array[2], 16), int(array[3], 16)
                             )
                 index = index + 1
 
         return True
 
     except Exception as e:
-        PTLogger.info(
-            "Failed to write configuration data to pi-topSPEAKER: " + str(e))
+        PTLogger.info("Failed to write configuration data to pi-topSPEAKER: " + str(e))
         return False
 
 
@@ -236,26 +231,30 @@ def enable_device():
         if "pi-topSPEAKER-v1" in _speaker_type_name:
             PTLogger.info("pi-topSPEAKER v1 is not supported on pi-top v2")
         elif "pi-topSPEAKER-v2" in _speaker_type_name:
-            enabled, reboot_required, v2_hub_hdmi_to_i2s_required = (
-                _initialise_v2_hub_v2_speaker()
-            )
+            (
+                enabled,
+                reboot_required,
+                v2_hub_hdmi_to_i2s_required,
+            ) = _initialise_v2_hub_v2_speaker()
         else:
-            PTLogger.error("Error - unrecognised device: " +
-                           _speaker_type_name)
+            PTLogger.error("Error - unrecognised device: " + _speaker_type_name)
     elif hub_is_v1 or (_host_device_id == DeviceID.unknown):
         if "pi-topSPEAKER-v1-" in _speaker_type_name:
             mode_long = _speaker_type_name.replace("pi-topSPEAKER-v1-", "")
             mode_first_lower_char = mode_long[0].lower()
-            enabled, reboot_required, v2_hub_hdmi_to_i2s_required = _initialise_v1_hub_v1_speaker(
-                mode_first_lower_char
-            )
+            (
+                enabled,
+                reboot_required,
+                v2_hub_hdmi_to_i2s_required,
+            ) = _initialise_v1_hub_v1_speaker(mode_first_lower_char)
         elif "pi-topSPEAKER-v2" in _speaker_type_name:
-            enabled, reboot_required, v2_hub_hdmi_to_i2s_required = (
-                _initialise_v1_hub_v2_speaker()
-            )
+            (
+                enabled,
+                reboot_required,
+                v2_hub_hdmi_to_i2s_required,
+            ) = _initialise_v1_hub_v2_speaker()
         else:
-            PTLogger.error("Error - unrecognised device: " +
-                           _speaker_type_name)
+            PTLogger.error("Error - unrecognised device: " + _speaker_type_name)
 
     else:
         PTLogger.error(

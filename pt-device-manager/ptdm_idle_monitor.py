@@ -1,12 +1,9 @@
-from pitop.common.logger import PTLogger
-from subprocess import check_output
-from subprocess import CalledProcessError
-from os import devnull
-from os import makedirs
-from os import path
-from os import remove
+from os import devnull, makedirs, path, remove
+from subprocess import CalledProcessError, check_output
 from threading import Thread
 from time import sleep
+
+from pitop.common.logger import PTLogger
 
 
 class IdleMonitor:
@@ -124,8 +121,7 @@ class IdleMonitor:
             try:
                 idletime_ms = int(xprintidle_resp_str)
             except ValueError:
-                PTLogger.warning(
-                    "Unable to convert xprintidle response to integer")
+                PTLogger.warning("Unable to convert xprintidle response to integer")
                 break
 
             timeout_expired = idletime_ms > (self._idle_timeout_s * 1000)
