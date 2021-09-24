@@ -4,9 +4,8 @@ from pitop.common.common_ids import DeviceID
 from pitop.common.counter import Counter
 from pitop.common.logger import PTLogger
 
-from pitopd.utils import get_project_root
-
 from . import state
+from .utils import get_project_root
 
 # Handles safe shutdown when the hub is communicating
 # that its battery capacity is below a threshold set by ptdm_controller

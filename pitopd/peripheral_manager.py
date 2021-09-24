@@ -6,12 +6,9 @@ from pitop.common.common_ids import DeviceID, Peripheral, PeripheralID
 from pitop.common.current_session_info import get_user_using_first_display
 from pitop.common.logger import PTLogger
 
-import pitopd.ptpulse as ptpulse_cfg
-import pitopd.ptspeaker as ptspeaker_cfg
-from pitopd.utils import get_project_root
-
-from . import state
+from . import ptpulse, ptspeaker, state
 from .sys_config import I2C, I2S, Hifiberry, System
+from .utils import get_project_root
 
 
 class PeripheralManager:
@@ -102,13 +99,13 @@ class PeripheralManager:
         self.emit_peripheral_disconnected(peripheral.id)
 
     def enable_v1_hub_v1_speaker(self, peripheral):
-        ptspeaker_cfg.initialise(self._host_device_id, peripheral.name)
+        ptspeaker.initialise(self._host_device_id, peripheral.name)
 
         (
             enabled,
             reboot_required,
             v2_hub_hdmi_to_i2s_required,
-        ) = ptspeaker_cfg.enable_device()
+        ) = ptspeaker.enable_device()
 
         if enabled or reboot_required:
             # Mark as enabled even if a reboot is required
@@ -119,13 +116,13 @@ class PeripheralManager:
             self.emit_reboot_message()
 
     def enable_v1_hub_v2_speaker(self, peripheral):
-        ptspeaker_cfg.initialise(self._host_device_id, peripheral.name)
+        ptspeaker.initialise(self._host_device_id, peripheral.name)
 
         (
             enabled,
             reboot_required,
             v2_hub_hdmi_to_i2s_required,
-        ) = ptspeaker_cfg.enable_device()
+        ) = ptspeaker.enable_device()
 
         if enabled or reboot_required:
             # Mark as enabled even if a reboot is required
@@ -136,13 +133,13 @@ class PeripheralManager:
             self.emit_reboot_message()
 
     def configure_not_v2_hub_pulse(self, peripheral, enable):
-        ptpulse_cfg.initialise(self._host_device_id, peripheral.name)
+        ptpulse.initialise(self._host_device_id, peripheral.name)
 
         (
             enabled,
             reboot_required,
             v2_hub_hdmi_to_i2s_required,
-        ) = ptpulse_cfg.enable_device()
+        ) = ptpulse.enable_device()
 
         if enabled or reboot_required:
             # Mark as enabled even if a reboot is required
@@ -153,13 +150,13 @@ class PeripheralManager:
             self.emit_reboot_message()
 
     def enable_v2_hub_v2_speaker(self, peripheral):
-        ptspeaker_cfg.initialise(self._host_device_id, peripheral.name)
+        ptspeaker.initialise(self._host_device_id, peripheral.name)
 
         (
             enabled,
             reboot_required,
             v2_hub_hdmi_to_i2s_required,
-        ) = ptspeaker_cfg.enable_device()
+        ) = ptspeaker.enable_device()
 
         if enabled is True or reboot_required is True:
             # Mark as enabled even if a reboot is required
@@ -176,13 +173,13 @@ class PeripheralManager:
             self.emit_reboot_message()
 
     def configure_v2_hub_pulse(self, peripheral, enable):
-        ptpulse_cfg.initialise(self._host_device_id, peripheral.name)
+        ptpulse.initialise(self._host_device_id, peripheral.name)
 
         (
             enabled,
             reboot_required,
             v2_hub_hdmi_to_i2s_required,
-        ) = ptpulse_cfg.enable_device()
+        ) = ptpulse.enable_device()
 
         if enabled is True or reboot_required is True:
             # Mark as enabled even if a reboot is required

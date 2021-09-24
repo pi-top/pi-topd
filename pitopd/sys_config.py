@@ -13,7 +13,7 @@ from pitop.common.file_ops import create_temp_file, sed_inplace
 from pitop.common.formatting import get_uncommented_line, is_line_commented
 from pitop.common.logger import PTLogger
 
-from pitopd.i2s import setI2S
+from .i2s import setI2S
 
 
 class AudioDevice(Enum):

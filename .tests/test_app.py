@@ -29,7 +29,7 @@ class AppTestCase(unittest.TestCase):
 
         # Create the object under test
 
-        self.controller = App(
+        self.app = App(
             self.mock_publish_server,
             self.mock_power_manager,
             self.mock_hub_manager,
@@ -40,13 +40,13 @@ class AppTestCase(unittest.TestCase):
             self.mock_config_manager,
         )
 
-        self.controller._continue_running = False
+        self.app._continue_running = False
 
     def tearDown(self):
 
         pass
 
-    def test_controller_starts_publish_server(self):
+    def test_app_starts_publish_server(self):
 
         # Setup
 
@@ -54,13 +54,13 @@ class AppTestCase(unittest.TestCase):
 
         # Run
 
-        self.assertTrue(self.controller.start())
+        self.assertTrue(self.app.start())
 
         # Test
 
         self.mock_publish_server.start_listening.assert_called()
 
-    def test_controller_dies_if_fails_to_start_publish_server(self):
+    def test_app_dies_if_fails_to_start_publish_server(self):
 
         # Setup
 
@@ -68,9 +68,9 @@ class AppTestCase(unittest.TestCase):
 
         # Run
 
-        self.assertFalse(self.controller.start())
+        self.assertFalse(self.app.start())
 
-    def test_controller_connects_to_hub_and_starts_hub_manager(self):
+    def test_app_connects_to_hub_and_starts_hub_manager(self):
 
         # Setup
 
@@ -79,14 +79,14 @@ class AppTestCase(unittest.TestCase):
 
         # Run
 
-        self.assertTrue(self.controller.start())
+        self.assertTrue(self.app.start())
 
         # Test
 
         self.mock_hub_manager.connect_to_hub.assert_called()
         self.mock_hub_manager.start.assert_called()
 
-    def test_controller_connects_to_hub_and_writes_host_device_to_file(self):
+    def test_app_connects_to_hub_and_writes_host_device_to_file(self):
 
         # Setup
         self.mock_publish_server.start_listening.return_value = True
@@ -95,7 +95,7 @@ class AppTestCase(unittest.TestCase):
 
         # Run
 
-        self.assertTrue(self.controller.start())
+        self.assertTrue(self.app.start())
 
         # Test
 
@@ -103,7 +103,7 @@ class AppTestCase(unittest.TestCase):
             DeviceID.pi_top_4
         )
 
-    def test_controller_does_not_connect_to_a_hub_and_writes_host_device_to_file(self):
+    def test_app_does_not_connect_to_a_hub_and_writes_host_device_to_file(self):
 
         # Setup
         self.mock_publish_server.start_listening.return_value = True
@@ -112,7 +112,7 @@ class AppTestCase(unittest.TestCase):
 
         # Run
 
-        assert self.controller.start() is False
+        assert self.app.start() is False
 
         # Test
 
@@ -120,7 +120,7 @@ class AppTestCase(unittest.TestCase):
             DeviceID.unknown
         )
 
-    def test_controller_dies_if_fails_to_connect_to_hub(self):
+    def test_app_dies_if_fails_to_connect_to_hub(self):
 
         # Setup
 
@@ -129,14 +129,14 @@ class AppTestCase(unittest.TestCase):
 
         # Run
 
-        self.assertFalse(self.controller.start())
+        self.assertFalse(self.app.start())
 
         # Test
 
         self.mock_hub_manager.connect_to_hub.assert_called()
         self.mock_hub_manager.start.assert_not_called()
 
-    def test_controller_waits_for_and_gets_device_id(self):
+    def test_app_waits_for_and_gets_device_id(self):
 
         # Setup
 
@@ -145,14 +145,14 @@ class AppTestCase(unittest.TestCase):
 
         # Run
 
-        self.assertTrue(self.controller.start())
+        self.assertTrue(self.app.start())
 
         # Test
 
         self.mock_hub_manager.wait_for_device_identification.assert_called()
         self.mock_hub_manager.get_device_id.assert_called()
 
-    def test_controller_exits_if_device_unknown(self):
+    def test_app_exits_if_device_unknown(self):
 
         # Setup
 
@@ -162,9 +162,9 @@ class AppTestCase(unittest.TestCase):
 
         # Run
 
-        assert self.controller.start() is False
+        assert self.app.start() is False
 
-    def test_controller_device_id_passed_to_sub_systems(self):
+    def test_app_device_id_passed_to_sub_systems(self):
 
         # Setup
 
@@ -174,7 +174,7 @@ class AppTestCase(unittest.TestCase):
 
         # Run
 
-        self.assertTrue(self.controller.start())
+        self.assertTrue(self.app.start())
 
         # Test
 
@@ -183,7 +183,7 @@ class AppTestCase(unittest.TestCase):
         )
         self.mock_power_manager.set_device_id.assert_called_with(DeviceID.pi_top_3)
 
-    def test_controller_starts_peripheral_manager(self):
+    def test_app_starts_peripheral_manager(self):
 
         # Setup
 
@@ -193,13 +193,13 @@ class AppTestCase(unittest.TestCase):
 
         # Run
 
-        self.assertTrue(self.controller.start())
+        self.assertTrue(self.app.start())
 
         # Test
 
         self.mock_peripheral_manager.start.assert_called()
 
-    def test_controller_dies_if_fails_to_start_peripheral_manager(self):
+    def test_app_dies_if_fails_to_start_peripheral_manager(self):
 
         # Setup
 
@@ -209,9 +209,9 @@ class AppTestCase(unittest.TestCase):
 
         # Run
 
-        self.assertFalse(self.controller.start())
+        self.assertFalse(self.app.start())
 
-    def test_controller_starts_idle_monitor(self):
+    def test_app_starts_idle_monitor(self):
 
         # Setup
 
@@ -221,13 +221,13 @@ class AppTestCase(unittest.TestCase):
 
         # Run
 
-        self.assertTrue(self.controller.start())
+        self.assertTrue(self.app.start())
 
         # Test
 
         self.mock_idle_monitor.start.assert_called()
 
-    def test_controller_starts_request_server_listening(self):
+    def test_app_starts_request_server_listening(self):
 
         # Setup
 
@@ -238,13 +238,13 @@ class AppTestCase(unittest.TestCase):
 
         # Run
 
-        self.assertTrue(self.controller.start())
+        self.assertTrue(self.app.start())
 
         # Test
 
         self.mock_request_server.start_listening.assert_called()
 
-    def test_controller_dies_if_fails_to_start_request_server(self):
+    def test_app_dies_if_fails_to_start_request_server(self):
 
         # Setup
 
@@ -255,9 +255,9 @@ class AppTestCase(unittest.TestCase):
 
         # Run
 
-        self.assertFalse(self.controller.start())
+        self.assertFalse(self.app.start())
 
-    def test_controller_notifies_systemd_when_ready(self):
+    def test_app_notifies_systemd_when_ready(self):
 
         # Setup
 
@@ -268,7 +268,7 @@ class AppTestCase(unittest.TestCase):
 
         # Run
 
-        self.assertTrue(self.controller.start())
+        self.assertTrue(self.app.start())
 
         # Test
 
