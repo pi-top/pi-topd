@@ -174,10 +174,8 @@ def poweroff():
     try:
         device_id = get_device_id()
         if device_id in [DeviceID.pi_top, DeviceID.pi_top_ceed]:
-            # TODO: 15s timeout?
             _do_poweroff_legacy()
         elif device_id in [DeviceID.pi_top_3, DeviceID.pi_top_4]:
-            # TODO: 5s timeout?
             _do_poweroff()
 
     except Exception as e:
