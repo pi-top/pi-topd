@@ -1,9 +1,10 @@
-from pitop.common.logger import PTLogger
-from pitop.common.counter import Counter
-from smbus import SMBus
+import traceback
 from threading import Thread
 from time import sleep
-import traceback
+
+from pitop.common.counter import Counter
+from pitop.common.logger import PTLogger
+from smbus import SMBus
 
 _battery_state_handler = None
 _main_thread = None
@@ -13,36 +14,34 @@ _run_main_thread = False
 _cycle_sleep_time = 1
 
 
-class BatteryRegisters():
-    current = 0x0a
+class BatteryRegisters:
+    current = 0x0A
     voltage = 0x09
-    capacity = 0x0d
+    capacity = 0x0D
     charge_time = 0x13
     discharge_time = 0x12
 
 
-class BatteryDataType():
-    charging_state = 'charging_state'
-    capacity = 'capacity'
-    time = 'time'
-    current = 'current'
-    voltage = 'voltage'
+class BatteryDataType:
+    charging_state = "charging_state"
+    capacity = "capacity"
+    time = "time"
+    current = "current"
+    voltage = "voltage"
 
 
 class BatteryStateHandler:
-
     def __init__(self, state_instance):
         self._state = state_instance
         self._bus_no = 1
-        self._chip_address = 0x0b
+        self._chip_address = 0x0B
 
         self._i2c_ctr = Counter(20)
 
         self._connected = self._setup_i2c()
 
     def set_charging_state(self, charging_state):
-        PTLogger.debug("Setting battery charging state as " +
-                       str(charging_state))
+        PTLogger.debug("Setting battery charging state as " + str(charging_state))
         self._state.set_battery_charging_state(charging_state)
 
     def set_capacity(self, capacity):
@@ -64,10 +63,8 @@ class BatteryStateHandler:
     def set_wattage_from_current_and_voltage(self):
         current_amps = self._current / 1000
         voltage_volts = self._voltage / 1000
-        wattage_deciwatts = max(
-            0, int(round((current_amps * voltage_volts) * 10)))
-        PTLogger.debug("Setting battery wattage as " +
-                       str(wattage_deciwatts) + "dW")
+        wattage_deciwatts = max(0, int(round((current_amps * voltage_volts) * 10)))
+        PTLogger.debug("Setting battery wattage as " + str(wattage_deciwatts) + "dW")
         self._state.set_battery_wattage(wattage_deciwatts)
 
     def is_connected(self):
@@ -171,8 +168,7 @@ class BatteryStateHandler:
             self.set_time(resp)
             return True
         else:
-            PTLogger.debug(
-                "Invalid, not less than or equal to 2400: " + str(resp))
+            PTLogger.debug("Invalid, not less than or equal to 2400: " + str(resp))
             return False
 
     def _process_current_and_charging_state_i2c_resp(self, resp):
@@ -183,8 +179,9 @@ class BatteryStateHandler:
         if resp <= -10:
             self.set_charging_state(0)
         else:
-            charging_state = 2 if (
-                self._state._battery_time == 0) else 1  # charging state
+            charging_state = (
+                2 if (self._state._battery_time == 0) else 1
+            )  # charging state
             self.set_charging_state(charging_state)
 
         self.set_current(resp)
@@ -210,8 +207,9 @@ class BatteryStateHandler:
         register = None
         try:
             register = self._get_battery_register_to_read(data_to_get)
-            resp = self.twos_comp(self._bus.read_word_data(
-                self._chip_address, register))
+            resp = self.twos_comp(
+                self._bus.read_word_data(self._chip_address, register)
+            )
             successful_read = True
         except Exception:
             pass
@@ -248,7 +246,8 @@ def start():
         _main_thread.start()
     else:
         PTLogger.error(
-            "Unable to start pi-topHUB SPI communication - run initialise() first!")
+            "Unable to start pi-topHUB SPI communication - run initialise() first!"
+        )
 
 
 def stop():
@@ -259,7 +258,9 @@ def stop():
 
 
 def is_initialised():
-    return (_battery_state_handler is not None) and (_battery_state_handler.is_connected() is True)
+    return (_battery_state_handler is not None) and (
+        _battery_state_handler.is_connected() is True
+    )
 
 
 def initialise(state):
@@ -277,26 +278,23 @@ def initialise(state):
 
 def communicate():
     if not is_initialised():
-        PTLogger.error(
-            "I2C has not been initialised - call initialise() first")
+        PTLogger.error("I2C has not been initialised - call initialise() first")
         return False
 
     try:
         _battery_state_handler._refresh_state()
         return True
     except Exception as e:
-        PTLogger.error(
-            "Error refreshing the state of the battery handler. " + str(e))
+        PTLogger.error("Error refreshing the state of the battery handler. " + str(e))
         PTLogger.info(traceback.format_exc())
         return False
 
 
 def _main_thread_loop():
-    '''
-        ///////////////////////////
-        // MAIN CODE STARTS HERE //
-        ///////////////////////////
-    '''
+    """///////////////////////////
+
+    // MAIN CODE STARTS HERE // ///////////////////////////
+    """
 
     while _run_main_thread:
         communicate()

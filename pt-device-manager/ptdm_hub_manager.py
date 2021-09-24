@@ -1,14 +1,12 @@
+from json import dump as json_dump
+from os import path, remove
+from time import sleep
+
 from pitop.common.common_ids import DeviceID
 from pitop.common.logger import PTLogger
-
-from pthub3 import pthub3
-from pthub2 import pthub2
 from pthub import pthub
-
-from time import sleep
-from os import path
-from os import remove
-from json import dump as json_dump
+from pthub2 import pthub2
+from pthub3 import pthub3
 
 # Determines which type of pi-top device hub (if any) is connected, and communicates with it
 
@@ -78,8 +76,7 @@ class HubManager:
         if self._hub_connected():
             self._active_hub_module.start()
         else:
-            PTLogger.warning(
-                "Attempted to call start when there was no active hub")
+            PTLogger.warning("Attempted to call start when there was no active hub")
 
     def stop(self):
 
@@ -231,8 +228,7 @@ class HubManager:
             return None
 
     def set_oled_pi_control_state(self, is_pi_controlled):
-        PTLogger.info("Setting OLED Pi control state to " +
-                      str(is_pi_controlled))
+        PTLogger.info("Setting OLED Pi control state to " + str(is_pi_controlled))
         if self._hub_connected():
             self._active_hub_module.set_oled_pi_control_state(is_pi_controlled)
         else:
@@ -245,8 +241,7 @@ class HubManager:
         if self._hub_connected():
             self._active_hub_module.shutdown()
         else:
-            PTLogger.warning(
-                "Attempted to call shutdown when there was no active hub")
+            PTLogger.warning("Attempted to call shutdown when there was no active hub")
 
     def enable_hdmi_to_i2s_audio(self):
         PTLogger.info("Switching HDMI to I2S mux on")
@@ -303,17 +298,19 @@ class HubManager:
         if self._hub_connected():
             __c = self._callback_client
             if self._active_hub_module.__name__ == "pthub3.pthub3":
-                self._active_hub_module.register_client({
-                    "hub_brightness": __c.on_hub_brightness_changed,
-                    "screen_blank_state": __c.on_screen_blank_state_changed,
-                    "lid_open_state": __c.on_lid_open_state_changed,
-                    "hub_shutdown_requested": __c.on_hub_shutdown_requested,
-                    "hub_battery_state": __c.on_hub_battery_state_changed,
-                    "button_press_state": __c.on_button_press_state_changed,
-                    "oled_pi_controlled_state": __c.on_oled_pi_controlled_state_changed,
-                    "oled_spi_state": __c.on_oled_spi_bus_changed,
-                    # "buttons_route_to_gpio": __c.on_buttons_route_to_gpio_state_changed,
-                })
+                self._active_hub_module.register_client(
+                    {
+                        "hub_brightness": __c.on_hub_brightness_changed,
+                        "screen_blank_state": __c.on_screen_blank_state_changed,
+                        "lid_open_state": __c.on_lid_open_state_changed,
+                        "hub_shutdown_requested": __c.on_hub_shutdown_requested,
+                        "hub_battery_state": __c.on_hub_battery_state_changed,
+                        "button_press_state": __c.on_button_press_state_changed,
+                        "oled_pi_controlled_state": __c.on_oled_pi_controlled_state_changed,
+                        "oled_spi_state": __c.on_oled_spi_bus_changed,
+                        # "buttons_route_to_gpio": __c.on_buttons_route_to_gpio_state_changed,
+                    }
+                )
                 self._active_hub_module.set_speed(10)
             else:
                 self._active_hub_module.register_client(

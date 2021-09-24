@@ -1,7 +1,8 @@
-from pitop.common.logger import PTLogger
+from os import system
+
 from pitop.common.common_ids import DeviceID
 from pitop.common.counter import Counter
-from os import system
+from pitop.common.logger import PTLogger
 
 
 # Handles safe shutdown when the hub is communicating

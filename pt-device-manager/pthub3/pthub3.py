@@ -1,7 +1,8 @@
-from pitop.common.logger import PTLogger
 from pitop.common.common_ids import DeviceID
-from .pthub3_state import State
+from pitop.common.logger import PTLogger
+
 from .pthub3_connection import HubConnection
+from .pthub3_state import State
 
 
 def initialise():
@@ -386,7 +387,9 @@ def get_apcad_3v3():
 
 
 def get_apcad_control_dc_mpwr_input_auto_overcurrent_protection():
-    return _hub_connection.read_apcad_control_dc_mpwr_input_auto_overcurrent_protection()
+    return (
+        _hub_connection.read_apcad_control_dc_mpwr_input_auto_overcurrent_protection()
+    )
 
 
 def set_fan_manual_speed(fan_speed):
@@ -421,7 +424,12 @@ def get_device_id():
 
 
 def get_battery_state():
-    return _state.battery_charging_state, _state.battery_capacity, _state.battery_remaining_time, _state.battery_wattage
+    return (
+        _state.battery_charging_state,
+        _state.battery_capacity,
+        _state.battery_remaining_time,
+        _state.battery_wattage,
+    )
 
 
 def get_battery_time_state():

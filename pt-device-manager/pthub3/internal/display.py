@@ -24,9 +24,9 @@ class BacklightRegister:
 
     # Combinations
     DIS__BACKLIGHT__PERC_ALL = (
-        DIS__BACKLIGHT__PERC_B1 |
-        DIS__BACKLIGHT__PERC_B2 |
-        DIS__BACKLIGHT__PERC_B3 |
-        DIS__BACKLIGHT__PERC_B4 |
-        DIS__BACKLIGHT__PERC_B5
+        DIS__BACKLIGHT__PERC_B1
+        | DIS__BACKLIGHT__PERC_B2
+        | DIS__BACKLIGHT__PERC_B3
+        | DIS__BACKLIGHT__PERC_B4
+        | DIS__BACKLIGHT__PERC_B5
     )

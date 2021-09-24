@@ -1,15 +1,16 @@
-from pitop.common.command_runner import run_command
-from pitop.common.current_session_info import get_current_user
-from pitop.common.logger import PTLogger
-from pitop.common.file_ops import sed_inplace, create_temp_file
-from pitop.common.formatting import is_line_commented, get_uncommented_line
+import traceback
+from enum import Enum, auto
 from os import devnull, path
 from re import compile
 from shutil import copy
-from subprocess import check_output, call, CalledProcessError
+from subprocess import CalledProcessError, call, check_output
 from sys import version_info
-import traceback
-from enum import Enum, auto
+
+from pitop.common.command_runner import run_command
+from pitop.common.current_session_info import get_current_user
+from pitop.common.file_ops import create_temp_file, sed_inplace
+from pitop.common.formatting import get_uncommented_line, is_line_commented
+from pitop.common.logger import PTLogger
 
 
 class AudioDevice(Enum):
@@ -166,33 +167,43 @@ class _SystemCalls:
 
     @staticmethod
     def _get_config_specific_alsa_card_name(interface: AudioDevice):
-        PTLogger.debug(
-            "Getting configuration-specific alsa card name for {interface}")
+        PTLogger.debug("Getting configuration-specific alsa card name for {interface}")
         if interface == AudioDevice.Headphones:
             PTLogger.debug("Interface is headphones - using common card name")
             return "bcm2835 Headphones"
 
         if interface == AudioDevice.Hifiberry:
             PTLogger.debug(
-                "Interface is Hifiberry - card name is assumed to be 'snd_rpi_hifiberry_dac'")
+                "Interface is Hifiberry - card name is assumed to be 'snd_rpi_hifiberry_dac'"
+            )
             return "snd_rpi_hifiberry_dac"
 
         if interface != AudioDevice.HDMI:
             PTLogger.warning("Unknown interface")
             return None
 
-        PTLogger.debug(
-            "Interface is HDMI - checking for multiple HDMI outputs...")
+        PTLogger.debug("Interface is HDMI - checking for multiple HDMI outputs...")
         if _SystemCalls._get_alsa_card_number_from_name("bcm2835 HDMI 2") is None:
             PTLogger.debug("Only one HDMI port available - using 'HDMI 1'")
             return "bcm2835 HDMI 1"
 
         PTLogger.debug(
-            "Multiple HDMI ports available - checking if HDMI 1 is set to be forced out...")
-        force_hdmi0_output = (run_command(
-            "raspi-config nonint get_config_var hdmi_force_hotplug:0 /boot/config.txt", timeout=3).strip() == "1")
-        force_hdmi1_output = (run_command(
-            "raspi-config nonint get_config_var hdmi_force_hotplug:1 /boot/config.txt", timeout=3).strip() == "1")
+            "Multiple HDMI ports available - checking if HDMI 1 is set to be forced out..."
+        )
+        force_hdmi0_output = (
+            run_command(
+                "raspi-config nonint get_config_var hdmi_force_hotplug:0 /boot/config.txt",
+                timeout=3,
+            ).strip()
+            == "1"
+        )
+        force_hdmi1_output = (
+            run_command(
+                "raspi-config nonint get_config_var hdmi_force_hotplug:1 /boot/config.txt",
+                timeout=3,
+            ).strip()
+            == "1"
+        )
 
         # Return 'HDMI 2' first if output is forced out (default pi-topOS behaviour for pi-top [4])
         # Else return 'HDMI 1' (primary output on RPi 4)
@@ -205,9 +216,8 @@ class _SystemCalls:
             return "bcm2835 HDMI 1"
 
     @staticmethod
-    def _get_alsa_card_number_from_name(card_name: str) -> int:
-        PTLogger.debug(
-            "Getting device-specific alsa card number for {interface}")
+    def _get_alsa_card_number_from_name(card_name: str):
+        PTLogger.debug("Getting device-specific alsa card number for {interface}")
         card_number = None
         for line in run_command("aplay -l", timeout=5).split("\n"):
             print(line)
@@ -243,21 +253,22 @@ class _SystemCalls:
             return False
 
         PTLogger.info(
-            f"Setting audio output for user {user} to {interface.name} (card number {card_number})")
+            f"Setting audio output for user {user} to {interface.name} (card number {card_number})"
+        )
         uid = run_command(f"id -u {user}", timeout=1).strip()
         run_command(
-            f"env SUDO_USER={user} SUDO_UID={uid} raspi-config nonint do_audio {card_number}", timeout=5)
+            f"env SUDO_USER={user} SUDO_UID={uid} raspi-config nonint do_audio {card_number}",
+            timeout=5,
+        )
 
         return True
 
     @staticmethod
     def legacy_set_audio_output_interface_no(interface_no, debug_interface_name):
-        PTLogger.debug("Setting audio output to " +
-                       debug_interface_name + "...")
+        PTLogger.debug("Setting audio output to " + debug_interface_name + "...")
 
         try:
-            amixer_set_interface_cmd_arr = list(
-                _SystemCalls.OLD_AMIXER_SET_CMD_ARR)
+            amixer_set_interface_cmd_arr = list(_SystemCalls.OLD_AMIXER_SET_CMD_ARR)
             amixer_set_interface_cmd_arr.append(str(interface_no))
 
             _SystemCalls._run_cmd(amixer_set_interface_cmd_arr)
@@ -295,10 +306,8 @@ class _BootCmdline:
                     break
 
         if found_string:
-            sed_inplace(_BootCmdline.BOOT_CMDLINE_FILE,
-                        r"console=ttyAMA0,[0-9]+ ", "")
-            sed_inplace(_BootCmdline.BOOT_CMDLINE_FILE,
-                        r"console=serial0,[0-9]+ ", "")
+            sed_inplace(_BootCmdline.BOOT_CMDLINE_FILE, r"console=ttyAMA0,[0-9]+ ", "")
+            sed_inplace(_BootCmdline.BOOT_CMDLINE_FILE, r"console=serial0,[0-9]+ ", "")
 
         return found_string
 
@@ -342,8 +351,7 @@ class _BootConfig:
                 if property_name in line:
                     if not line.strip().startswith("#"):
                         if value_is_number:
-                            value = _BootConfig._get_number_value_from_line(
-                                line)
+                            value = _BootConfig._get_number_value_from_line(line)
                         else:
                             value = _BootConfig._get_last_field_from_line(line)
                         return value
@@ -485,8 +493,7 @@ class I2C:
 
         # Switch on I2C if it's not enabled
         if I2C.get_state() is False:
-            PTLogger.warning(
-                "I2C is not initialised - attempting to initialise")
+            PTLogger.warning("I2C is not initialised - attempting to initialise")
             I2C.set_state(True)
 
         # Error if still false
@@ -520,8 +527,7 @@ class I2S:
     @staticmethod
     def set_state(enable):
         i2s_mode_current, i2s_mode_next = I2S.get_states()
-        PTLogger.info("SYS_CONFIG - i2s_mode_current: " +
-                      str(i2s_mode_current))
+        PTLogger.info("SYS_CONFIG - i2s_mode_current: " + str(i2s_mode_current))
         PTLogger.info("SYS_CONFIG - i2s_mode_next: " + str(i2s_mode_next))
         if enable == i2s_mode_current:
             PTLogger.info(

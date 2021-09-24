@@ -25,10 +25,12 @@ class State:
     def emit_battery_state_change(self):
         func = self.funcs.get("hub_battery_state")
         if callable(func):
-            func(self.battery_charging_state,
-                 self.battery_capacity,
-                 self.battery_remaining_time,
-                 self.battery_wattage)
+            func(
+                self.battery_charging_state,
+                self.battery_capacity,
+                self.battery_remaining_time,
+                self.battery_wattage,
+            )
 
     def emit_brightness_change(self):
         func = self.funcs.get("hub_brightness")
