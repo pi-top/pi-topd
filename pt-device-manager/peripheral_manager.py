@@ -16,8 +16,8 @@ from sys_config import I2C, I2S, Hifiberry, System
 
 class PeripheralManager:
     _loop_delay_seconds = 3
-    _i2s_config_file_path = "/etc/pi-top/.i2s-vol/hifiberry-alsactl.restore"
-    _i2s_configured_file_path = "/etc/pi-top/.i2s-vol/configured"
+    _i2s_config_file_path = "/usr/lib/pt-device-manager/files/hifiberry-alsactl.restore"
+    _i2s_configured_file_path = "/etc/.hifiberry-alsactl.configured"
 
     def __init__(self):
         self._callback_client = None
