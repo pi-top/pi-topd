@@ -11,7 +11,7 @@ class Pipes(Enum):
     display_serial = "/run/pt_display_serial"
 
 
-def write_to_file(self, pipe_path, text):
+def write_to_file(pipe_path, text):
     try:
         with open(pipe_path, "w") as f:
             f.write(str(text) + "\n")
@@ -25,7 +25,7 @@ class PipeManager:
             path = Path(pipe.value)
 
             if not path.exists():
-                path.mkdir(parents=True, exist_ok=True)
+                Path(path.parent).mkdir(parents=True, exist_ok=True)
                 path.touch()
 
     # TODO: loop over writing to FIFO, ready for clients to read

@@ -9,7 +9,7 @@ path = Path(STATE_FILE_PATH)
 lock = Lock()
 
 if not path.exists():
-    path.mkdir(parents=True, exist_ok=True)
+    Path(path.parent).mkdir(parents=True, exist_ok=True)
     path.touch()
 
 config_parser.read(STATE_FILE_PATH)
