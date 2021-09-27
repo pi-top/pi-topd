@@ -5,7 +5,6 @@ from re import compile
 from shutil import copy
 from subprocess import CalledProcessError, call, check_output
 from sys import version_info
-from typing import Optional
 
 from pitop.common.command_runner import run_command
 from pitop.common.current_session_info import get_current_user
@@ -214,7 +213,7 @@ class _SystemCalls:
             return "bcm2835 HDMI 1"
 
     @staticmethod
-    def _get_alsa_card_number_from_name(card_name: str) -> Optional[int]:
+    def _get_alsa_card_number_from_name(card_name: str):
         PTLogger.debug("Getting device-specific alsa card number for {interface}")
         card_number = None
         for line in run_command("aplay -l", timeout=5).split("\n"):
