@@ -17,7 +17,7 @@ from .server import PublishServer, RequestServer
 
 class App:
     def __init__(self):
-        self._continue_running = True
+        self._run = True
 
         self._pipe_manager = PipeManager()
         self._publish_server = PublishServer()
@@ -128,14 +128,14 @@ class App:
 
         PTLogger.info("Fully configured - running")
 
-        while self._continue_running is True:
+        while self._run is True:
             sleep(0.5)
 
         return True
 
     def stop(self):
         PTLogger.info("Stopping device manager...")
-        self._continue_running = False
+        self._run = False
 
         # Stop the other classes
 
