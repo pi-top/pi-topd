@@ -23,7 +23,7 @@ Last-Update: 2021-09-05
 -from smbus2 import SMBus
 +from smbus import SMBus
  
- from pitopd.sys_config import HDMI, I2S, UART
+ from ..sys_config import HDMI, I2S, UART
  
 --- a/pitopd/ptspeaker/configuration.py
 +++ b/pitopd/ptspeaker/configuration.py
@@ -34,5 +34,5 @@ Last-Update: 2021-09-05
 -from smbus2 import SMBus
 +from smbus import SMBus
  
- from pitopd.sys_config import HDMI, I2C, I2S
+ from .sys_config import HDMI, I2C, I2S
  
