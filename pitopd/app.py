@@ -1,23 +1,25 @@
-# Instantiates and coordinates between the other classes
 from time import sleep
 
-from config_manager import ConfigManager
-from hub_manager import HubManager
-from idle_monitor import IdleMonitor
-from interface_manager import InterfaceManager
-from notification_manager import NotificationManager
-from peripheral_manager import PeripheralManager
 from pitop.common.common_ids import DeviceID
 from pitop.common.logger import PTLogger
-from power_manager import PowerManager
-from server import PublishServer, RequestServer
 from systemd.daemon import notify
+
+from . import state
+from .hub_manager import HubManager
+from .idle_monitor import IdleMonitor
+from .interface_manager import InterfaceManager
+from .notification_manager import NotificationManager
+from .peripheral_manager import PeripheralManager
+from .pipe_manager import PipeManager
+from .power_manager import PowerManager
+from .server import PublishServer, RequestServer
 
 
 class App:
     def __init__(self):
-        self._continue_running = True
+        self._run = True
 
+        self._pipe_manager = PipeManager()
         self._publish_server = PublishServer()
         self._power_manager = PowerManager()
         self._hub_manager = HubManager()
@@ -26,9 +28,7 @@ class App:
         self._notification_manager = NotificationManager()
         self._peripheral_manager = PeripheralManager()
         self._request_server = RequestServer()
-        self._config_manager = ConfigManager()
 
-        # Initialise
         self._power_manager.initialise(self)
         self._hub_manager.initialise(self)
         self._idle_monitor.initialise(self)
@@ -42,10 +42,11 @@ class App:
 
         PTLogger.info(f"Setting device ID as {self.device_id}")
 
-        self._config_manager.write_device_id_to_file(self.device_id)
+        state.set("device", "type", str(self.device_id.name))
 
         self._peripheral_manager.initialise_device_id(self.device_id)
         self._power_manager.set_device_id(self.device_id)
+        self._pipe_manager.set_device_id(self.device_id)
 
     def _set_host_device_id_from_hub(self):
         self._set_host_device_id(self._hub_manager.get_device_id())
@@ -53,13 +54,25 @@ class App:
     def start(self):
         PTLogger.info("Starting device manager...")
 
-        last_identified_device_id = self._config_manager.get_last_identified_device_id()
+        last_identified_device_id_str = state.get(
+            "device", "type", fallback=str(DeviceID.unknown.name)
+        )
+        last_identified_device_id = DeviceID[last_identified_device_id_str]
 
         if self._publish_server.start_listening() is False:
             PTLogger.error("Unable to start listening on publish server")
             return False
 
         if self._hub_manager.connect_to_hub():
+            self._pipe_manager.set_hub_serial_number(
+                self._hub_manager._active_hub_module.get_serial_id()
+            )
+            self._pipe_manager.set_battery_serial_number(
+                self._hub_manager._active_hub_module.get_battery_serial_number()
+            )
+            self._pipe_manager.set_display_serial_number(
+                self._hub_manager._active_hub_module.get_display_serial_id()
+            )
             self._hub_manager.start()
         else:
             PTLogger.error("No pi-top hub detected")
@@ -115,14 +128,14 @@ class App:
 
         PTLogger.info("Fully configured - running")
 
-        while self._continue_running is True:
+        while self._run is True:
             sleep(0.5)
 
         return True
 
     def stop(self):
         PTLogger.info("Stopping device manager...")
-        self._continue_running = False
+        self._run = False
 
         # Stop the other classes
 

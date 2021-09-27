@@ -12,6 +12,8 @@ from pitop.common.file_ops import create_temp_file, sed_inplace
 from pitop.common.formatting import get_uncommented_line, is_line_commented
 from pitop.common.logger import PTLogger
 
+from .utils import get_project_root
+
 
 class AudioDevice(Enum):
     Headphones = auto()
@@ -27,7 +29,8 @@ class _SystemCalls:
 
     I2CDETECT_CMD_ARR = ["/usr/sbin/i2cdetect", "-y", "1"]
 
-    PTI2S_CMD = "/usr/lib/pt-device-manager/files/pt-i2s"
+    PTI2S_CMD = f"{get_project_root()}/scripts/pt-i2s"
+
     I2S_ENABLE_CMD_ARR = [PTI2S_CMD, "enable"]
     I2S_DISABLE_CMD_ARR = [PTI2S_CMD, "disable"]
 

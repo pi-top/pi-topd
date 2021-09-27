@@ -1,0 +1,10 @@
+click python3-click; PEP386
+pitop python3-pitop; PEP386
+# smbus2 is a pure Python implementation of the python-smbus package
+# Versions do not match so ignore PEP386
+smbus2 python3-smbus
+spidev python3-spidev; PEP386
+# Journal handling
+systemd_python python3-systemd; PEP386
+# System state change communication
+pyzmq python3-zmq; PEP386

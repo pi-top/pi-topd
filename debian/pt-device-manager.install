@@ -1,2 +1,0 @@
-pt-device-manager/*                               /usr/lib/pt-device-manager
-debian/extra/pt-xhost-local-root.conf             /etc/lightdm/lightdm.conf.d/

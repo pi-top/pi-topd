@@ -1,33 +1,24 @@
-from os import devnull, makedirs, path, remove
+from os import devnull
 from subprocess import CalledProcessError, check_output
 from threading import Thread
 from time import sleep
 
 from pitop.common.logger import PTLogger
 
+from . import state
+
 
 class IdleMonitor:
 
     DEFAULT_CYCLE_SLEEP_TIME = 5
     SENSITIVE_CYCLE_SLEEP_TIME = 0.2
-    CONFIG_FILE_DIR = "/etc/pi-top/pt-device-manager/"
-    CONFIG_FILE = CONFIG_FILE_DIR + "screen-timeout"
 
     def __init__(self):
         self._callback_client = None
         self.previous_idletime = 0
         self._main_thread = None
         self._run_main_thread = False
-        self._idle_timeout_s = 300
         self._cycle_sleep_time = self.DEFAULT_CYCLE_SLEEP_TIME
-
-        if not path.exists(self.CONFIG_FILE_DIR):
-            makedirs(self.CONFIG_FILE_DIR)
-
-        if not path.exists(self.CONFIG_FILE):
-            self._set_timeout_in_file()
-
-        self._get_timeout_from_file()
 
     def initialise(self, callback_client):
         self._callback_client = callback_client
@@ -48,11 +39,10 @@ class IdleMonitor:
         PTLogger.debug("Stopped idle time monitor.")
 
     def get_configured_timeout(self):
-        return self._idle_timeout_s
+        return int(state.get("display", "timeout", fallback=str(300)))
 
-    def set_configured_timeout(self, timeout):
-        self._idle_timeout_s = timeout
-        self._set_timeout_in_file()
+    def set_configured_timeout(self, timeout: int):
+        state.set("display", "timeout", str(timeout))
 
     # Internal methods
     def _emit_idletime_threshold_exceeded(self):
@@ -64,33 +54,6 @@ class IdleMonitor:
         if self._callback_client is not None:
             PTLogger.info("Idletime reset")
             self._callback_client.on_exceeded_idletime_reset()
-
-    def _get_timeout_from_file(self):
-        if path.exists(self.CONFIG_FILE):
-            try:
-                file = open(self.CONFIG_FILE, "r+")
-                file_contents = file.read().strip()
-                file.close()
-
-                self._idle_timeout_s = int(file_contents)
-                PTLogger.info(
-                    f"Idletime retrieved from config: {str(self._idle_timeout_s)}"
-                )
-            except Exception as e:
-                PTLogger.warning(
-                    f"Idletime could not be retrieved from config. Using default: {str(self._idle_timeout_s)}"
-                )
-                PTLogger.warning(e)
-
-    def _set_timeout_in_file(self):
-        if path.exists(self.CONFIG_FILE):
-            remove(self.CONFIG_FILE)
-
-        file = open(self.CONFIG_FILE, "w")
-        file.write(str(self._idle_timeout_s) + "\n")
-        file.close()
-
-        PTLogger.info(f"Idletime set in config: {str(self._idle_timeout_s)}")
 
     def _main_thread_loop(self):
         startup_wait_counter = 0
@@ -124,16 +87,16 @@ class IdleMonitor:
                 PTLogger.warning("Unable to convert xprintidle response to integer")
                 break
 
-            timeout_expired = idletime_ms > (self._idle_timeout_s * 1000)
+            idle_timeout_s = self.get_configured_timeout()
+
+            timeout_expired = idletime_ms > (idle_timeout_s * 1000)
             idletime_reset = idletime_ms < self.previous_idletime
             PTLogger.debug(f"MS since idle: \t{str(idletime_ms)}")
             PTLogger.debug(f"Timeout Expired?:\t{str(timeout_expired)}")
             PTLogger.debug(f"Idletime Expired?:\t{str(idletime_reset)}")
 
-            if self._idle_timeout_s > 0:
-                timeout_already_expired = (
-                    self.previous_idletime > self._idle_timeout_s * 1000
-                )
+            if idle_timeout_s > 0:
+                timeout_already_expired = self.previous_idletime > idle_timeout_s * 1000
 
                 if timeout_expired and not timeout_already_expired:
                     self._emit_idletime_threshold_exceeded()

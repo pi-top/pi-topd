@@ -1,0 +1,38 @@
+Description: smbus2 is a pure Python implementation of the python-smbus package
+Forwarded: not-needed
+Author: pi-top <deb-maintainers@pi-top.com>
+Last-Update: 2021-09-05
+
+--- a/pitopd/pthub/pthub_i2c.py
++++ b/pitopd/pthub/pthub_i2c.py
+@@ -4,7 +4,7 @@
+ 
+ from pitop.common.counter import Counter
+ from pitop.common.logger import PTLogger
+-from smbus2 import SMBus
++from smbus import SMBus
+ 
+ _battery_state_handler = None
+ _main_thread = None
+--- a/pitopd/ptpulse/configuration.py
++++ b/pitopd/ptpulse/configuration.py
+@@ -6,7 +6,7 @@
+ 
+ from pitop.common.common_ids import DeviceID
+ from pitop.common.logger import PTLogger
+-from smbus2 import SMBus
++from smbus import SMBus
+ 
+ from ..sys_config import HDMI, I2S, UART
+ 
+--- a/pitopd/ptspeaker/configuration.py
++++ b/pitopd/ptspeaker/configuration.py
+@@ -5,7 +5,7 @@
+ from pitop.common.common_ids import DeviceID
+ from pitop.common.current_session_info import get_user_using_first_display
+ from pitop.common.logger import PTLogger
+-from smbus2 import SMBus
++from smbus import SMBus
+ 
+ from .sys_config import HDMI, I2C, I2S
+ 

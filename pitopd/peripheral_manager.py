@@ -1,23 +1,22 @@
-from importlib import import_module
-from os import path
 from subprocess import call
 from threading import Thread
 from time import sleep
 
 from pitop.common.common_ids import DeviceID, Peripheral, PeripheralID
 from pitop.common.current_session_info import get_user_using_first_display
-from pitop.common.file_ops import touch_file
 from pitop.common.logger import PTLogger
-from sys_config import I2C, I2S, Hifiberry, System
 
-# Discovers which peripheral libraries are installed, and uses those to
-# detect, initialise, and communicate with the corresponding peripheral
+from . import ptpulse, ptspeaker, state
+from .sys_config import I2C, I2S, Hifiberry, System
+from .utils import get_project_root
 
 
 class PeripheralManager:
+    """Discovers which peripheral libraries are installed, and uses those to
+    detect, initialise, and communicate with the corresponding peripheral."""
+
     _loop_delay_seconds = 3
-    _i2s_config_file_path = "/usr/lib/pt-device-manager/files/hifiberry-alsactl.restore"
-    _i2s_configured_file_path = "/etc/.hifiberry-alsactl.configured"
+    _i2s_config_file_path = f"{get_project_root()}/assets/hifiberry-alsactl.restore"
 
     def __init__(self):
         self._callback_client = None
@@ -26,16 +25,10 @@ class PeripheralManager:
         self._main_thread = Thread(target=self._main_thread_loop)
 
         self._enabled_peripherals = list()
-        self._custom_imported_modules = {}
         self._host_device_id = DeviceID.unknown
 
     def initialise(self, callback_client):
         self._callback_client = callback_client
-
-        PTLogger.debug("Initialising peripheral manager...")
-        # Dynamically add the required python modules, if they are installed
-        self.add_module_if_available("ptspeaker")
-        self.add_module_if_available("ptpulse")
 
         self.configure_hifiberry()
 
@@ -91,21 +84,6 @@ class PeripheralManager:
             self.auto_initialise_peripherals()
             sleep(self._loop_delay_seconds)
 
-    def add_module_if_available(self, module_name):
-        cfg_module_str = str(module_name + ".configuration")
-        try:
-            i = import_module(cfg_module_str)
-            self._custom_imported_modules[module_name] = i
-
-        except ImportError as exc:
-            PTLogger.warning(
-                "Error: failed to import "
-                + cfg_module_str
-                + " settings module ("
-                + str(exc)
-                + ")"
-            )
-
     def add_enabled_peripheral(self, peripheral):
         PTLogger.info("Adding enabled peripheral: " + peripheral.name)
 
@@ -121,14 +99,13 @@ class PeripheralManager:
         self.emit_peripheral_disconnected(peripheral.id)
 
     def enable_v1_hub_v1_speaker(self, peripheral):
-        ptspeaker_cfg = self._custom_imported_modules["ptspeaker"]
-        ptspeaker_cfg.initialise(self._host_device_id, peripheral.name)
+        ptspeaker.initialise(self._host_device_id, peripheral.name)
 
         (
             enabled,
             reboot_required,
             v2_hub_hdmi_to_i2s_required,
-        ) = ptspeaker_cfg.enable_device()
+        ) = ptspeaker.enable_device()
 
         if enabled or reboot_required:
             # Mark as enabled even if a reboot is required
@@ -139,14 +116,13 @@ class PeripheralManager:
             self.emit_reboot_message()
 
     def enable_v1_hub_v2_speaker(self, peripheral):
-        ptspeaker_cfg = self._custom_imported_modules["ptspeaker"]
-        ptspeaker_cfg.initialise(self._host_device_id, peripheral.name)
+        ptspeaker.initialise(self._host_device_id, peripheral.name)
 
         (
             enabled,
             reboot_required,
             v2_hub_hdmi_to_i2s_required,
-        ) = ptspeaker_cfg.enable_device()
+        ) = ptspeaker.enable_device()
 
         if enabled or reboot_required:
             # Mark as enabled even if a reboot is required
@@ -157,14 +133,13 @@ class PeripheralManager:
             self.emit_reboot_message()
 
     def configure_not_v2_hub_pulse(self, peripheral, enable):
-        ptpulse_cfg = self._custom_imported_modules["ptpulse"]
-        ptpulse_cfg.initialise(self._host_device_id, peripheral.name)
+        ptpulse.initialise(self._host_device_id, peripheral.name)
 
         (
             enabled,
             reboot_required,
             v2_hub_hdmi_to_i2s_required,
-        ) = ptpulse_cfg.enable_device()
+        ) = ptpulse.enable_device()
 
         if enabled or reboot_required:
             # Mark as enabled even if a reboot is required
@@ -175,14 +150,13 @@ class PeripheralManager:
             self.emit_reboot_message()
 
     def enable_v2_hub_v2_speaker(self, peripheral):
-        ptspeaker_cfg = self._custom_imported_modules["ptspeaker"]
-        ptspeaker_cfg.initialise(self._host_device_id, peripheral.name)
+        ptspeaker.initialise(self._host_device_id, peripheral.name)
 
         (
             enabled,
             reboot_required,
             v2_hub_hdmi_to_i2s_required,
-        ) = ptspeaker_cfg.enable_device()
+        ) = ptspeaker.enable_device()
 
         if enabled is True or reboot_required is True:
             # Mark as enabled even if a reboot is required
@@ -199,14 +173,13 @@ class PeripheralManager:
             self.emit_reboot_message()
 
     def configure_v2_hub_pulse(self, peripheral, enable):
-        ptpulse_cfg = self._custom_imported_modules["ptpulse"]
-        ptpulse_cfg.initialise(self._host_device_id, peripheral.name)
+        ptpulse.initialise(self._host_device_id, peripheral.name)
 
         (
             enabled,
             reboot_required,
             v2_hub_hdmi_to_i2s_required,
-        ) = ptpulse_cfg.enable_device()
+        ) = ptpulse.enable_device()
 
         if enabled is True or reboot_required is True:
             # Mark as enabled even if a reboot is required
@@ -234,53 +207,37 @@ class PeripheralManager:
 
         if valid:
             if "pi-topPULSE" in peripheral.name:
-                if "ptpulse" in self._custom_imported_modules:
-                    if self._host_device_id == DeviceID.pi_top_3:
-                        self.configure_v2_hub_pulse(peripheral, enable)
-                    else:
-                        self.configure_not_v2_hub_pulse(peripheral, enable)
+                if self._host_device_id == DeviceID.pi_top_3:
+                    self.configure_v2_hub_pulse(peripheral, enable)
                 else:
-                    self.show_pulse_install_package_message()
-                    PTLogger.info(
-                        "pi-topPULSE initialisation not available - "
-                        "please install 'python3-pt-pulse' package via apt-get"
-                    )
+                    self.configure_not_v2_hub_pulse(peripheral, enable)
             elif "pi-topSPEAKER" in peripheral.name:
-                if "ptspeaker" in self._custom_imported_modules:
-                    is_v1_hub = (self._host_device_id == DeviceID.pi_top) or (
-                        self._host_device_id == DeviceID.pi_top_ceed
-                    )
+                is_v1_hub = (self._host_device_id == DeviceID.pi_top) or (
+                    self._host_device_id == DeviceID.pi_top_ceed
+                )
 
-                    if self._host_device_id == DeviceID.pi_top_4:
-                        # TODO: v3 speaker init code - or just use in-built speaker?
-                        pass
-                    elif self._host_device_id == DeviceID.pi_top_3:
-                        # CHECK THAT SPEAKER IS V2
-                        if peripheral.name == "pi-topSPEAKER-v2":
-                            self.enable_v2_hub_v2_speaker(peripheral)
-                        else:
-                            PTLogger.warning(
-                                "Unable to initialise V1 speaker with V2 hardware"
-                            )
-                            # Mark as enabled even if a reboot is required
-                            # to prevent subsequent attempts to enable
-                            self.add_enabled_peripheral(peripheral)
-                            self.emit_unsupported_hardware_message()
-                    elif is_v1_hub or self._host_device_id == DeviceID.unknown:
-                        if enable is True:
-                            if peripheral.name == "pi-topSPEAKER-v2":
-                                self.enable_v1_hub_v2_speaker(peripheral)
-                            else:
-                                self.enable_v1_hub_v1_speaker(peripheral)
-                        else:
-                            self.remove_enabled_peripheral(peripheral)
+                if self._host_device_id == DeviceID.pi_top_3:
+                    # Check that speaker is v2
+                    if peripheral.name == "pi-topSPEAKER-v2":
+                        self.enable_v2_hub_v2_speaker(peripheral)
                     else:
-                        PTLogger.error("Not a valid configuration")
+                        PTLogger.warning(
+                            "Unable to initialise V1 speaker with V2 hardware"
+                        )
+                        # Mark as enabled even if a reboot is required
+                        # to prevent subsequent attempts to enable
+                        self.add_enabled_peripheral(peripheral)
+                        self.emit_unsupported_hardware_message()
+                elif is_v1_hub or self._host_device_id == DeviceID.unknown:
+                    if enable is True:
+                        if peripheral.name == "pi-topSPEAKER-v2":
+                            self.enable_v1_hub_v2_speaker(peripheral)
+                        else:
+                            self.enable_v1_hub_v1_speaker(peripheral)
+                    else:
+                        self.remove_enabled_peripheral(peripheral)
                 else:
-                    PTLogger.info(
-                        "pi-topSPEAKER initialisation not available - "
-                        "please install 'python3-pt-speaker' package via apt-get"
-                    )
+                    PTLogger.error("Not a valid configuration")
             elif "pi-topPROTO+" in peripheral.name:
                 # Nothing to do - add to list of peripherals
                 self.add_enabled_peripheral(peripheral)
@@ -393,9 +350,9 @@ class PeripheralManager:
 
     def configure_hifiberry(self):
         if I2S.get_current_state() is True:
-            if path.isfile(self._i2s_configured_file_path) is False:
+            if state.get("sound", "i2s_configured", fallback="false") == "false":
                 call(("/usr/sbin/alsactl", "-f", self._i2s_config_file_path, "restore"))
-                touch_file(self._i2s_configured_file_path)
+                state.set("sound", "i2s_configured", "true")
                 System.reboot_system()
             else:
                 Hifiberry.set_as_audio_output(user=get_user_using_first_display())
