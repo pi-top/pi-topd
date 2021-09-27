@@ -6,7 +6,7 @@ from pitop.common.logger import PTLogger
 from systemd.daemon import notify
 
 
-class Controller:
+class App:
     def __init__(
         self,
         publish_server,

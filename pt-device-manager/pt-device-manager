@@ -15,17 +15,17 @@ from argparse import ArgumentParser
 from os import environ
 from signal import SIGINT, SIGTERM, signal
 
+from app import App
+from config_manager import ConfigManager
+from hub_manager import HubManager
+from idle_monitor import IdleMonitor
+from interface_manager import InterfaceManager
+from notification_manager import NotificationManager
+from peripheral_manager import PeripheralManager
 from pitop.common.logger import PTLogger
-from ptdm_config_manager import ConfigManager
-from ptdm_controller import Controller
-from ptdm_hub_manager import HubManager
-from ptdm_idle_monitor import IdleMonitor
-from ptdm_interface_manager import InterfaceManager
-from ptdm_notification_manager import NotificationManager
-from ptdm_peripheral_manager import PeripheralManager
-from ptdm_power_manager import PowerManager
-from ptdm_publish_server import PublishServer
-from ptdm_request_server import RequestServer
+from power_manager import PowerManager
+from publish_server import PublishServer
+from request_server import RequestServer
 from systemd.daemon import notify
 
 # Set the display env var
@@ -54,8 +54,8 @@ peripheral_manager = PeripheralManager()
 request_server = RequestServer()
 config_manager = ConfigManager()
 
-# Create the controller
-controller = Controller(
+# Create the app
+app = App(
     publish_server,
     power_manager,
     hub_manager,
@@ -69,7 +69,7 @@ controller = Controller(
 
 
 def signal_handler(unused_signal, unused_frame):
-    controller.stop()
+    app.stop()
 
 
 # Capture and handle interrupts
@@ -77,13 +77,13 @@ signal(SIGINT, signal_handler)
 signal(SIGTERM, signal_handler)
 
 
-# Start the controller
-successful_start = controller.start()
+# Start the app
+successful_start = app.start()
 notify("STOPPING=1")
 
 if not successful_start:
-    PTLogger.error("Unable to start pi-top device manager's central controller")
-    controller.stop()
+    PTLogger.error("Unable to start pi-top device manager")
+    app.stop()
 
 # Exiting with 1 will cause systemd service to restart - we should only do this if we failed to determine a device ID
-exit(0 if controller.device_id is not None else 1)
+exit(0 if app.device_id is not None else 1)
