@@ -1,3 +1,15 @@
+pi-topd (5.1.0-1) bullseye; urgency=medium
+
+  * Drop default log_to_journal
+  * Apply latest Python pre-commit (#125)
+  * Refactor application to be built with pybuild (#118)
+  * Replace files in `/etc/pi-top` with state/asset files (#118)
+  * Move pt-xhost-local-root.conf into debian/extra
+  * Move initialisation of components into app
+
+
+ -- pi-top <deb-maintainers@pi-top.com>  Mon, 27 Sep 2021 12:58:25 +0000
+
 pi-topd (5.0.0-1) bullseye; urgency=medium
 
   * Refactor as pybuild package
