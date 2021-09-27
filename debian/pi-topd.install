@@ -1,0 +1,1 @@
+debian/extra/pt-xhost-local-root.conf                /etc/lightdm/lightdm.conf.d/

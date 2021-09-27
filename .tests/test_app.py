@@ -2,8 +2,9 @@ import sys
 import unittest
 from unittest.mock import Mock
 
-from app import App
 from pitop.common.common_ids import DeviceID
+
+from pitopd.app import App
 
 mock_systemd_daemon = Mock()
 mock_common_ids = Mock()

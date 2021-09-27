@@ -1,5 +1,5 @@
 [Unit]
-Description=pi-top device auto-detection and configuration daemon
+Description=pi-top System Daemon
 Documentation=https://knowledgebase.pi-top.com/knowledge
 
 [Service]
@@ -8,7 +8,7 @@ Restart=on-failure
 Environment="PT_LOG_BATTERY_CHANGE=0"
 Environment="PYTHONUNBUFFERED=1"
 Environment="PYTHONDONTWRITEBYTECODE=1"
-ExecStart=/usr/lib/pt-device-manager/pt-device-manager
+ExecStart=/usr/bin/pi-topd
 
 [Install]
 WantedBy=multi-user.target

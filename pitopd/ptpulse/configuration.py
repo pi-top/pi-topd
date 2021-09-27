@@ -6,8 +6,9 @@ from math import pow
 
 from pitop.common.common_ids import DeviceID
 from pitop.common.logger import PTLogger
-from smbus import SMBus
-from sys_config import HDMI, I2S, UART
+from smbus2 import SMBus
+
+from ..sys_config import HDMI, I2S, UART
 
 _bus_id = 1
 _device_addr = 0x24

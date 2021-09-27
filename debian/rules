@@ -1,9 +1,14 @@
 #!/usr/bin/make -f
 
+export PYBUILD_NAME=pitopd
+
 %:
-	dh $@
+	dh $@ --buildsystem=pybuild
+
+override_dh_auto_test:
+	# Don't run the tests!
 
 override_dh_installsystemd:
-	dh_installsystemd --name=pt-device-manager
+	dh_installsystemd --name=pi-topd
 	dh_installsystemd --name=pt-poweroff --no-start --no-stop-on-upgrade
 	dh_installsystemd --name=pt-reboot --no-start --no-stop-on-upgrade

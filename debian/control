@@ -1,29 +1,22 @@
-Source: pt-device-manager
+Source: pi-topd
 Section: utils
 Priority: optional
 Maintainer: pi-top <deb-maintainers@pi-top.com>
 Build-Depends:
  debhelper-compat (= 12),
  dh-sequence-python3,
+ python3-all,
+ python3-setuptools,
 Standards-Version: 4.5.1
 Homepage: https://pi-top.com/
 
-Package: pt-device-manager
+Package: pi-topd
 Architecture: all
 Depends:
  ${misc:Depends},
  ${python3:Depends},
 # Configure sound settings
  alsa-utils,
-# Common functions and command-line tools
- python3-pitop,
-# Journal handling
- python3-systemd,
-# System state change communication
- python3-zmq,
-# Hub management
- python3-smbus,
- python3-spidev,
 # Hardware interface management for devices and peripherals
  raspi-config,
 Suggests:
@@ -31,7 +24,7 @@ Suggests:
  notify-send-ng,
 # User idle time
  xprintidle,
-Description: pi-top Device Manager
+Description: pi-top System Daemon
  Core pi-top service for interfacing with pi-top hardware.
  Provides support for management of all pi-top units.
  Depending on which pi-top device you are using, it is possible
