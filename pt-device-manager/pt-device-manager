@@ -24,8 +24,7 @@ from notification_manager import NotificationManager
 from peripheral_manager import PeripheralManager
 from pitop.common.logger import PTLogger
 from power_manager import PowerManager
-from publish_server import PublishServer
-from request_server import RequestServer
+from server import PublishServer, RequestServer
 from systemd.daemon import notify
 
 # Set the display env var
