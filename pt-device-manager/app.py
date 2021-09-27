@@ -1,35 +1,32 @@
 # Instantiates and coordinates between the other classes
 from time import sleep
 
+from config_manager import ConfigManager
+from hub_manager import HubManager
+from idle_monitor import IdleMonitor
+from interface_manager import InterfaceManager
+from notification_manager import NotificationManager
+from peripheral_manager import PeripheralManager
 from pitop.common.common_ids import DeviceID
 from pitop.common.logger import PTLogger
+from power_manager import PowerManager
+from server import PublishServer, RequestServer
 from systemd.daemon import notify
 
 
 class App:
-    def __init__(
-        self,
-        publish_server,
-        power_manager,
-        hub_manager,
-        idle_monitor,
-        interface_manager,
-        notification_manager,
-        peripheral_manager,
-        request_server,
-        config_manager,
-    ):
+    def __init__(self):
         self._continue_running = True
 
-        self._publish_server = publish_server
-        self._power_manager = power_manager
-        self._hub_manager = hub_manager
-        self._idle_monitor = idle_monitor
-        self._interface_manager = interface_manager
-        self._notification_manager = notification_manager
-        self._peripheral_manager = peripheral_manager
-        self._request_server = request_server
-        self._config_manager = config_manager
+        self._publish_server = PublishServer()
+        self._power_manager = PowerManager()
+        self._hub_manager = HubManager()
+        self._idle_monitor = IdleMonitor()
+        self._interface_manager = InterfaceManager()
+        self._notification_manager = NotificationManager()
+        self._peripheral_manager = PeripheralManager()
+        self._request_server = RequestServer()
+        self._config_manager = ConfigManager()
 
         # Initialise
         self._power_manager.initialise(self)
