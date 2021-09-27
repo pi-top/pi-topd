@@ -1,4 +1,4 @@
-pi-topd (5.0.0-2) bullseye; urgency=medium
+pi-topd (5.1.0-1) bullseye; urgency=medium
 
   * Drop default log_to_journal
   * Apply latest Python pre-commit (#125)
