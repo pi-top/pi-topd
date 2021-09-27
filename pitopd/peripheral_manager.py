@@ -16,7 +16,7 @@ class PeripheralManager:
     detect, initialise, and communicate with the corresponding peripheral."""
 
     _loop_delay_seconds = 3
-    _i2s_config_file_path = f"{get_project_root()}/files/hifiberry-alsactl.restore"
+    _i2s_config_file_path = f"{get_project_root()}/assets/hifiberry-alsactl.restore"
 
     def __init__(self):
         self._callback_client = None
