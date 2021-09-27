@@ -12,6 +12,8 @@ from pitop.common.file_ops import create_temp_file, sed_inplace
 from pitop.common.formatting import get_uncommented_line, is_line_commented
 from pitop.common.logger import PTLogger
 
+from .i2s import setI2S
+
 
 class AudioDevice(Enum):
     Headphones = auto()
@@ -26,10 +28,6 @@ class _SystemCalls:
     SET_I2C_CMD_ARR_PREFIX = ["/usr/bin/raspi-config", "nonint", "do_i2c"]
 
     I2CDETECT_CMD_ARR = ["/usr/sbin/i2cdetect", "-y", "1"]
-
-    PTI2S_CMD = "/usr/bin/pt-i2s"
-    I2S_ENABLE_CMD_ARR = [PTI2S_CMD, "enable"]
-    I2S_DISABLE_CMD_ARR = [PTI2S_CMD, "disable"]
 
     OLD_AMIXER_SET_CMD_ARR = ["amixer", "cset", "numid=3"]
     ALSA_RESTART_CMD = ["sudo", "/etc/init.d/alsa-utils", "restart"]
@@ -130,9 +128,8 @@ class _SystemCalls:
         i2s_mode_current = None
         i2s_mode_next = None
         try:
-            i2s_output = _SystemCalls._get_cmd_resp(
-                [_SystemCalls.PTI2S_CMD]
-            ).splitlines()
+            # TODO: this won't work as we aren't capturing text output!
+            i2s_output = setI2S("status").splitlines()
 
             for line in i2s_output:
                 if "I2S is currently enabled" in str(line):
@@ -161,9 +158,9 @@ class _SystemCalls:
     @staticmethod
     def set_i2s_state(enable):
         if enable:
-            _SystemCalls._run_cmd(_SystemCalls.I2S_ENABLE_CMD_ARR)
+            setI2S("enable")
         else:
-            _SystemCalls._run_cmd(_SystemCalls.I2S_DISABLE_CMD_ARR)
+            setI2S("disable")
 
     @staticmethod
     def _get_config_specific_alsa_card_name(interface: AudioDevice):
