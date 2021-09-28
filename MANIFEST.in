@@ -1,4 +1,5 @@
 recursive-include pitopd/assets/ *
+recursive-include pitopd/scripts/ i2s.sh
 
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]

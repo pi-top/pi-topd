@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# pt-i2s [enable|disable]
+# i2s.sh [enable|disable]
 #   status/enable/disable
 
 CONFIG="/boot/config.txt"
@@ -164,7 +164,7 @@ if [ -z "$1" ] || [[ "$1" == "status" ]] || [[ "$1" == "enable" ]] || [[ "$1" ==
     desired_i2s_enabled_state=1
   fi
 else
-  echo "Usage: pt-i2s [status|enable|disable]"
+  echo "Usage: i2s.sh [status|enable|disable]"
   exit 1
 fi
 
