@@ -71,7 +71,7 @@ class PeripheralManager:
         return True
 
     def stop(self):
-        PTLogger.info("Stopping peripheral manager...")
+        PTLogger.debug("Stopping peripheral manager...")
         self._run_main_thread = False
         if self._main_thread.is_alive():
             self._main_thread.join()

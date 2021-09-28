@@ -24,7 +24,7 @@ class IdleMonitor:
         self._callback_client = callback_client
 
     def start(self):
-        PTLogger.info("Starting idle time monitor...")
+        PTLogger.debug("Starting idle time monitor...")
         if self._main_thread is None:
             self._main_thread = Thread(target=self._main_thread_loop)
 
@@ -32,7 +32,7 @@ class IdleMonitor:
         self._main_thread.start()
 
     def stop(self):
-        PTLogger.info("Stopping idle time monitor...")
+        PTLogger.debug("Stopping idle time monitor...")
         self._run_main_thread = False
         if self._main_thread is not None:
             self._main_thread.join()

@@ -26,7 +26,7 @@ class PublishServer:
             self._zmq_context = zmq.Context()
             self._zmq_socket = self._zmq_context.socket(zmq.PUB)
             self._zmq_socket.bind("tcp://*:3781")
-            PTLogger.info("Publish server ready...")
+            PTLogger.debug("Publish server ready...")
 
             return True
 
@@ -40,7 +40,7 @@ class PublishServer:
             self._socket_lock.release()
 
     def stop_listening(self):
-        PTLogger.info("Closing publisher socket...")
+        PTLogger.debug("Closing publisher socket...")
 
         try:
             self._socket_lock.acquire()

@@ -52,7 +52,7 @@ class App:
         self._set_host_device_id(self._hub_manager.get_device_id())
 
     def start(self):
-        PTLogger.info("Starting device manager...")
+        PTLogger.debug("Starting device manager...")
 
         last_identified_device_id_str = state.get(
             "device", "type", fallback=str(DeviceID.unknown.name)
@@ -134,7 +134,7 @@ class App:
         return True
 
     def stop(self):
-        PTLogger.info("Stopping device manager...")
+        PTLogger.debug("Stopping device manager...")
         self._run = False
 
         # Stop the other classes

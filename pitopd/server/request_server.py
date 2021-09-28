@@ -28,7 +28,7 @@ class RequestServer:
 
         try:
             self._zmq_socket.bind("tcp://*:3782")
-            PTLogger.info("Request server ready...")
+            PTLogger.debug("Request server ready...")
 
         except zmq.error.ZMQError as e:
             PTLogger.error("Error starting the request server: " + str(e))
@@ -44,7 +44,7 @@ class RequestServer:
         return True
 
     def stop_listening(self):
-        PTLogger.info("Closing responder socket...")
+        PTLogger.debug("Closing responder socket...")
 
         self._continue = False
         if self._thread.is_alive():
@@ -56,7 +56,7 @@ class RequestServer:
         PTLogger.debug("Closed responder socket.")
 
     def _thread_method(self):
-        PTLogger.info("Listening for requests...")
+        PTLogger.debug("Listening for requests...")
 
         while self._continue:
             poller = zmq.Poller()
