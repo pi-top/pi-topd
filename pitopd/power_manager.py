@@ -193,7 +193,7 @@ class PowerManager:
 
         PTLogger.info("Shutting down OS...")
 
-        run("shutdown -h now")
+        run(["shutdown", "-h", "now"])
         self.shutdown_initiated = True
         PTLogger.info("OS shutdown command issued")
 
