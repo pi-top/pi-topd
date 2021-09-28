@@ -1,7 +1,6 @@
 from distutils.version import StrictVersion
 from os.path import isfile
 from platform import uname
-from sys import argv
 from time import sleep
 
 from pitop.common.common_ids import DeviceID
@@ -102,15 +101,8 @@ def _do_poweroff_legacy():
     send_data(spi, calculate())
 
 
-def _do_poweroff():
-
-    try:
-        device_id = argv[1]
-    except Exception as e:
-        print("Error getting pi-top version from pt-poweroff: " + str(e))
-        exit(1)
-
-    i2c_address = 0x11 if device_id == "pi_top_4" else 0x10
+def _do_poweroff(device_id):
+    i2c_address = 0x11 if device_id == DeviceID.pi_top_4 else 0x10
 
     PWR__SHUTDOWN_CTRL = 0xA0
     PWR__SHUTDOWN_CTRL__MODE1 = 0x08
@@ -176,7 +168,7 @@ def poweroff():
         if device_id in [DeviceID.pi_top, DeviceID.pi_top_ceed]:
             _do_poweroff_legacy()
         elif device_id in [DeviceID.pi_top_3, DeviceID.pi_top_4]:
-            _do_poweroff()
+            _do_poweroff(device_id)
 
     except Exception as e:
         print("Error starting shutdown service: " + str(e))

@@ -253,12 +253,13 @@ class App:
         self._interface_manager.spi1 = enabled
 
     def on_hub_shutdown_requested(self):
+        PTLogger.info("Hub shutdown requested")
         self._publish_server.publish_shutdown_requested()
 
-        # Let the hub modules handle any logic required to shutdown
+        PTLogger.info("Notifying hub of shutdown...")
         self._hub_manager.shutdown()
 
-        # Now trigger the OS shutdown
+        PTLogger.info("Triggering OS shutdown...")
         self._power_manager.shutdown()
 
     def on_hub_brightness_changed(self, new_value):
