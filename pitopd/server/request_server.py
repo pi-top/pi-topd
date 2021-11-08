@@ -1,11 +1,13 @@
+import logging
 import traceback
 from threading import Thread
 from time import sleep
 
 import zmq
 from pitop.common.common_ids import DeviceID
-from pitop.common.logger import PTLogger
 from pitop.common.ptdm import Message
+
+logger = logging.getLogger(__name__)
 
 
 # Creates a server for clients to connect to, and then responds to
@@ -24,15 +26,15 @@ class RequestServer:
         self._callback_client = callback_client
 
     def start_listening(self):
-        PTLogger.debug("Opening request socket...")
+        logger.debug("Opening request socket...")
 
         try:
             self._zmq_socket.bind("tcp://*:3782")
-            PTLogger.debug("Request server ready...")
+            logger.debug("Request server ready...")
 
         except zmq.error.ZMQError as e:
-            PTLogger.error("Error starting the request server: " + str(e))
-            PTLogger.info(traceback.format_exc())
+            logger.error("Error starting the request server: " + str(e))
+            logger.info(traceback.format_exc())
 
             return False
 
@@ -44,7 +46,7 @@ class RequestServer:
         return True
 
     def stop_listening(self):
-        PTLogger.debug("Closing responder socket...")
+        logger.debug("Closing responder socket...")
 
         self._continue = False
         if self._thread.is_alive():
@@ -53,10 +55,10 @@ class RequestServer:
         self._zmq_socket.close()
         self._zmq_context.destroy()
 
-        PTLogger.debug("Closed responder socket.")
+        logger.debug("Closed responder socket.")
 
     def _thread_method(self):
-        PTLogger.debug("Listening for requests...")
+        logger.debug("Listening for requests...")
 
         while self._continue:
             poller = zmq.Poller()
@@ -66,18 +68,18 @@ class RequestServer:
 
             if len(events) > 0:
                 request = self._zmq_socket.recv_string()
-                PTLogger.debug("Request received: " + request)
+                logger.debug("Request received: " + request)
 
                 response = self._process_request(request)
 
-                PTLogger.debug("Sending response: " + response)
+                logger.debug("Sending response: " + response)
                 self._zmq_socket.send_string(response)
 
     def _process_request(self, request):
         valid_message_format = False
         try:
             message = Message.from_string(request)
-            PTLogger.debug("Received request: " + message.message_friendly_string())
+            logger.debug("Received request: " + message.message_friendly_string())
 
             if message.message_id() == Message.REQ_PING:
                 response = Message.from_parts(Message.RSP_PING, list())
@@ -216,25 +218,25 @@ class RequestServer:
                 response = Message.from_parts(Message.RSP_SET_OLED_SPI_BUS)
 
             else:
-                PTLogger.error("Unsupported request received: " + request)
+                logger.error("Unsupported request received: " + request)
                 response = Message.from_parts(Message.RSP_ERR_UNSUPPORTED, list())
 
             valid_message_format = True
 
         except ValueError as e:
-            PTLogger.error("Error processing message: " + str(e))
-            PTLogger.info(traceback.format_exc())
+            logger.error("Error processing message: " + str(e))
+            logger.info(traceback.format_exc())
             response = Message.from_parts(Message.RSP_ERR_MALFORMED, list())
 
         except Exception as e:
-            PTLogger.error("Unknown error processing message: " + str(e))
-            PTLogger.info(traceback.format_exc())
+            logger.error("Unknown error processing message: " + str(e))
+            logger.info(traceback.format_exc())
             response = Message.from_parts(Message.RSP_ERR_SERVER, list())
 
         if valid_message_format:
             # Reduce output noise from RPi's polling lxpanel plugin
             if message.message_id() != Message.REQ_GET_BATTERY_STATE:
-                PTLogger.info(
+                logger.info(
                     "Recv: "
                     + message.message_friendly_string()
                     + " - Send: "

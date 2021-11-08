@@ -1,8 +1,11 @@
+import logging
+
 from pitop.common.common_ids import DeviceID
-from pitop.common.logger import PTLogger
 
 from .pthub3_connection import HubConnection
 from .pthub3_state import State
+
+logger = logging.getLogger(__name__)
 
 
 def initialise():
@@ -12,13 +15,13 @@ def initialise():
     _state = State()
     _hub_connection = HubConnection()
 
-    PTLogger.info("Initialising I2C connection...")
+    logger.info("Initialising I2C connection...")
 
     if _hub_connection.initialise(_state) is False:
-        PTLogger.warning("Unable to detect pi-topHUB v3 connection")
+        logger.warning("Unable to detect pi-topHUB v3 connection")
         return False
 
-    PTLogger.info("Initialised")
+    logger.info("Initialised")
     return True
 
 
@@ -27,15 +30,15 @@ def register_client(funcs):
 
 
 def start():
-    PTLogger.debug("Hub connection loop starting...")
+    logger.debug("Hub connection loop starting...")
     _hub_connection.start()
-    PTLogger.info("Hub connection loop started")
+    logger.info("Hub connection loop started")
 
 
 def stop():
-    PTLogger.debug("Hub connection loop stopping...")
+    logger.debug("Hub connection loop stopping...")
     _hub_connection.stop()
-    PTLogger.info("Hub connection loop stopped")
+    logger.info("Hub connection loop stopped")
 
 
 def increment_brightness():

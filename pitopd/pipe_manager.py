@@ -1,7 +1,8 @@
+import logging
 from enum import Enum
 from pathlib import Path
 
-from pitop.common.logger import PTLogger
+logger = logging.getLogger(__name__)
 
 
 class Pipes(Enum):
@@ -16,7 +17,7 @@ def write_to_file(pipe_path, text):
         with open(pipe_path, "w") as f:
             f.write(str(text) + "\n")
     except IOError:
-        PTLogger.warning("Failed to write to device type file")
+        logger.warning("Failed to write to device type file")
 
 
 class PipeManager:
@@ -33,22 +34,22 @@ class PipeManager:
         try:
             write_to_file(Pipes.device_type.value, device_id.name)
         except IOError:
-            PTLogger.warning("Failed to write to device type file")
+            logger.warning("Failed to write to device type file")
 
     def set_hub_serial_number(self, serial):
         try:
             write_to_file(Pipes.hub_serial.value, serial)
         except IOError:
-            PTLogger.warning("Failed to write to device type file")
+            logger.warning("Failed to write to device type file")
 
     def set_battery_serial_number(self, serial):
         try:
             write_to_file(Pipes.battery_serial.value, serial)
         except IOError:
-            PTLogger.warning("Failed to write to device type file")
+            logger.warning("Failed to write to device type file")
 
     def set_display_serial_number(self, serial):
         try:
             write_to_file(Pipes.display_serial.value, serial)
         except IOError:
-            PTLogger.warning("Failed to write to device type file")
+            logger.warning("Failed to write to device type file")

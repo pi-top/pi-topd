@@ -1,14 +1,16 @@
+import logging
 from subprocess import call
 from threading import Thread
 from time import sleep
 
 from pitop.common.common_ids import DeviceID, Peripheral, PeripheralID
 from pitop.common.current_session_info import get_user_using_first_display
-from pitop.common.logger import PTLogger
 
 from . import ptpulse, ptspeaker, state
 from .sys_config import I2C, I2S, Hifiberry, System
 from .utils import get_project_root
+
+logger = logging.getLogger(__name__)
 
 
 class PeripheralManager:
@@ -61,7 +63,7 @@ class PeripheralManager:
 
     def start(self):
         if not self.is_initialised():
-            PTLogger.error(
+            logger.error(
                 "Unable to start pi-top peripheral management - run initialise() first!"
             )
             return False
@@ -71,7 +73,7 @@ class PeripheralManager:
         return True
 
     def stop(self):
-        PTLogger.debug("Stopping peripheral manager...")
+        logger.debug("Stopping peripheral manager...")
         self._run_main_thread = False
         if self._main_thread.is_alive():
             self._main_thread.join()
@@ -85,15 +87,13 @@ class PeripheralManager:
             sleep(self._loop_delay_seconds)
 
     def add_enabled_peripheral(self, peripheral):
-        PTLogger.info("Adding enabled peripheral: " + peripheral.name)
+        logger.info("Adding enabled peripheral: " + peripheral.name)
 
         self._enabled_peripherals.append(peripheral)
         self.emit_peripheral_connected(peripheral.id)
 
     def remove_enabled_peripheral(self, peripheral):
-        PTLogger.debug(
-            "Removing peripheral from enabled peripherals: " + peripheral.name
-        )
+        logger.debug("Removing peripheral from enabled peripherals: " + peripheral.name)
 
         self._enabled_peripherals.remove(peripheral)
         self.emit_peripheral_disconnected(peripheral.id)
@@ -197,10 +197,10 @@ class PeripheralManager:
 
     def update_peripheral_state(self, peripheral, enable):
         if enable:
-            PTLogger.info("Enabling peripheral: " + peripheral.name)
+            logger.info("Enabling peripheral: " + peripheral.name)
 
         else:
-            PTLogger.info("Disabling peripheral: " + peripheral.name)
+            logger.info("Disabling peripheral: " + peripheral.name)
 
         peripheral_enabled = self.get_peripheral_enabled(peripheral)
         valid = enable != peripheral_enabled
@@ -221,7 +221,7 @@ class PeripheralManager:
                     if peripheral.name == "pi-topSPEAKER-v2":
                         self.enable_v2_hub_v2_speaker(peripheral)
                     else:
-                        PTLogger.warning(
+                        logger.warning(
                             "Unable to initialise V1 speaker with V2 hardware"
                         )
                         # Mark as enabled even if a reboot is required
@@ -237,15 +237,15 @@ class PeripheralManager:
                     else:
                         self.remove_enabled_peripheral(peripheral)
                 else:
-                    PTLogger.error("Not a valid configuration")
+                    logger.error("Not a valid configuration")
             elif "pi-topPROTO+" in peripheral.name:
                 # Nothing to do - add to list of peripherals
                 self.add_enabled_peripheral(peripheral)
 
             else:
-                PTLogger.error("Peripheral name not recognised")
+                logger.error("Peripheral name not recognised")
         else:
-            PTLogger.debug("Peripheral state was already set")
+            logger.debug("Peripheral state was already set")
 
     @staticmethod
     def get_connected_peripherals():
@@ -257,7 +257,7 @@ class PeripheralManager:
             try:
                 address = int(address, 16)
             except ValueError:
-                PTLogger.debug(f"Can't convert address {address} to integer, skipping.")
+                logger.debug(f"Can't convert address {address} to integer, skipping.")
                 continue
             current_peripheral = Peripheral(addr=address)
             if current_peripheral.id != PeripheralID.unknown:
@@ -284,16 +284,14 @@ class PeripheralManager:
         current_peripheral = Peripheral(name=current_peripheral_name)
 
         if current_peripheral.id == PeripheralID.unknown:
-            PTLogger.warning(
-                "Peripheral " + current_peripheral_name + " not recognised"
-            )
+            logger.warning("Peripheral " + current_peripheral_name + " not recognised")
 
         elif self.get_peripheral_enabled(current_peripheral):
-            PTLogger.debug("updating peripheral state")
+            logger.debug("updating peripheral state")
             self.update_peripheral_state(current_peripheral, False)
 
         else:
-            PTLogger.warning(
+            logger.warning(
                 "Peripheral " + current_peripheral_name + " already disabled"
             )
 
@@ -301,14 +299,14 @@ class PeripheralManager:
         current_peripheral = Peripheral(name=current_peripheral_name)
 
         if current_peripheral.id == PeripheralID.unknown:
-            PTLogger.error(
+            logger.error(
                 "Attempted to enable peripheral "
                 + current_peripheral_name
                 + ", but it was not recognised"
             )
 
         elif not self.get_peripheral_enabled(current_peripheral):
-            PTLogger.debug(
+            logger.debug(
                 "Peripheral " + current_peripheral_name + " not already enabled"
             )
 
@@ -317,20 +315,20 @@ class PeripheralManager:
                     enabled_peripheral.id != current_peripheral.id
                     and current_peripheral.id not in enabled_peripheral.compatible_ids
                 ):
-                    PTLogger.debug("Not compatible with " + enabled_peripheral.name)
+                    logger.debug("Not compatible with " + enabled_peripheral.name)
                     return
 
             self.update_peripheral_state(current_peripheral, True)
 
         else:
-            PTLogger.debug("Peripheral " + current_peripheral_name + " already enabled")
+            logger.debug("Peripheral " + current_peripheral_name + " already enabled")
 
     def auto_initialise_peripherals(self):
         addresses = I2C.get_connected_device_addresses()
 
         for peripheral in self._enabled_peripherals:
             if format(peripheral.addr, "x") not in addresses:
-                PTLogger.debug(
+                logger.debug(
                     "Peripheral " + peripheral.name + " was enabled but not detected."
                 )
                 self.remove_enabled_peripheral(peripheral)
@@ -340,7 +338,7 @@ class PeripheralManager:
             try:
                 address = int(address, 16)
             except ValueError:
-                PTLogger.debug(
+                logger.debug(
                     f"Can't convert address {address} to integer, skipping initialisation."
                 )
                 continue
