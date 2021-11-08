@@ -14,7 +14,7 @@ click_logging.basic_config(logger)
 @click.command()
 @click_logging.simple_verbosity_option(logger)
 @click.version_option()
-def main(log_level) -> None:
+def main() -> None:
     app = App()
 
     for sig in [SIGINT, SIGTERM]:
