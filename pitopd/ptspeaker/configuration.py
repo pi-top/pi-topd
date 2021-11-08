@@ -1,13 +1,15 @@
+import logging
 import traceback
 from os import path
 from sys import exit
 
 from pitop.common.common_ids import DeviceID
 from pitop.common.current_session_info import get_user_using_first_display
-from pitop.common.logger import PTLogger
 from smbus2 import SMBus
 
 from .sys_config import HDMI, I2C, I2S
+
+logger = logging.getLogger(__name__)
 
 _BUS_ID = 1
 _I2C_BUS = None
@@ -22,7 +24,7 @@ CFG_FILE_PATH = path.dirname(path.realpath(__file__)) + "/setup.cfg"
 
 def _set_hdmi_as_audio_output():
     if not HDMI.set_as_audio_output(user=get_user_using_first_display()):
-        PTLogger.error("Failed to configure HDMI output")
+        logger.error("Failed to configure HDMI output")
 
 
 def _enable_i2c_if_disabled():
@@ -32,19 +34,19 @@ def _enable_i2c_if_disabled():
             I2C.set_state(True)
 
         if I2C.get_state() is False:
-            PTLogger.error("Unable to initialise I2C")
+            logger.error("Unable to initialise I2C")
     except Exception as e:
-        PTLogger.error("Failed to configure pi-topSPEAKER. Error: " + str(e))
-        PTLogger.info(traceback.format_exc())
+        logger.error("Failed to configure pi-topSPEAKER. Error: " + str(e))
+        logger.info(traceback.format_exc())
 
 
 def _set_write_to_v1_speaker_enabled(address, enable):
     global _I2C_BUS
 
     if enable:
-        PTLogger.info("Enabling write to pi-topSPEAKER (" + str(address) + ")")
+        logger.info("Enabling write to pi-topSPEAKER (" + str(address) + ")")
     else:
-        PTLogger.info("Disabling write to pi-topSPEAKER (" + str(address) + ")")
+        logger.info("Disabling write to pi-topSPEAKER (" + str(address) + ")")
 
     try:
         _I2C_BUS = SMBus(_BUS_ID)
@@ -52,7 +54,7 @@ def _set_write_to_v1_speaker_enabled(address, enable):
         _I2C_BUS.write_byte_data(address, _v1_i2c_ce_reg, value)
 
     except Exception as e:
-        PTLogger.info("Failed to write to pi-topSPEAKER: " + str(e))
+        logger.info("Failed to write to pi-topSPEAKER: " + str(e))
         return False
 
     return True
@@ -60,7 +62,7 @@ def _set_write_to_v1_speaker_enabled(address, enable):
 
 def _parse_v1_speaker_playback_mode_file(mode):
 
-    PTLogger.info("Writing config data to pi-topSPEAKER")
+    logger.info("Writing config data to pi-topSPEAKER")
 
     try:
         index = 0
@@ -69,7 +71,7 @@ def _parse_v1_speaker_playback_mode_file(mode):
                 if (line[0] == "W") or (line[0].lower() == mode):
                     array = line.split()
                     if len(array) < 4:
-                        PTLogger.info(
+                        logger.info(
                             "Error parsing line " + str(index) + " - exiting..."
                         )
                         exit(0)
@@ -90,15 +92,15 @@ def _parse_v1_speaker_playback_mode_file(mode):
         return True
 
     except Exception as e:
-        PTLogger.info("Failed to write configuration data to pi-topSPEAKER: " + str(e))
+        logger.info("Failed to write configuration data to pi-topSPEAKER: " + str(e))
         return False
 
 
 def _enable_v1_speaker(mode):
-    PTLogger.info("Initialising speaker (mode " + mode + ")")
+    logger.info("Initialising speaker (mode " + mode + ")")
 
     if not path.exists(CFG_FILE_PATH):
-        PTLogger.info("Error: playback configuration file does not exist")
+        logger.info("Error: playback configuration file does not exist")
         return None
 
     if mode == "l" or str(mode) == "71":
@@ -111,19 +113,19 @@ def _enable_v1_speaker(mode):
         mode = "m"
         address = 0x73
     else:
-        PTLogger.info("Mode not recognised")
+        logger.info("Mode not recognised")
         return False
 
     if _set_write_to_v1_speaker_enabled(address, True) is False:
-        PTLogger.info("Error enabling write to pi-topSPEAKER")
+        logger.info("Error enabling write to pi-topSPEAKER")
         return False
 
     if _parse_v1_speaker_playback_mode_file(mode) is False:
-        PTLogger.info("Error parsing and writing mode file to pi-topSPEAKER")
+        logger.info("Error parsing and writing mode file to pi-topSPEAKER")
         return False
 
     if _set_write_to_v1_speaker_enabled(address, False) is False:
-        PTLogger.info("Error disabling write to pi-topSPEAKER")
+        logger.info("Error disabling write to pi-topSPEAKER")
         return False
 
     return True
@@ -139,11 +141,11 @@ def _initialise_v1_hub_v1_speaker(mode):
     if i2s_mode_current is True:
         # If in I2S mode
         if i2s_mode_next is True:
-            PTLogger.debug("I2S appears to be enabled - disabling...")
+            logger.debug("I2S appears to be enabled - disabling...")
             I2S.set_state(False)
             reboot_required = True
     else:
-        PTLogger.debug("Initialising pi-topSPEAKER...")
+        logger.debug("Initialising pi-topSPEAKER...")
         _set_hdmi_as_audio_output()
         _enable_i2c_if_disabled()
         enabled = _enable_v1_speaker(mode)
@@ -167,11 +169,11 @@ def _initialise_v1_hub_v2_speaker():
     if i2s_mode_current is False:
         # If not in I2S mode
         if i2s_mode_next is False:
-            PTLogger.debug("I2S appears to be disabled - enabling...")
+            logger.debug("I2S appears to be disabled - enabling...")
             I2S.set_state(True)
             reboot_required = True
     else:
-        PTLogger.debug("Initialising pi-topSPEAKER...")
+        logger.debug("Initialising pi-topSPEAKER...")
         enabled = True
 
     reboot_required = HDMI.set_hdmi_drive_in_boot_config(2) or reboot_required
@@ -192,11 +194,11 @@ def _initialise_v2_hub_v2_speaker():
     if i2s_mode_current is True:
         # If in I2S mode
         if i2s_mode_next is True:
-            PTLogger.debug("I2S appears to be enabled - disabling...")
+            logger.debug("I2S appears to be enabled - disabling...")
             I2S.set_state(False)
             reboot_required = True
     else:
-        PTLogger.debug("Initialising pi-topSPEAKER v2...")
+        logger.debug("Initialising pi-topSPEAKER v2...")
         _set_hdmi_as_audio_output()
         _enable_i2c_if_disabled()
         enabled = True
@@ -230,7 +232,7 @@ def enable_device():
 
     if is_pi_top_3:
         if "pi-topSPEAKER-v1" in _speaker_type_name:
-            PTLogger.info("pi-topSPEAKER v1 is not supported on pi-top v2")
+            logger.info("pi-topSPEAKER v1 is not supported on pi-top v2")
         elif "pi-topSPEAKER-v2" in _speaker_type_name:
             (
                 enabled,
@@ -238,7 +240,7 @@ def enable_device():
                 v2_hub_hdmi_to_i2s_required,
             ) = _initialise_v2_hub_v2_speaker()
         else:
-            PTLogger.error("Error - unrecognised device: " + _speaker_type_name)
+            logger.error("Error - unrecognised device: " + _speaker_type_name)
     elif hub_is_v1 or (_host_device_id == DeviceID.unknown):
         if "pi-topSPEAKER-v1-" in _speaker_type_name:
             mode_long = _speaker_type_name.replace("pi-topSPEAKER-v1-", "")
@@ -255,10 +257,10 @@ def enable_device():
                 v2_hub_hdmi_to_i2s_required,
             ) = _initialise_v1_hub_v2_speaker()
         else:
-            PTLogger.error("Error - unrecognised device: " + _speaker_type_name)
+            logger.error("Error - unrecognised device: " + _speaker_type_name)
 
     else:
-        PTLogger.error(
+        logger.error(
             "Error - unrecognised device ID '"
             + str(_host_device_id)
             + "' - unsure how to initialise "

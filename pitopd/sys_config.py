@@ -1,3 +1,4 @@
+import logging
 import traceback
 from enum import Enum, auto
 from os import devnull, path
@@ -10,9 +11,10 @@ from pitop.common.command_runner import run_command
 from pitop.common.current_session_info import get_current_user
 from pitop.common.file_ops import create_temp_file, sed_inplace
 from pitop.common.formatting import get_uncommented_line, is_line_commented
-from pitop.common.logger import PTLogger
 
 from .utils import get_project_root
+
+logger = logging.getLogger(__name__)
 
 
 class AudioDevice(Enum):
@@ -109,12 +111,12 @@ class _SystemCalls:
             i2c_mode = i2c_output == 0
 
             if i2c_mode is False and i2c_output == 1:
-                PTLogger.error("Unable to verify I2C mode - assuming disabled")
+                logger.error("Unable to verify I2C mode - assuming disabled")
 
             return i2c_mode
         except Exception as e:
-            PTLogger.error("Unable to verify I2C mode. " + str(e))
-            PTLogger.info(traceback.format_exc())
+            logger.error("Unable to verify I2C mode. " + str(e))
+            logger.info(traceback.format_exc())
             return None
 
     @staticmethod
@@ -148,11 +150,11 @@ class _SystemCalls:
                     i2s_mode_next = False
 
         except Exception as e:
-            PTLogger.error("Unable to verify I2S mode. " + str(e))
-            PTLogger.info(traceback.format_exc())
+            logger.error("Unable to verify I2S mode. " + str(e))
+            logger.info(traceback.format_exc())
 
         if i2s_mode_current is None or i2s_mode_next is None:
-            PTLogger.error(
+            logger.error(
                 "Unable to determine I2S mode. Current: "
                 + str(i2s_mode_current)
                 + ", Next: "
@@ -170,27 +172,27 @@ class _SystemCalls:
 
     @staticmethod
     def _get_config_specific_alsa_card_name(interface: AudioDevice):
-        PTLogger.debug("Getting configuration-specific alsa card name for {interface}")
+        logger.debug("Getting configuration-specific alsa card name for {interface}")
         if interface == AudioDevice.Headphones:
-            PTLogger.debug("Interface is headphones - using common card name")
+            logger.debug("Interface is headphones - using common card name")
             return "bcm2835 Headphones"
 
         if interface == AudioDevice.Hifiberry:
-            PTLogger.debug(
+            logger.debug(
                 "Interface is Hifiberry - card name is assumed to be 'snd_rpi_hifiberry_dac'"
             )
             return "snd_rpi_hifiberry_dac"
 
         if interface != AudioDevice.HDMI:
-            PTLogger.warning("Unknown interface")
+            logger.warning("Unknown interface")
             return None
 
-        PTLogger.debug("Interface is HDMI - checking for multiple HDMI outputs...")
+        logger.debug("Interface is HDMI - checking for multiple HDMI outputs...")
         if _SystemCalls._get_alsa_card_number_from_name("bcm2835 HDMI 2") is None:
-            PTLogger.debug("Only one HDMI port available - using 'HDMI 1'")
+            logger.debug("Only one HDMI port available - using 'HDMI 1'")
             return "bcm2835 HDMI 1"
 
-        PTLogger.debug(
+        logger.debug(
             "Multiple HDMI ports available - checking if HDMI 1 is set to be forced out..."
         )
         force_hdmi0_output = (
@@ -220,7 +222,7 @@ class _SystemCalls:
 
     @staticmethod
     def _get_alsa_card_number_from_name(card_name: str):
-        PTLogger.debug("Getting device-specific alsa card number for {interface}")
+        logger.debug("Getting device-specific alsa card number for {interface}")
         card_number = None
         for line in run_command("aplay -l", timeout=5).split("\n"):
             print(line)
@@ -236,26 +238,26 @@ class _SystemCalls:
 
     @staticmethod
     def set_audio_output_interface(interface: AudioDevice, user: str = None):
-        PTLogger.info(f"Setting audio output to {interface.name}")
+        logger.info(f"Setting audio output to {interface.name}")
 
         if user is None:
             user = get_current_user()
 
         if user is None:
-            PTLogger.warning("Couldn't find user to set audio output")
+            logger.warning("Couldn't find user to set audio output")
             return False
 
         card_name = _SystemCalls._get_config_specific_alsa_card_name(interface)
         if card_name is None:
-            PTLogger.warning(f"Couldn't find card name for {interface.name}")
+            logger.warning(f"Couldn't find card name for {interface.name}")
             return False
 
         card_number = _SystemCalls._get_alsa_card_number_from_name(card_name)
         if card_number is None:
-            PTLogger.warning("Couldn't find card number to set audio output")
+            logger.warning("Couldn't find card number to set audio output")
             return False
 
-        PTLogger.info(
+        logger.info(
             f"Setting audio output for user {user} to {interface.name} (card number {card_number})"
         )
         uid = run_command(f"id -u {user}", timeout=1).strip()
@@ -268,7 +270,7 @@ class _SystemCalls:
 
     @staticmethod
     def legacy_set_audio_output_interface_no(interface_no, debug_interface_name):
-        PTLogger.debug("Setting audio output to " + debug_interface_name + "...")
+        logger.debug("Setting audio output to " + debug_interface_name + "...")
 
         try:
             amixer_set_interface_cmd_arr = list(_SystemCalls.OLD_AMIXER_SET_CMD_ARR)
@@ -277,11 +279,11 @@ class _SystemCalls:
             _SystemCalls._run_cmd(amixer_set_interface_cmd_arr)
             _SystemCalls._run_cmd(_SystemCalls.ALSA_RESTART_CMD)
 
-            PTLogger.debug("OK")
+            logger.debug("OK")
             return True
 
         except Exception as e:
-            PTLogger.error(
+            logger.error(
                 "There was an error setting audio output to "
                 + debug_interface_name
                 + ": "
@@ -346,7 +348,7 @@ class _BootConfig:
     @staticmethod
     def get_value(property_name, value_is_number):
         if not (path.isfile(_BootConfig.BOOT_CONFIG_FILE)):
-            PTLogger.error(_BootConfig.BOOT_CONFIG_FILE + " - file not found!")
+            logger.error(_BootConfig.BOOT_CONFIG_FILE + " - file not found!")
             return ""
 
         with open(_BootConfig.BOOT_CONFIG_FILE) as config_file:
@@ -363,7 +365,7 @@ class _BootConfig:
 
     @staticmethod
     def set_value(property_name, value_to_set):
-        PTLogger.debug(
+        logger.debug(
             "Checking "
             + property_name
             + " setting in "
@@ -415,7 +417,7 @@ class _BootConfig:
                 property_updated = True
 
         if property_updated is True:
-            PTLogger.info(
+            logger.info(
                 "Updating "
                 + _BootConfig.BOOT_CONFIG_FILE
                 + " to set "
@@ -425,7 +427,7 @@ class _BootConfig:
             copy(temp_file, _BootConfig.BOOT_CONFIG_FILE)
 
         else:
-            PTLogger.debug(
+            logger.debug(
                 property_name
                 + " setting already set in "
                 + _BootConfig.BOOT_CONFIG_FILE
@@ -485,9 +487,9 @@ class I2C:
     @staticmethod
     def set_state(enable):
         if enable:
-            PTLogger.debug("Enabling I2C...")
+            logger.debug("Enabling I2C...")
         else:
-            PTLogger.debug("Disabling I2C...")
+            logger.debug("Disabling I2C...")
         _SystemCalls.set_i2c_state(enable)
 
     @staticmethod
@@ -496,12 +498,12 @@ class I2C:
 
         # Switch on I2C if it's not enabled
         if I2C.get_state() is False:
-            PTLogger.warning("I2C is not initialised - attempting to initialise")
+            logger.warning("I2C is not initialised - attempting to initialise")
             I2C.set_state(True)
 
         # Error if still false
         if I2C.get_state() is False:
-            PTLogger.error(
+            logger.error(
                 "Unable to initialise I2C - unable to get connected device addresses"
             )
 
@@ -530,16 +532,16 @@ class I2S:
     @staticmethod
     def set_state(enable):
         i2s_mode_current, i2s_mode_next = I2S.get_states()
-        PTLogger.info("SYS_CONFIG - i2s_mode_current: " + str(i2s_mode_current))
-        PTLogger.info("SYS_CONFIG - i2s_mode_next: " + str(i2s_mode_next))
+        logger.info("SYS_CONFIG - i2s_mode_current: " + str(i2s_mode_current))
+        logger.info("SYS_CONFIG - i2s_mode_next: " + str(i2s_mode_next))
         if enable == i2s_mode_current:
-            PTLogger.info(
+            logger.info(
                 "I2S is configured correctly for this session. Requested enabled: "
                 + str(enable)
             )
 
         if enable == i2s_mode_next:
-            PTLogger.info(
+            logger.info(
                 "I2S is configured correctly for next session. Requested enabled: "
                 + str(enable)
             )
@@ -559,19 +561,19 @@ class UART:
         if isinstance(init_uart_clock, int):
             _BootConfig.set_value("init_uart_clock", init_uart_clock)
         else:
-            PTLogger.warning(
+            logger.warning(
                 "Unable to set init_uart_clock in /boot/config.txt to non-integer value"
             )
         if isinstance(init_uart_baud, int):
             _BootConfig.set_value("init_uart_baud", init_uart_baud)
         else:
-            PTLogger.warning(
+            logger.warning(
                 "Unable to set init_uart_baud in /boot/config.txt to non-integer value"
             )
         if enable_uart == 1 or enable_uart == 0:
             _BootConfig.set_value("enable_uart", enable_uart)
         else:
-            PTLogger.warning(
+            logger.warning(
                 "Unable to set enable_uart in /boot/config.txt to value other than 0 or 1"
             )
 
@@ -587,7 +589,7 @@ class UART:
                 )
                 clock_val_okay = clock_string == str(expected_clock_val)
             else:
-                PTLogger.warning(
+                logger.warning(
                     "Invalid init_uart_clock value to check for in /boot/config.txt - must be an integer"
                 )
         else:
@@ -600,7 +602,7 @@ class UART:
                 )
                 baud_val_okay = baud_string == str(expected_baud_val)
             else:
-                PTLogger.warning(
+                logger.warning(
                     "Invalid init_uart_baud value to check for in /boot/config.txt - must be an integer"
                 )
         else:
@@ -613,7 +615,7 @@ class UART:
                 )
                 enabled_val_okay = enabled_string == str(expected_enabled_val)
             else:
-                PTLogger.warning(
+                logger.warning(
                     "Invalid enable_uart value to check for in /boot/config.txt - must be 0 or 1"
                 )
         else:

@@ -1,11 +1,13 @@
+import logging
 from time import sleep
 
 from pitop.common.common_ids import DeviceID
-from pitop.common.logger import PTLogger
 
 from .pthub import pthub
 from .pthub2 import pthub2
 from .pthub3 import pthub3
+
+logger = logging.getLogger(__name__)
 
 
 class HubManager:
@@ -29,25 +31,25 @@ class HubManager:
         # We can also positively identify a v1 pi-top, however we cannot
         # do this for a pi-topCEED. Hence this is the fall-through case.
 
-        PTLogger.info("Attempting to find pi-topHUB v3...")
+        logger.info("Attempting to find pi-topHUB v3...")
         if pthub3.initialise() is True:
             self._active_hub_module = pthub3
-            PTLogger.info("Connected to pi-topHUB v3")
+            logger.info("Connected to pi-topHUB v3")
             self._register_client()
             return True
         else:
-            PTLogger.warning("Could not initialise v3 hub")
+            logger.warning("Could not initialise v3 hub")
 
-        PTLogger.info("Attempting to find pi-topHUB v2...")
+        logger.info("Attempting to find pi-topHUB v2...")
         if pthub2.initialise() is True:
             self._active_hub_module = pthub2
-            PTLogger.info("Connected to pi-topHUB v2")
+            logger.info("Connected to pi-topHUB v2")
             self._register_client()
             return True
         else:
-            PTLogger.warning("Could not initialise v2 hub")
+            logger.warning("Could not initialise v2 hub")
 
-        PTLogger.info("Attempting to find pi-topHUB v1...")
+        logger.info("Attempting to find pi-topHUB v1...")
 
         spi_was_enabled = self._callback_client.on_spi0_state_requested()
         # Enable SPI for hub checking
@@ -56,17 +58,17 @@ class HubManager:
 
         if pthub.initialise() is True:
             self._active_hub_module = pthub
-            PTLogger.info("Connected to pi-topHUB v1")
+            logger.info("Connected to pi-topHUB v1")
             self._register_client()
             return True
         else:
-            PTLogger.warning("Could not initialise v1 hub")
+            logger.warning("Could not initialise v1 hub")
 
             # Disable SPI if it was not already running
             if not spi_was_enabled:
                 self._callback_client.on_spi0_state_required(False)
 
-        PTLogger.error("Could not connect to a hub!")
+        logger.error("Could not connect to a hub!")
 
         return False
 
@@ -74,24 +76,24 @@ class HubManager:
         if self._hub_connected():
             self._active_hub_module.start()
         else:
-            PTLogger.warning("Attempted to call start when there was no active hub")
+            logger.warning("Attempted to call start when there was no active hub")
 
     def stop(self):
 
         # When stopping, we unblank the screen and set the brightness to full
         # to prevent restarting with no display
 
-        PTLogger.info("Stopping hub manager...")
+        logger.info("Stopping hub manager...")
 
         if self._hub_connected():
             self.unblank_screen()
 
-            PTLogger.info("Stopping hub module...")
+            logger.info("Stopping hub module...")
             self._active_hub_module.stop()
 
     def wait_for_device_identification(self):
 
-        PTLogger.debug("Waiting for device id to be established...")
+        logger.debug("Waiting for device id to be established...")
 
         time_waited = 0
         while time_waited < 5:
@@ -103,7 +105,7 @@ class HubManager:
                 time_waited += 0.25
 
             else:
-                PTLogger.debug(
+                logger.debug(
                     "Got device id ("
                     + str(device_id)
                     + "). Waited "
@@ -112,22 +114,20 @@ class HubManager:
                 )
                 return
 
-        PTLogger.warning("Timed out waiting for device identification.")
+        logger.warning("Timed out waiting for device identification.")
 
     def get_device_id(self):
         if self._hub_connected():
             return self._active_hub_module.get_device_id()
         else:
-            PTLogger.debug(
-                "Attempted to call get_device_id when there was no active hub"
-            )
+            logger.debug("Attempted to call get_device_id when there was no active hub")
             return DeviceID.unknown
 
     def get_brightness(self):
         if self._hub_connected():
             return self._active_hub_module.get_brightness()
         else:
-            PTLogger.warning(
+            logger.warning(
                 "Attempted to call get_brightness when there was no active hub"
             )
             return None
@@ -136,7 +136,7 @@ class HubManager:
         if self._hub_connected():
             return self._active_hub_module.get_screen_blanked_state()
         else:
-            PTLogger.warning(
+            logger.warning(
                 "Attempted to call get_screen_blanked_state() when there was no active hub"
             )
             return None
@@ -145,7 +145,7 @@ class HubManager:
         if self._hub_connected():
             return self._active_hub_module.get_shutdown_state()
         else:
-            PTLogger.warning(
+            logger.warning(
                 "Attempted to call get_shutdown_state when there was no active hub"
             )
             return None
@@ -154,7 +154,7 @@ class HubManager:
         if self._hub_connected():
             return self._active_hub_module.get_lid_open_state()
         else:
-            PTLogger.warning(
+            logger.warning(
                 "Attempted to call get_lid_open_state when there was no active hub"
             )
             return None
@@ -163,56 +163,56 @@ class HubManager:
         if self._hub_connected():
             return self._active_hub_module.get_battery_state()
         else:
-            PTLogger.warning(
+            logger.warning(
                 "Attempted to call get_battery_state when there was no active hub"
             )
             return None
 
     def set_brightness(self, brightness):
-        PTLogger.info("Setting brightness to " + str(brightness))
+        logger.info("Setting brightness to " + str(brightness))
         if self._hub_connected():
             self.unblank_screen()
             self._active_hub_module.set_brightness(brightness)
         else:
-            PTLogger.warning(
+            logger.warning(
                 "Attempted to call set_brightness when there was no active hub"
             )
 
     def increment_brightness(self):
-        PTLogger.info("Incrementing brightness")
+        logger.info("Incrementing brightness")
         if self._hub_connected():
             self.unblank_screen()
             self._active_hub_module.increment_brightness()
         else:
-            PTLogger.warning(
+            logger.warning(
                 "Attempted to call increment_brightness when there was no active hub"
             )
 
     def decrement_brightness(self):
-        PTLogger.info("Decrementing brightness")
+        logger.info("Decrementing brightness")
         if self._hub_connected():
             self.unblank_screen()
             self._active_hub_module.decrement_brightness()
         else:
-            PTLogger.warning(
+            logger.warning(
                 "Attempted to call decrement_brightness when there was no active hub"
             )
 
     def blank_screen(self):
-        PTLogger.info("Blanking screen")
+        logger.info("Blanking screen")
         if self._hub_connected():
             self._active_hub_module.blank_screen()
         else:
-            PTLogger.warning(
+            logger.warning(
                 "Attempted to call blank_screen when there was no active hub"
             )
 
     def unblank_screen(self):
-        PTLogger.info("Unblanking screen")
+        logger.info("Unblanking screen")
         if self._hub_connected():
             self._active_hub_module.unblank_screen()
         else:
-            PTLogger.warning(
+            logger.warning(
                 "Attempted to call unblank_screen when there was no active hub"
             )
 
@@ -220,42 +220,42 @@ class HubManager:
         if self._hub_connected():
             return self._active_hub_module.get_oled_pi_control_state()
         else:
-            PTLogger.warning(
+            logger.warning(
                 "Attempted to call get_oled_pi_control_state when there was no active hub"
             )
             return None
 
     def set_oled_pi_control_state(self, is_pi_controlled):
-        PTLogger.info("Setting OLED Pi control state to " + str(is_pi_controlled))
+        logger.info("Setting OLED Pi control state to " + str(is_pi_controlled))
         if self._hub_connected():
             self._active_hub_module.set_oled_pi_control_state(is_pi_controlled)
         else:
-            PTLogger.warning(
+            logger.warning(
                 "Attempted to call set_oled_pi_control_state when there was no active hub"
             )
 
     def shutdown(self):
-        PTLogger.info("Shutting down the hub")
+        logger.info("Shutting down the hub")
         if self._hub_connected():
             self._active_hub_module.shutdown()
         else:
-            PTLogger.warning("Attempted to call shutdown when there was no active hub")
+            logger.warning("Attempted to call shutdown when there was no active hub")
 
     def enable_hdmi_to_i2s_audio(self):
-        PTLogger.info("Switching HDMI to I2S mux on")
+        logger.info("Switching HDMI to I2S mux on")
         if self._hub_connected():
             self._active_hub_module.enable_hdmi_to_i2s_audio()
         else:
-            PTLogger.warning(
+            logger.warning(
                 "Attempted to call enable_hdmi_to_i2s_audio when there was no active hub"
             )
 
     def disable_hdmi_to_i2s_audio(self):
-        PTLogger.info("Switching HDMI to I2S mux off")
+        logger.info("Switching HDMI to I2S mux off")
         if self._hub_connected():
             self._active_hub_module.disable_hdmi_to_i2s_audio()
         else:
-            PTLogger.warning(
+            logger.warning(
                 "Attempted to call disable_hdmi_to_i2s_audio when there was no active hub"
             )
 
@@ -266,7 +266,7 @@ class HubManager:
             else:
                 return 1
         else:
-            PTLogger.warning(
+            logger.warning(
                 "Attempted to call get_oled_spi_state when there was no active hub"
             )
             return None
@@ -275,7 +275,7 @@ class HubManager:
         if self._hub_connected():
             return self._active_hub_module.get_oled_use_spi0()
         else:
-            PTLogger.warning(
+            logger.warning(
                 "Attempted to call get_oled_spi_state when there was no active hub"
             )
             return None
@@ -284,7 +284,7 @@ class HubManager:
         if self._hub_connected():
             return self._active_hub_module.set_oled_use_spi0(use_spi0)
         else:
-            PTLogger.warning(
+            logger.warning(
                 "Attempted to call set_oled_spi_state when there was no active hub"
             )
             return None

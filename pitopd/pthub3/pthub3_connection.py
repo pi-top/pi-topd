@@ -1,9 +1,9 @@
+import logging
 from threading import Thread
 from time import sleep
 
 from pitop.common import bitwise_ops
 from pitop.common.i2c_device import I2CDevice
-from pitop.common.logger import PTLogger
 
 from .internal.apcad import APCAD
 from .internal.battery import BatteryControl
@@ -20,6 +20,8 @@ from .internal.hardware import (
 )
 from .internal.misc import AudioConfig, AudioRegister, UnixTime
 from .internal.power import PowerControl, ShutdownRegister
+
+logger = logging.getLogger(__name__)
 
 
 class HubConnection:
@@ -52,7 +54,7 @@ class HubConnection:
             if not self.check_for_part_name_id():
                 return False
         except Exception as e:
-            PTLogger.warning("Unable to read from hub (v3) over i2c: " + str(e))
+            logger.warning("Unable to read from hub (v3) over i2c: " + str(e))
             return False
 
         return True
@@ -63,7 +65,7 @@ class HubConnection:
             self._poll_hub()
             self._main_thread.start()
         else:
-            PTLogger.error(
+            logger.error(
                 "Unable to start pi-topHUB SPI communication - run initialise() first!"
             )
 
@@ -76,21 +78,21 @@ class HubConnection:
         self._cycle_sleep_time = float(1 / no_of_polls_per_second)
 
     def read_raspi_board_detect_flag(self):
-        PTLogger.debug("Hub: Reading raspi board detect flag")
+        logger.debug("Hub: Reading raspi board detect flag")
         return self._i2c_device.read_bits_from_byte_at_address(
             bits_to_read=RasPiBoardDetect.CTRL__BRD_DETECT__DETECT,
             addr_to_read=HardwareControl.CTRL__BRD_DETECT,
         )
 
     def read_raspi_board_prevent_boot(self):
-        PTLogger.debug("Hub: Reading raspi board prevent boot")
+        logger.debug("Hub: Reading raspi board prevent boot")
         return self._i2c_device.read_bits_from_byte_at_address(
             bits_to_read=RasPiBoardDetect.CTRL__BRD_DETECT__PREVENT,
             addr_to_read=HardwareControl.CTRL__BRD_DETECT,
         )
 
     def set_raspi_board_prevent_boot(self, prevent_boot):
-        PTLogger.debug("Hub: setting raspi board prevent boot")
+        logger.debug("Hub: setting raspi board prevent boot")
         full_byte = self._i2c_device.read_unsigned_byte(
             HardwareControl.CTRL__BRD_DETECT
         )
@@ -107,32 +109,32 @@ class HubConnection:
         self._i2c_device.write_byte(HardwareControl.CTRL__BRD_DETECT, full_byte)
 
     def read_modular_connector_device_detection(self):
-        PTLogger.debug("Hub: Reading Modular Connector Device Detection")
+        logger.debug("Hub: Reading Modular Connector Device Detection")
         return self._i2c_device.read_unsigned_byte(HardwareControl.CTRL__MODULE_DETECT)
 
     def read_battery_display_i2c_control(self):
-        PTLogger.debug("Hub: Reading battery_display_i2c_control")
+        logger.debug("Hub: Reading battery_display_i2c_control")
         return self._i2c_device.read_bits_from_byte_at_address(
             bits_to_read=BatteryDisplayI2CBusControl.CTRL__BATT_AND_DISP_I2C_MUX__CONTROL,
             addr_to_read=HardwareControl.CTRL__BATT_AND_DISP_I2C_MUX,
         )
 
     def set_battery_display_i2c_control(self, controlled_by_pi):
-        PTLogger.debug("Hub: Writing battery_display_i2c_control")
+        logger.debug("Hub: Writing battery_display_i2c_control")
         state_bit = 0x1 if controlled_by_pi else 0x00
         self._i2c_device.write_byte(
             HardwareControl.CTRL__BATT_AND_DISP_I2C_MUX, state_bit
         )
 
     def read_oled_control(self):
-        PTLogger.debug("Hub: Reading oled_control")
+        logger.debug("Hub: Reading oled_control")
         return self._i2c_device.read_bits_from_byte_at_address(
             bits_to_read=OLEDControlRegister.CTRL__UI_OLED_CTRL__RPI_CONTROL,
             addr_to_read=HardwareControl.CTRL__UI_OLED_CTRL,
         )
 
     def set_oled_control(self, controlled_by_pi):
-        PTLogger.debug("Hub: Writing oled_control")
+        logger.debug("Hub: Writing oled_control")
         full_byte = self._i2c_device.read_unsigned_byte(
             HardwareControl.CTRL__UI_OLED_CTRL
         )
@@ -158,26 +160,26 @@ class HubConnection:
         )
         self._i2c_device.write_byte(HardwareControl.CTRL__UI_OLED_CTRL, full_byte)
         for count in range(5):
-            PTLogger.debug("Hub: reading for OLED reset count: " + str(count))
+            logger.debug("Hub: reading for OLED reset count: " + str(count))
             sleep(0.002)
             reset_bit_value = (
                 self._i2c_device.read_unsigned_byte(HardwareControl.CTRL__UI_OLED_CTRL)
                 & OLEDControlRegister.CTRL__UI_OLED_CTRL__RST
             )
             if reset_bit_value == 0:
-                PTLogger.debug("Hub: OLED has reset (count: %s)" % str(count))
+                logger.debug("Hub: OLED has reset (count: %s)" % str(count))
                 return
-        PTLogger.warning("Hub: Failed to read OLED reset completed in time.")
+        logger.warning("Hub: Failed to read OLED reset completed in time.")
 
     def read_oled_use_spi0(self):
-        PTLogger.debug("Hub: Reading oled_use_spi0")
+        logger.debug("Hub: Reading oled_use_spi0")
         return self._i2c_device.read_bits_from_byte_at_address(
             bits_to_read=OLEDControlRegister.CTRL__UI_OLED_CTRL__SPI_ALT,
             addr_to_read=HardwareControl.CTRL__UI_OLED_CTRL,
         )
 
     def set_oled_use_spi0(self, use_spi0):
-        PTLogger.debug("Hub: Writing oled_use_spi0")
+        logger.debug("Hub: Writing oled_use_spi0")
         full_byte = self._i2c_device.read_unsigned_byte(
             HardwareControl.CTRL__UI_OLED_CTRL
         )
@@ -195,9 +197,9 @@ class HubConnection:
         self.reset_oled()
 
     def set_fan_manual_speed(self, fan_speed):
-        PTLogger.debug("Hub: Writing fan speed")
+        logger.debug("Hub: Writing fan speed")
         if not 0 <= fan_speed <= 9:
-            PTLogger.warning(
+            logger.warning(
                 "Invalid fan speed " + str(fan_speed) + ". Fan speed range is [0-9]"
             )
             return
@@ -214,14 +216,14 @@ class HubConnection:
         self._i2c_device.write_byte(HardwareControl.CTRL__FAN_SPEED, fan_speed_set_byte)
 
     def read_fan_speed(self):
-        PTLogger.debug("Hub: Reading fan speed")
+        logger.debug("Hub: Reading fan speed")
         return (
             self._i2c_device.read_unsigned_byte(HardwareControl.CTRL__FAN_SPEED)
             & FanSpeedControl.CTRL__FAN_SPEED__SPEED
         )
 
     def set_fan_mode_auto(self, auto):
-        PTLogger.debug("Hub: Writing fan control mode")
+        logger.debug("Hub: Writing fan control mode")
         fan_mode = 0 if auto else 1
         fan_speed_control_byte = self._i2c_device.read_unsigned_byte(
             HardwareControl.CTRL__FAN_SPEED
@@ -236,50 +238,50 @@ class HubConnection:
         self._i2c_device.write_byte(HardwareControl.CTRL__FAN_SPEED, fan_mode_set_byte)
 
     def read_fan_mode_auto(self):
-        PTLogger.debug("Hub: Reading fan mode")
+        logger.debug("Hub: Reading fan mode")
         return self._i2c_device.read_unsigned_byte(HardwareControl.CTRL__FAN_SPEED) >> 7
 
     def read_mcu_rpi_cpu_temp(self):
-        PTLogger.debug("Hub: Reading RPi CPU temperature")
+        logger.debug("Hub: Reading RPi CPU temperature")
         return self._i2c_device.read_unsigned_byte(HardwareControl.CTRL__RASPI_CPU_TEMP)
 
     def set_rpi_cpu_temp(self, cpu_temp):
-        PTLogger.debug("Hub: Writing RPi CPU temperature")
+        logger.debug("Hub: Writing RPi CPU temperature")
         self._i2c_device.write_byte(HardwareControl.CTRL__RASPI_CPU_TEMP, cpu_temp)
 
     def read_uptime_standby_time(self):
-        PTLogger.debug("Hub: Reading standby time of uptime")
+        logger.debug("Hub: Reading standby time of uptime")
         return self._i2c_device.read_n_unsigned_bytes(Diagnostics.DIAG__UPTIME_STDBY, 4)
 
     def read_uptime_rails_on_time(self):
-        PTLogger.debug("Hub: Reading rails on time of uptime")
+        logger.debug("Hub: Reading rails on time of uptime")
         return self._i2c_device.read_n_unsigned_bytes(
             Diagnostics.DIAG__UPTIME_RAILSON, 4
         )
 
     def read_lifetime_standby_time(self):
-        PTLogger.debug("Hub: Reading standby time of lifetime")
+        logger.debug("Hub: Reading standby time of lifetime")
         return self._i2c_device.read_n_unsigned_bytes(Diagnostics.DIAG__UPTIME_STDBY, 4)
 
     def read_lifetime_rails_on_time(self):
-        PTLogger.debug("Hub: Reading rails on time of lifetime")
+        logger.debug("Hub: Reading rails on time of lifetime")
         return self._i2c_device.read_n_unsigned_bytes(
             Diagnostics.DIAG__LIFETIME_RAILSON, 4
         )
 
     def read_lifetime_number_of_power_cycles(self):
-        PTLogger.debug("Hub: Reading number of power cycles of lifetime")
+        logger.debug("Hub: Reading number of power cycles of lifetime")
         return self._i2c_device.read_unsigned_word(Diagnostics.DIAG__UPTIME_STDBY)
 
     def read_shutdown_button_held(self):
-        PTLogger.debug("Hub: Reading shutdown button held")
+        logger.debug("Hub: Reading shutdown button held")
         return self._i2c_device.read_bits_from_byte_at_address(
             bits_to_read=ShutdownRegister.PWR__SHUTDOWN_CTRL__HELD,
             addr_to_read=PowerControl.PWR__SHUTDOWN_CTRL,
         )
 
     def _read_shutdown_control(self):
-        PTLogger.debug("Polling for shutdown...")
+        logger.debug("Polling for shutdown...")
         shutdown_control = bitwise_ops.get_bits(
             ShutdownRegister.PWR__SHUTDOWN_CTRL__BUTT,
             self._i2c_device.read_unsigned_byte(PowerControl.PWR__SHUTDOWN_CTRL),
@@ -289,7 +291,7 @@ class HubConnection:
             self._state.emit_shutdown()
 
     def read_shutdown_mode(self):
-        PTLogger.debug("Hub: Reading shutdown mode")
+        logger.debug("Hub: Reading shutdown mode")
         full_byte = self._i2c_device.read_unsigned_byte(PowerControl.PWR__SHUTDOWN_CTRL)
         # TODO: REVIEW BITSHIFT HERE - WHY IS THIS NEEDED?
         return (
@@ -298,7 +300,7 @@ class HubConnection:
         )
 
     def set_shutdown_mode(self, mode: int):
-        PTLogger.debug("Hub: Writing shutdown mode")
+        logger.debug("Hub: Writing shutdown mode")
         full_byte = bitwise_ops.set_bits_low(
             ShutdownRegister.PWR__SHUTDOWN_CTRL__MODE,
             self._i2c_device.read_unsigned_byte(PowerControl.PWR__SHUTDOWN_CTRL),
@@ -307,14 +309,14 @@ class HubConnection:
         self._i2c_device.write_byte(PowerControl.PWR__SHUTDOWN_CTRL, set_value)
 
     def read_ac_power_connected(self):
-        PTLogger.debug("Hub: Reading detect ac power")
+        logger.debug("Hub: Reading detect ac power")
         return self._i2c_device.read_bits_from_byte_at_address(
             bits_to_read=ShutdownRegister.PWR__SHUTDOWN_CTRL__AC,
             addr_to_read=PowerControl.PWR__SHUTDOWN_CTRL,
         )
 
     def set_shutdown_cancel(self, cancel):
-        PTLogger.debug("Hub: Writing cancel shutdown")
+        logger.debug("Hub: Writing cancel shutdown")
         if cancel is True:
             shutdown_state = self._i2c_device.read_unsigned_byte(
                 PowerControl.PWR__SHUTDOWN_CTRL
@@ -327,71 +329,71 @@ class HubConnection:
             )
 
     def read_shutdown_short_button_hold_turn_on(self):
-        PTLogger.debug("Hub: Reading shutdown short hold button turn on duration")
+        logger.debug("Hub: Reading shutdown short hold button turn on duration")
         return self._i2c_device.read_unsigned_byte(
             PowerControl.PWR__BUTT_SHORT_HOLD_TURNON
         )
 
     def set_shutdown_short_button_hold_turn_on(self, time):
-        PTLogger.debug("Hub: Writing shutdown short hold button turn on duration")
+        logger.debug("Hub: Writing shutdown short hold button turn on duration")
         self._i2c_device.write_byte(PowerControl.PWR__BUTT_SHORT_HOLD_TURNON, time)
 
     def read_shutdown_short_button_hold_turn_off(self):
-        PTLogger.debug("Hub: Reading shutdown short hold button turn off duration")
+        logger.debug("Hub: Reading shutdown short hold button turn off duration")
         return self._i2c_device.read_unsigned_byte(
             PowerControl.PWR__BUTT_SHORT_HOLD_TURNOFF
         )
 
     def set_shutdown_short_button_hold_turn_off(self, time):
-        PTLogger.debug("Hub: Writing shutdown short hold button turn off duration")
+        logger.debug("Hub: Writing shutdown short hold button turn off duration")
         self._i2c_device.write_byte(PowerControl.PWR__BUTT_SHORT_HOLD_TURNOFF, time)
 
     def read_shutdown_long_button_hold_turn_off(self):
-        PTLogger.debug("Hub: Reading shutdown long hold button turn off duration")
+        logger.debug("Hub: Reading shutdown long hold button turn off duration")
         return self._i2c_device.read_unsigned_byte(PowerControl.PWR__BUTT_LONG_HOLD)
 
     def set_shutdown_long_button_hold_turn_off(self, time):
-        PTLogger.debug("Hub: Writing shutdown long hold button turn off duration")
+        logger.debug("Hub: Writing shutdown long hold button turn off duration")
         self._i2c_device.write_byte(PowerControl.PWR__BUTT_LONG_HOLD, time)
 
     def read_shutdown_mode1_timeout_min(self):
-        PTLogger.debug("Hub: Reading shutdown mode 1 timeout min")
+        logger.debug("Hub: Reading shutdown mode 1 timeout min")
         return self._i2c_device.read_unsigned_word(PowerControl.PWR__M1_TIMEOUT_MIN)
 
     def set_shutdown_mode1_timeout_min(self, time):
-        PTLogger.debug("Hub: Writing shutdown mode 1 timeout min")
+        logger.debug("Hub: Writing shutdown mode 1 timeout min")
         self._i2c_device.write_word(PowerControl.PWR__M1_TIMEOUT_MIN, time)
 
     def read_shutdown_mode2_timeout_min(self):
-        PTLogger.debug("Hub: Reading shutdown mode 2 timeout min")
+        logger.debug("Hub: Reading shutdown mode 2 timeout min")
         return self._i2c_device.read_unsigned_word(PowerControl.PWR__M2_TIMEOUT_MIN)
 
     def set_shutdown_mode2_timeout_min(self, time):
-        PTLogger.debug("Hub: Writing shutdown mode 2 timeout min")
+        logger.debug("Hub: Writing shutdown mode 2 timeout min")
         self._i2c_device.write_word(PowerControl.PWR__M2_TIMEOUT_MIN, time)
 
     def read_shutdown_mode1_timeout_max(self):
-        PTLogger.debug("Hub: Reading shutdown mode 1 timeout max")
+        logger.debug("Hub: Reading shutdown mode 1 timeout max")
         return self._i2c_device.read_unsigned_word(PowerControl.PWR__M1_TIMEOUT_MAX)
 
     def set_shutdown_mode1_timeout_max(self, time):
-        PTLogger.debug("Hub: Writing shutdown mode 1 timeout max")
+        logger.debug("Hub: Writing shutdown mode 1 timeout max")
         self._i2c_device.write_word(PowerControl.PWR__M1_TIMEOUT_Max, time)
 
     def read_shutdown_mode2_timeout_max(self):
-        PTLogger.debug("Hub: Reading shutdown mode 2 timeout max")
+        logger.debug("Hub: Reading shutdown mode 2 timeout max")
         return self._i2c_device.read_unsigned_word(PowerControl.PWR__M2_TIMEOUT_MAX)
 
     def set_shutdown_mode2_timeout_max(self, time):
-        PTLogger.debug("Hub: Writing shutdown mode 2 timeout max")
+        logger.debug("Hub: Writing shutdown mode 2 timeout max")
         self._i2c_device.write_word(PowerControl.PWR__M2_TIMEOUT_MAX, time)
 
     def read_shutdown_mode3_timeout(self):
-        PTLogger.debug("Hub: Reading shutdown mode 3 timeout")
+        logger.debug("Hub: Reading shutdown mode 3 timeout")
         return self._i2c_device.read_unsigned_word(PowerControl.PWR__M3_TIMEOUT)
 
     def set_shutdown_mode3_timeout(self, time):
-        PTLogger.debug("Hub: Writing shutdown mode 3 timeout")
+        logger.debug("Hub: Writing shutdown mode 3 timeout")
         self._i2c_device.write_word(PowerControl.PWR__M3_TIMEOUT, time)
 
     def read_screen_test_mode(self):
@@ -401,128 +403,128 @@ class HubConnection:
         self._i2c_device.write_byte(Display.DIS__TEST_MODE, test_mode)
 
     def read_battery_storage_mode(self):
-        PTLogger.debug("Hub: Reading battery storage mode")
+        logger.debug("Hub: Reading battery storage mode")
         return self._i2c_device.read_unsigned_byte(BatteryControl.BAT__STORAGE_MODE)
 
     def set_battery_storage_mode(self, set_storage_mode):
-        PTLogger.debug("Hub: Writing battery storage mode")
+        logger.debug("Hub: Writing battery storage mode")
         state_bit = int(set_storage_mode)
         self._i2c_device.write_byte(BatteryControl.BAT__STORAGE_MODE, state_bit)
 
     def read_battery_temperature(self):
-        PTLogger.debug("Hub: Reading battery temperature")
+        logger.debug("Hub: Reading battery temperature")
         return self._i2c_device.read_unsigned_word(BatteryControl.BAT__TEMPERATURE)
 
     def read_battery_cell1_voltage(self):
-        PTLogger.debug("Hub: Reading battery cell 1 voltage")
+        logger.debug("Hub: Reading battery cell 1 voltage")
         return self._i2c_device.read_unsigned_word(BatteryControl.BAT__VOLT_CELL1)
 
     def read_battery_cell2_voltage(self):
-        PTLogger.debug("Hub: Reading battery cell 2 voltage")
+        logger.debug("Hub: Reading battery cell 2 voltage")
         return self._i2c_device.read_unsigned_word(BatteryControl.BAT__VOLT_CELL2)
 
     def read_battery_cell3_voltage(self):
-        PTLogger.debug("Hub: Reading battery cell 3 voltage")
+        logger.debug("Hub: Reading battery cell 3 voltage")
         return self._i2c_device.read_unsigned_word(BatteryControl.BAT__VOLT_CELL3)
 
     def read_battery_cell4_voltage(self):
-        PTLogger.debug("Hub: Reading battery cell 4 voltage")
+        logger.debug("Hub: Reading battery cell 4 voltage")
         return self._i2c_device.read_unsigned_word(BatteryControl.BAT__VOLT_CELL4)
 
     def read_battery_error_flag(self):
-        PTLogger.debug("Hub: Reading battery error flag")
+        logger.debug("Hub: Reading battery error flag")
         return self._i2c_device.read_bits_from_byte_at_address(
             bits_to_read=0x1, addr_to_read=BatteryControl.BAT__PF_ERROR
         )
 
     def read_battery_serial_number(self):
-        PTLogger.debug("Hub: Reading battery serial number")
+        logger.debug("Hub: Reading battery serial number")
         return self._i2c_device.read_unsigned_word(BatteryControl.BAT__SERIAL_NUM)
 
     def read_battery_manufacture_date(self):
-        PTLogger.debug("Hub: Reading battery manufacture date")
+        logger.debug("Hub: Reading battery manufacture date")
         return self._i2c_device.read_unsigned_word(BatteryControl.BAT__MANUF_DATE)
 
     def read_battery_charging_error_detect(self):
-        PTLogger.debug("Hub: Reading battery charging error")
+        logger.debug("Hub: Reading battery charging error")
         return self._i2c_device.read_unsigned_byte(BatteryControl.BAT__CHARGING_ERROR)
 
     def read_mcu_software_version_major(self):
-        PTLogger.debug("Hub: Reading mcu software version major")
+        logger.debug("Hub: Reading mcu software version major")
         return self._i2c_device.read_unsigned_byte(DeviceInfo.ID__MCU_SOFT_VERS_MAJOR)
 
     def read_mcu_software_version_minor(self):
-        PTLogger.debug("Hub: Reading mcu software version minor")
+        logger.debug("Hub: Reading mcu software version minor")
         return self._i2c_device.read_unsigned_byte(DeviceInfo.ID__MCU_SOFT_VERS_MINOR)
 
     def read_sch_hardware_version_major(self):
-        PTLogger.debug("Hub: Reading sch hardware version major")
+        logger.debug("Hub: Reading sch hardware version major")
         return self._i2c_device.read_unsigned_byte(DeviceInfo.ID__SCH_REV_MAJOR)
 
     def read_sch_hardware_version_minor(self):
-        PTLogger.debug("Hub: Reading sch hardware version minor")
+        logger.debug("Hub: Reading sch hardware version minor")
         return self._i2c_device.read_unsigned_byte(DeviceInfo.ID__SCH_REV_MINOR)
 
     def read_brd_version(self):
-        PTLogger.debug("Hub: Reading brd version")
+        logger.debug("Hub: Reading brd version")
         return self._i2c_device.read_unsigned_byte(DeviceInfo.ID__BRD_REV)
 
     def check_for_part_name_id(self):
         return self.read_part_name() != 0
 
     def read_part_name(self):
-        PTLogger.debug("Hub: Reading part name")
+        logger.debug("Hub: Reading part name")
         return self._i2c_device.read_unsigned_word(DeviceInfo.ID__PART_NAME)
 
     def read_part_number(self):
-        PTLogger.debug("Hub: Reading part number")
+        logger.debug("Hub: Reading part number")
         return self._i2c_device.read_unsigned_word(DeviceInfo.ID__PART_NUMBER)
 
     def read_serial_id(self):
-        PTLogger.debug("Hub: Reading serial id")
+        logger.debug("Hub: Reading serial id")
         return self._i2c_device.read_n_unsigned_bytes(DeviceInfo.ID__SERIAL_ID, 4)
 
     def read_display_mcu_software_version_major(self):
-        PTLogger.debug("Hub: Reading display mcu software version major")
+        logger.debug("Hub: Reading display mcu software version major")
         return self._i2c_device.read_unsigned_byte(
             DeviceInfo.ID__DISPLAY_MCU_SOFT_VERS_MAJOR
         )
 
     def read_display_mcu_software_version_minor(self):
-        PTLogger.debug("Hub: Reading display mcu software version minor")
+        logger.debug("Hub: Reading display mcu software version minor")
         return self._i2c_device.read_unsigned_byte(
             DeviceInfo.ID__DISPLAY_MCU_SOFT_VERS_MINOR
         )
 
     def read_display_sch_hardware_version_major(self):
-        PTLogger.debug("Hub: Reading display sch hardware version major")
+        logger.debug("Hub: Reading display sch hardware version major")
         return self._i2c_device.read_unsigned_byte(DeviceInfo.ID__DISPLAY_SCH_REV_MAJOR)
 
     def read_display_sch_hardware_version_minor(self):
-        PTLogger.debug("Hub: Reading display sch hardware version minor")
+        logger.debug("Hub: Reading display sch hardware version minor")
         return self._i2c_device.read_unsigned_byte(DeviceInfo.ID__DISPLAY_SCH_REV_MINOR)
 
     def read_display_brd_version(self):
-        PTLogger.debug("Hub: Reading display brd version")
+        logger.debug("Hub: Reading display brd version")
         return self._i2c_device.read_unsigned_byte(DeviceInfo.ID__DISPLAY_BRD_REV)
 
     def read_display_part_name(self):
-        PTLogger.debug("Hub: Reading display part name")
+        logger.debug("Hub: Reading display part name")
         return self._i2c_device.read_unsigned_word(DeviceInfo.ID__DISPLAY_PART_NAME)
 
     def read_display_part_nmuber(self):
-        PTLogger.debug("Hub: Reading display part number")
+        logger.debug("Hub: Reading display part number")
         return self._i2c_device.read_unsigned_word(DeviceInfo.ID__DISPLAY_PART_NUMBER)
 
     def read_display_serial_id(self):
-        PTLogger.debug("Hub: Reading display serial id")
+        logger.debug("Hub: Reading display serial id")
         return self._i2c_device.read_n_unsigned_bytes(
             DeviceInfo.ID__DISPLAY_SERIAL_ID, 4
         )
 
     def increment_brightness(self):
         try:
-            PTLogger.debug("Hub: increment_brightness")
+            logger.debug("Hub: increment_brightness")
             current_brightness_value = self._i2c_device.read_bits_from_byte_at_address(
                 bits_to_read=BacklightRegister.DIS__BACKLIGHT__PERC_ALL,
                 addr_to_read=Display.DIS__BACKLIGHT,
@@ -531,11 +533,11 @@ class HubConnection:
             if current_brightness_value < 16:
                 self.set_brightness(current_brightness_value + 1)
         except Exception as e:
-            PTLogger.error("Error incrementing brightness: " + str(e))
+            logger.error("Error incrementing brightness: " + str(e))
 
     def decrement_brightness(self):
         try:
-            PTLogger.debug("Hub: decrement_brightness")
+            logger.debug("Hub: decrement_brightness")
             current_brightness_value = self._i2c_device.read_bits_from_byte_at_address(
                 bits_to_read=BacklightRegister.DIS__BACKLIGHT__PERC_ALL,
                 addr_to_read=Display.DIS__BACKLIGHT,
@@ -544,14 +546,14 @@ class HubConnection:
             if current_brightness_value > 0:
                 self.set_brightness(current_brightness_value - 1)
         except Exception as e:
-            PTLogger.error("Error decrementing brightness: " + str(e))
+            logger.error("Error decrementing brightness: " + str(e))
 
     def set_brightness(self, value):
         try:
-            PTLogger.debug("Hub: set_brightness")
+            logger.debug("Hub: set_brightness")
 
             if value < 0 or value > 16:
-                PTLogger.warning("Invalid brightness value provided: " + str(value))
+                logger.warning("Invalid brightness value provided: " + str(value))
                 return
 
             updated_backlight_settings = bitwise_ops.set_bits_high(
@@ -566,11 +568,11 @@ class HubConnection:
                 Display.DIS__BACKLIGHT, updated_backlight_settings
             )
         except Exception as e:
-            PTLogger.error("Error setting brightness: " + str(e))
+            logger.error("Error setting brightness: " + str(e))
 
     def blank_screen(self):
         try:
-            PTLogger.debug("Hub: blank_screen")
+            logger.debug("Hub: blank_screen")
             updated_backlight_settings = bitwise_ops.set_bits_low(
                 BacklightRegister.DIS__BACKLIGHT__EN,
                 self._i2c_device.read_unsigned_byte(Display.DIS__BACKLIGHT),
@@ -579,11 +581,11 @@ class HubConnection:
                 Display.DIS__BACKLIGHT, updated_backlight_settings
             )
         except Exception as e:
-            PTLogger.error("Error blanking screen: " + str(e))
+            logger.error("Error blanking screen: " + str(e))
 
     def unblank_screen(self):
         try:
-            PTLogger.debug("Hub: unblank_screen")
+            logger.debug("Hub: unblank_screen")
             updated_backlight_settings = bitwise_ops.set_bits_high(
                 BacklightRegister.DIS__BACKLIGHT__EN,
                 self._i2c_device.read_unsigned_byte(Display.DIS__BACKLIGHT),
@@ -592,7 +594,7 @@ class HubConnection:
                 Display.DIS__BACKLIGHT, updated_backlight_settings
             )
         except Exception as e:
-            PTLogger.error("Error unblanking screen: " + str(e))
+            logger.error("Error unblanking screen: " + str(e))
 
     def shutdown(self):
         # IMPORTANT: The default way in which the hub shuts down is as follows:
@@ -604,85 +606,85 @@ class HubConnection:
 
         # However, we do need to stop polling the hub, otherwise we'll keep detecting
         # shutdown and triggering the shutdown process.
-        PTLogger.debug("Hub: shutdown")
+        logger.debug("Hub: shutdown")
         self._run_polling_thread = False
 
     def enable_hdmi_audio(self):
         try:
-            PTLogger.debug("Hub: enable_hdmi_audio")
+            logger.debug("Hub: enable_hdmi_audio")
             updated_audio_settings = bitwise_ops.set_bits_high(
                 AudioRegister.AUD__CONFIG__HDMI,
                 self._i2c_device.read_unsigned_byte(AudioConfig.AUD__CONFIG),
             )
             self._i2c_device.write_byte(AudioConfig.AUD__CONFIG, updated_audio_settings)
         except Exception as e:
-            PTLogger.error("Error enabling hdmi audio (multiplexer): " + str(e))
+            logger.error("Error enabling hdmi audio (multiplexer): " + str(e))
 
     def disable_hdmi_audio(self):
         try:
-            PTLogger.debug("Hub: disable_hdmi_audio")
+            logger.debug("Hub: disable_hdmi_audio")
             updated_audio_settings = bitwise_ops.set_bits_low(
                 AudioRegister.AUD__CONFIG__HDMI,
                 self._i2c_device.read_unsigned_byte(AudioConfig.AUD__CONFIG),
             )
             self._i2c_device.write_byte(AudioConfig.AUD__CONFIG, updated_audio_settings)
         except Exception as e:
-            PTLogger.error("Error disabling hdmi audio (multiplexer): " + str(e))
+            logger.error("Error disabling hdmi audio (multiplexer): " + str(e))
 
     def read_audio_hdmi_control(self):
-        PTLogger.debug("Hub: reading hdmi audio control")
+        logger.debug("Hub: reading hdmi audio control")
         return self._i2c_device.read_bits_from_byte_at_address(
             bits_to_read=AudioRegister.AUD__CONFIG__HDMI,
             addr_to_read=AudioConfig.AUD__CONFIG,
         )
 
     def read_audio_headphone_detect_flag(self):
-        PTLogger.debug("Hub: reading hdmi audio control")
+        logger.debug("Hub: reading hdmi audio control")
         return self._i2c_device.read_bits_from_byte_at_address(
             bits_to_read=AudioRegister.AUD__CONFIG__HPDET,
             addr_to_read=AudioConfig.AUD__CONFIG,
         )
 
     def read_realtime_counter(self):
-        PTLogger.debug("Hub: reading real time counter unix time")
+        logger.debug("Hub: reading real time counter unix time")
         return self._i2c_device.read_n_unsigned_bytes(
             UnixTime.MISC__realtime_COUNTER, 4
         )
 
     def set_realtime_counter(self, time):
-        PTLogger.debug("Hub: Wrting real time counter unix time")
+        logger.debug("Hub: Wrting real time counter unix time")
         self._i2c_device.write_n_bytes(UnixTime.MISC__realtime_COUNTER, time)
 
     def read_apcad_battery_pack_in(self):
-        PTLogger.debug("Reading APCAD__VOLT_BATT_IN")
+        logger.debug("Reading APCAD__VOLT_BATT_IN")
         return self._i2c_device.read_unsigned_word(APCAD.APCAD__VOLT_BATT_IN)
 
     def read_apcad_dc_jack_in(self):
-        PTLogger.debug("Reading APCAD__VOLT_DC_IN")
+        logger.debug("Reading APCAD__VOLT_DC_IN")
         return self._i2c_device.read_unsigned_word(APCAD.APCAD__VOLT_DC_IN)
 
     def read_apcad_modular_power_in(self):
-        PTLogger.debug("Reading APCAD__VOLT_MPWR_IN")
+        logger.debug("Reading APCAD__VOLT_MPWR_IN")
         return self._i2c_device.read_unsigned_word(APCAD.APCAD__VOLT_MPWR_IN)
 
     def read_apcad_system_voltage_persist(self):
-        PTLogger.debug("Reading APCAD__VOLT_VSYS_PRST")
+        logger.debug("Reading APCAD__VOLT_VSYS_PRST")
         return self._i2c_device.read_unsigned_word(APCAD.APCAD__VOLT_VSYS_PRST)
 
     def read_apcad_5v_persist(self):
-        PTLogger.debug("Reading APCAD__VOLT_5V_PRST")
+        logger.debug("Reading APCAD__VOLT_5V_PRST")
         return self._i2c_device.read_unsigned_word(APCAD.APCAD__VOLT_5V_PRST)
 
     def read_apcad_5v(self):
-        PTLogger.debug("Reading APCAD__VOLT_5V")
+        logger.debug("Reading APCAD__VOLT_5V")
         return self._i2c_device.read_unsigned_word(APCAD.APCAD__VOLT_5V)
 
     def read_apcad_5v_usb(self):
-        PTLogger.debug("Reading APCAD__VOLT_5V_USB")
+        logger.debug("Reading APCAD__VOLT_5V_USB")
         return self._i2c_device.read_unsigned_word(APCAD.APCAD__VOLT_5V_USB)
 
     def read_apcad_3v3(self):
-        PTLogger.debug("Reading APCAD__VOLT_3V3")
+        logger.debug("Reading APCAD__VOLT_3V3")
         return self._i2c_device.read_unsigned_word(APCAD.APCAD__VOLT_3V3)
 
     ########################
@@ -701,7 +703,7 @@ class HubConnection:
         self._battery_sleep_counter += self._cycle_sleep_time
 
     def _read_battery_registers(self):
-        PTLogger.debug("Hub: Reading battery registers")
+        logger.debug("Hub: Reading battery registers")
 
         # Get values from the hub
         current_ma = self._i2c_device.read_signed_word(BatteryControl.BAT__CURRENT)
@@ -746,7 +748,7 @@ class HubConnection:
         self._state.set_battery_state(charging_state, capacity, remaining_time, wattage)
 
     def _read_oled_register(self):
-        PTLogger.debug("Hub: Reading OLED register")
+        logger.debug("Hub: Reading OLED register")
 
         oled_controlled_state = self._i2c_device.read_unsigned_byte(
             HardwareControl.CTRL__UI_OLED_CTRL
@@ -764,7 +766,7 @@ class HubConnection:
         )
 
     def _read_ui_buttons_register(self):
-        PTLogger.debug("Hub: Reading UI button register")
+        logger.debug("Hub: Reading UI button register")
 
         ui_button_state = self._i2c_device.read_unsigned_byte(
             HardwareControl.CTRL__UI_BUTTON_CTRL
@@ -801,39 +803,39 @@ class HubConnection:
         )
 
     def _get_cpu_temp(self):
-        PTLogger.debug("Getting CPU temperature")
+        logger.debug("Getting CPU temperature")
         cpu_temp_file = "/sys/class/thermal/thermal_zone0/temp"
         try:
             file = open(cpu_temp_file, "r")
         except FileNotFoundError as ferr:
-            PTLogger.warning("CPU temperature file not found")
-            PTLogger.warning(ferr)
+            logger.warning("CPU temperature file not found")
+            logger.warning(ferr)
             return None
         except Exception as ex:
-            PTLogger.warning(
+            logger.warning(
                 "Unhandled exception when trying to open CPU temperature file"
             )
-            PTLogger.warning(ex)
+            logger.warning(ex)
             return None
         else:
             str_val = file.readline().strip()
 
-        PTLogger.debug("Parsing CPU temperature")
+        logger.debug("Parsing CPU temperature")
 
         try:
             cpu_temp = int(str_val)
         except ValueError as verr:
-            PTLogger.warning("CPU temp from file not valid integer")
-            PTLogger.warning(verr)
+            logger.warning("CPU temp from file not valid integer")
+            logger.warning(verr)
             return None
         except Exception as ex:
-            PTLogger.warning("Unhandled exception when parsing CPU temp")
-            PTLogger.warning(ex)
+            logger.warning("Unhandled exception when parsing CPU temp")
+            logger.warning(ex)
             return None
 
         temp_celsius = int(cpu_temp / 1000)
 
-        PTLogger.debug("CPU temperature: " + str(temp_celsius))
+        logger.debug("CPU temperature: " + str(temp_celsius))
 
         return temp_celsius
 
@@ -841,9 +843,7 @@ class HubConnection:
         cpu_temp = self._get_cpu_temp()
 
         if cpu_temp is None:
-            PTLogger.warning(
-                "CPU temperature is not valid - skipping write to register"
-            )
+            logger.warning("CPU temperature is not valid - skipping write to register")
             return
 
         self.set_rpi_cpu_temp(cpu_temp)
@@ -862,19 +862,19 @@ class HubConnection:
 
     def _poll_hub(self):
         try:
-            PTLogger.debug("Starting poll hub registers")
+            logger.debug("Starting poll hub registers")
             self._read_battery_registers_if_min_time_passed()
             self._read_shutdown_control()
             self._read_oled_register()
             self._read_ui_buttons_register()
             self._write_cpu_temp_register_if_min_time_passed()
-            PTLogger.debug("Finished poll hub registers")
+            logger.debug("Finished poll hub registers")
 
         except TypeError as e:
             raise e
 
         except Exception as e:
-            PTLogger.error("Error polling hub: " + str(e))
+            logger.error("Error polling hub: " + str(e))
 
     def check_button_pressed_recently(self):
         button_pressed_now = (
@@ -914,5 +914,5 @@ class HubConnection:
                 sleep(time_to_sleep)
 
             except Exception as e:
-                PTLogger.warning("Exception during hub polling")
-                PTLogger.warning(e)
+                logger.warning("Exception during hub polling")
+                logger.warning(e)

@@ -1,8 +1,10 @@
+import logging
 from threading import Thread
 from time import sleep
 
 from pitop.common.i2c_device import I2CDevice
-from pitop.common.logger import PTLogger
+
+logger = logging.getLogger(__name__)
 
 
 class HubRegisters:
@@ -77,7 +79,7 @@ class HubConnection:
             self._i2c_device = I2CDevice("/dev/i2c-1", 0x10)
             self._i2c_device.connect()
         except Exception as e:
-            PTLogger.warning("Unable to read from hub (v2) over i2c: " + str(e))
+            logger.warning("Unable to read from hub (v2) over i2c: " + str(e))
             return False
 
         return True
@@ -88,7 +90,7 @@ class HubConnection:
             self._poll_hub()
             self._main_thread.start()
         else:
-            PTLogger.error(
+            logger.error(
                 "Unable to start pi-topHUB SPI communication - run initialise() first!"
             )
 
@@ -103,7 +105,7 @@ class HubConnection:
     def increment_brightness(self):
 
         try:
-            PTLogger.debug("Hub: increment_brightness")
+            logger.debug("Hub: increment_brightness")
             backlight_settings = self._i2c_device.read_unsigned_byte(
                 HubRegisters.DIS__BACKLIGHT
             )
@@ -117,12 +119,12 @@ class HubConnection:
                 self.set_brightness(current_brightness_value + 1)
 
         except Exception as e:
-            PTLogger.error("Error incrementing brightness: " + str(e))
+            logger.error("Error incrementing brightness: " + str(e))
 
     def decrement_brightness(self):
 
         try:
-            PTLogger.debug("Hub: decrement_brightness")
+            logger.debug("Hub: decrement_brightness")
             backlight_settings = self._i2c_device.read_unsigned_byte(
                 HubRegisters.DIS__BACKLIGHT
             )
@@ -136,15 +138,15 @@ class HubConnection:
                 self.set_brightness(current_brightness_value - 1)
 
         except Exception as e:
-            PTLogger.error("Error decrementing brightness: " + str(e))
+            logger.error("Error decrementing brightness: " + str(e))
 
     def set_brightness(self, value):
 
         try:
-            PTLogger.debug("Hub: set_brightness")
+            logger.debug("Hub: set_brightness")
 
             if value < 0 or value > 16:
-                PTLogger.warning("Invalid brightness value provided: " + str(value))
+                logger.warning("Invalid brightness value provided: " + str(value))
                 return
 
             backlight_settings = self._i2c_device.read_unsigned_byte(
@@ -162,12 +164,12 @@ class HubConnection:
             self._i2c_device.write_byte(HubRegisters.DIS__BACKLIGHT, backlight_settings)
 
         except Exception as e:
-            PTLogger.error("Error setting brightness: " + str(e))
+            logger.error("Error setting brightness: " + str(e))
 
     def blank_screen(self):
 
         try:
-            PTLogger.debug("Hub: blank_screen")
+            logger.debug("Hub: blank_screen")
             backlight_settings = self._i2c_device.read_unsigned_byte(
                 HubRegisters.DIS__BACKLIGHT
             )
@@ -177,12 +179,12 @@ class HubConnection:
             )
 
         except Exception as e:
-            PTLogger.error("Error blanking screen: " + str(e))
+            logger.error("Error blanking screen: " + str(e))
 
     def unblank_screen(self):
 
         try:
-            PTLogger.debug("Hub: unblank_screen")
+            logger.debug("Hub: unblank_screen")
             backlight_settings = self._i2c_device.read_unsigned_byte(
                 HubRegisters.DIS__BACKLIGHT
             )
@@ -192,7 +194,7 @@ class HubConnection:
             )
 
         except Exception as e:
-            PTLogger.error("Error unblanking screen: " + str(e))
+            logger.error("Error unblanking screen: " + str(e))
 
     def shutdown(self):
 
@@ -206,13 +208,13 @@ class HubConnection:
         # However, we do need to stop polling the hub, otherwise we'll keep detecting
         # shutdown and triggering the shutdown process.
 
-        PTLogger.debug("Hub: shutdown")
+        logger.debug("Hub: shutdown")
         self._run_polling_thread = False
 
     def enable_hdmi_audio(self):
 
         try:
-            PTLogger.debug("Hub: enable_hdmi_audio")
+            logger.debug("Hub: enable_hdmi_audio")
             audio_settings = self._i2c_device.read_unsigned_byte(
                 HubRegisters.AUD__CONFIG
             )
@@ -222,12 +224,12 @@ class HubConnection:
             )
 
         except Exception as e:
-            PTLogger.error("Error enabling hdmi audio (multiplexer): " + str(e))
+            logger.error("Error enabling hdmi audio (multiplexer): " + str(e))
 
     def disable_hdmi_audio(self):
 
         try:
-            PTLogger.debug("Hub: disable_hdmi_audio")
+            logger.debug("Hub: disable_hdmi_audio")
             audio_settings = self._i2c_device.read_unsigned_byte(
                 HubRegisters.AUD__CONFIG
             )
@@ -237,7 +239,7 @@ class HubConnection:
             )
 
         except Exception as e:
-            PTLogger.error("Error disabling hdmi audio (multiplexer): " + str(e))
+            logger.error("Error disabling hdmi audio (multiplexer): " + str(e))
 
     ########################
     # Internal methods
@@ -253,20 +255,20 @@ class HubConnection:
     def _poll_hub(self):
 
         try:
-            PTLogger.debug("Polling for shutdown...")
+            logger.debug("Polling for shutdown...")
             self._read_shutdown_control()
 
-            PTLogger.debug("Polling for battery...")
+            logger.debug("Polling for battery...")
             self._read_battery_registers()
 
-            PTLogger.debug("Polling for backlight...")
+            logger.debug("Polling for backlight...")
             self._read_backlight_register()
 
         except TypeError:
             raise
 
         except Exception as e:
-            PTLogger.error("Error polling hub: " + str(e))
+            logger.error("Error polling hub: " + str(e))
 
     def _read_shutdown_control(self):
 
@@ -344,14 +346,14 @@ class HubConnection:
         )
 
         if current_brightness_value < 0:
-            PTLogger.warning(
+            logger.warning(
                 "Invalid brightness value returned from hub: "
                 + str(current_brightness_value)
             )
             current_brightness_value = 0
 
         if current_brightness_value > 16:
-            PTLogger.warning(
+            logger.warning(
                 "Invalid brightness value returned from hub: "
                 + str(current_brightness_value)
             )

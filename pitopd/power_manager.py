@@ -1,16 +1,17 @@
+import logging
 from subprocess import run
 
 from pitop.common.common_ids import DeviceID
 from pitop.common.counter import Counter
-from pitop.common.logger import PTLogger
 
 from . import state
 from .utils import get_project_root
 
+logger = logging.getLogger(__name__)
+
+
 # Handles safe shutdown when the hub is communicating
 # that its battery capacity is below a threshold set by ptdm_controller
-
-
 class PowerManager:
     no_of_sequential_reads_to_verify = 5
 
@@ -105,7 +106,7 @@ class PowerManager:
         if under_shutdown_threshold:
             self.shutdown_battery_ctr.increment()
             if self.shutdown_initiated is False:
-                PTLogger.info(
+                logger.info(
                     "Battery: shutdown threshold reached "
                     + str(self.shutdown_battery_ctr.current)
                     + " of "
@@ -122,7 +123,7 @@ class PowerManager:
         if under_critical_threshold:
             self.critical_battery_ctr.increment()
             if self.shown_critical_battery_message is False:
-                PTLogger.info(
+                logger.info(
                     "Battery: critical threshold reached "
                     + str(self.critical_battery_ctr.current)
                     + " of "
@@ -139,7 +140,7 @@ class PowerManager:
         if under_warning_threshold:
             self.warning_battery_ctr.increment()
             if self.shown_warning_battery_message is False:
-                PTLogger.info(
+                logger.info(
                     "Battery: warning threshold reached "
                     + str(self.warning_battery_ctr.current)
                     + " of "
@@ -188,17 +189,17 @@ class PowerManager:
 
     def shutdown(self):
         if self.shutdown_initiated is True:
-            PTLogger.warning("Shutdown already initiated")
+            logger.warning("Shutdown already initiated")
             return
 
-        PTLogger.info("Shutting down OS...")
+        logger.info("Shutting down OS...")
 
         run(["shutdown", "-h", "now"])
         self.shutdown_initiated = True
-        PTLogger.info("OS shutdown command issued")
+        logger.info("OS shutdown command issued")
 
     def reboot(self):
-        PTLogger.info("Rebooting OS")
+        logger.info("Rebooting OS")
 
         run("reboot")
-        PTLogger.info("OS reboot command issued")
+        logger.info("OS reboot command issued")

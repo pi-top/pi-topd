@@ -1,7 +1,10 @@
+import logging
+
 from pitop.common.common_ids import DeviceID
-from pitop.common.logger import PTLogger
 
 from . import pthub_i2c, pthub_spi
+
+logger = logging.getLogger(__name__)
 
 _state = None
 
@@ -146,23 +149,23 @@ def initialise():
 
     _state = State()
 
-    PTLogger.info("Initialising I2C...")
+    logger.info("Initialising I2C...")
     pthub_i2c.initialise(_state)
 
-    PTLogger.info("Initialising SPI...")
+    logger.info("Initialising SPI...")
     pthub_spi.initialise(_state)
 
     if pthub_spi.is_initialised() is False:
-        PTLogger.error("Unable to detect pi-topHUB via SPI")
+        logger.error("Unable to detect pi-topHUB via SPI")
         _state.set_device_id(DeviceID.unknown)
         return False
 
     if pthub_i2c.is_initialised():
-        PTLogger.info("Detected pi-top battery. This is a pi-top")
+        logger.info("Detected pi-top battery. This is a pi-top")
         _state.set_device_id(DeviceID.pi_top)
 
     else:
-        PTLogger.info(
+        logger.info(
             "Unable to detect pi-topHUB's battery. If host is a CEED this will be established after initial communication"
         )
 
@@ -259,13 +262,13 @@ def shutdown():
 
 
 def enable_hdmi_to_i2s_audio():
-    PTLogger.warning(
+    logger.warning(
         "V1 hub called to enable HDMI to I2S audio - this hub does not support this"
     )
 
 
 def disable_hdmi_to_i2s_audio():
-    PTLogger.warning(
+    logger.warning(
         "V1 hub called to disable HDMI to I2S audio - this hub does not support this"
     )
 
@@ -283,28 +286,28 @@ def _start_spi():
     if pthub_spi.is_initialised():
         pthub_spi.start()
     else:
-        PTLogger.error("SPI is not available")
+        logger.error("SPI is not available")
 
 
 def _start_i2c():
     if pthub_i2c.is_initialised():
         pthub_i2c.start()
     else:
-        PTLogger.warning("I2C is not available")
+        logger.warning("I2C is not available")
 
 
 def _stop_spi():
     if pthub_spi._run_main_thread:
         pthub_spi.stop()
     else:
-        PTLogger.warning("Unable to stop SPI - not currently running")
+        logger.warning("Unable to stop SPI - not currently running")
 
 
 def _stop_i2c():
     if pthub_i2c._run_main_thread:
         pthub_i2c.stop()
     else:
-        PTLogger.warning("Unable to stop I2C - not currently running")
+        logger.warning("Unable to stop I2C - not currently running")
 
 
 def _represents_int(s):

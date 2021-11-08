@@ -1,8 +1,10 @@
+import logging
 from enum import IntEnum
+from os import environ
 from subprocess import getoutput
 from threading import Thread
 
-from pitop.common.logger import PTLogger
+logger = logging.getLogger(__name__)
 
 
 class MessageID(IntEnum):
@@ -39,6 +41,8 @@ messages = messages_en
 
 class NotificationManager:
     def __init__(self):
+        # Set the display env var
+        environ["DISPLAY"] = ":0.0"
         self.__battery_warning_notification_id = -1
 
     def __is_battery_notification(self, message_title_id):
@@ -73,7 +77,7 @@ class NotificationManager:
         cmd += '"' + messages[message_title_id] + '" '
         cmd += '"' + messages[message_text_id] + '"'
 
-        PTLogger.info("pt-notify-send command: " + str(cmd))
+        logger.info("pt-notify-send command: " + str(cmd))
         return cmd
 
     def __show_message_in_thread(
@@ -108,21 +112,21 @@ class NotificationManager:
             )
             notification_output = getoutput(cmd)
 
-            PTLogger.info("Notification output:" + notification_output)
+            logger.info("Notification output:" + notification_output)
             if notification_output.isnumeric() and self.__is_battery_notification(
                 message_title_id
             ):
                 self.__battery_warning_notification_id = int(notification_output)
             else:
-                PTLogger.warning("Notification output was not a valid id")
+                logger.warning("Notification output was not a valid id")
 
         except Exception as e:
-            PTLogger.warning("Failed to show message: " + str(e))
+            logger.warning("Failed to show message: " + str(e))
 
     def clear_battery_warning_message(self):
-        PTLogger.debug("Attempting to clear battery warning message if needed")
+        logger.debug("Attempting to clear battery warning message if needed")
         if self.__battery_warning_notification_id != -1:
-            PTLogger.debug("Clearing battery warning message")
+            logger.debug("Clearing battery warning message")
             cmd = "/usr/bin/pt-notify-send --close=" + str(
                 self.__battery_warning_notification_id
             )
@@ -130,7 +134,7 @@ class NotificationManager:
             self.__battery_warning_notification_id = -1
 
     def display_critical_battery_warning_message(self):
-        PTLogger.info("Displaying critical battery warning message")
+        logger.info("Displaying critical battery warning message")
 
         self.__show_message(
             message_title_id=MessageID.title_critical_battery,
@@ -139,7 +143,7 @@ class NotificationManager:
         )
 
     def display_low_battery_warning_message(self):
-        PTLogger.info("Displaying low battery warning message")
+        logger.info("Displaying low battery warning message")
 
         self.__show_message(
             message_title_id=MessageID.title_low_battery,
@@ -148,7 +152,7 @@ class NotificationManager:
         )
 
     def display_reboot_message(self):
-        PTLogger.info("Displaying reboot message")
+        logger.info("Displaying reboot message")
 
         self.__show_message(
             message_title_id=MessageID.title_reboot,
@@ -157,7 +161,7 @@ class NotificationManager:
         )
 
     def display_unsupported_hardware_message(self):
-        PTLogger.info("Displaying unsupported hardware message")
+        logger.info("Displaying unsupported hardware message")
 
         self.__show_message(
             message_title_id=MessageID.title_unsupported,
@@ -166,7 +170,7 @@ class NotificationManager:
         )
 
     def display_old_spi_bus_still_active_message(self):
-        PTLogger.info("Displaying old SPI bus is still active message")
+        logger.info("Displaying old SPI bus is still active message")
         open_knowledge_base_cmd = (
             "chromium-browser --new-window https://knowledgebase.pi-top.com/"
         )

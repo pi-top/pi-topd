@@ -1,7 +1,7 @@
+import logging
 from time import sleep
 
 from pitop.common.common_ids import DeviceID
-from pitop.common.logger import PTLogger
 from systemd.daemon import notify
 
 from . import state
@@ -13,6 +13,8 @@ from .peripheral_manager import PeripheralManager
 from .pipe_manager import PipeManager
 from .power_manager import PowerManager
 from .server import PublishServer, RequestServer
+
+logger = logging.getLogger(__name__)
 
 
 class App:
@@ -40,7 +42,7 @@ class App:
     def _set_host_device_id(self, device_id):
         self.device_id = device_id
 
-        PTLogger.info(f"Setting device ID as {self.device_id}")
+        logger.info(f"Setting device ID as {self.device_id}")
 
         state.set("device", "type", str(self.device_id.name))
 
@@ -52,7 +54,7 @@ class App:
         self._set_host_device_id(self._hub_manager.get_device_id())
 
     def start(self):
-        PTLogger.debug("Starting device manager...")
+        logger.debug("Starting device manager...")
 
         last_identified_device_id_str = state.get(
             "device", "type", fallback=str(DeviceID.unknown.name)
@@ -60,7 +62,7 @@ class App:
         last_identified_device_id = DeviceID[last_identified_device_id_str]
 
         if self._publish_server.start_listening() is False:
-            PTLogger.error("Unable to start listening on publish server")
+            logger.error("Unable to start listening on publish server")
             return False
 
         if self._hub_manager.connect_to_hub():
@@ -75,7 +77,7 @@ class App:
             )
             self._hub_manager.start()
         else:
-            PTLogger.error("No pi-top hub detected")
+            logger.error("No pi-top hub detected")
             self._set_host_device_id(DeviceID.unknown)
             return False
 
@@ -88,16 +90,16 @@ class App:
 
         # Stop device manager if no pi-top host detected
         if self.device_id == DeviceID.unknown:
-            PTLogger.warning(
+            logger.warning(
                 "Unknown host device, despite successfully initialising a hub"
             )
             return False
 
         if self.device_id == DeviceID.pi_top_4:
-            PTLogger.info("Running on a pi-top [4]. Configuring SPI bus for OLED...")
+            logger.info("Running on a pi-top [4]. Configuring SPI bus for OLED...")
 
             spi_bus_to_use = self._hub_manager.get_oled_spi_bus()
-            PTLogger.info(f"Hub says to use SPI bus {spi_bus_to_use}")
+            logger.info(f"Hub says to use SPI bus {spi_bus_to_use}")
 
             if spi_bus_to_use is not None:
                 self._interface_manager.spi0 = spi_bus_to_use == 0
@@ -106,27 +108,27 @@ class App:
         # Check if any peripherals need to be set up
         self._peripheral_manager.auto_initialise_peripherals()
 
-        PTLogger.info("Configured for dependencies - unblocking systemd")
+        logger.info("Configured for dependencies - unblocking systemd")
         notify("READY=1")
 
         if self.device_id != last_identified_device_id:
-            PTLogger.info(
+            logger.info(
                 f"Host device has changed! Previous pi-top host: {str(last_identified_device_id)}"
             )
 
         if self._peripheral_manager.start() is False:
-            PTLogger.error("Unable to start peripheral manager")
+            logger.error("Unable to start peripheral manager")
             return False
 
         self._idle_monitor.start()
 
         if self._request_server.start_listening() is False:
-            PTLogger.error("Unable to start listening on request server")
+            logger.error("Unable to start listening on request server")
             return False
 
         sleep(0.5)
 
-        PTLogger.info("Fully configured - running")
+        logger.info("Fully configured - running")
 
         while self._run is True:
             sleep(0.5)
@@ -134,7 +136,7 @@ class App:
         return True
 
     def stop(self):
-        PTLogger.debug("Stopping device manager...")
+        logger.debug("Stopping device manager...")
         self._run = False
 
         # Stop the other classes
@@ -213,7 +215,7 @@ class App:
         return self._hub_manager.get_oled_spi_bus()
 
     def on_request_set_oled_spi_bus(self, spi_bus):
-        PTLogger.info(f"OLED SPI bus requested to be changed to use {spi_bus}")
+        logger.info(f"OLED SPI bus requested to be changed to use {spi_bus}")
 
         if spi_bus == 0:
             self._interface_manager.spi0 = True
@@ -253,13 +255,13 @@ class App:
         self._interface_manager.spi1 = enabled
 
     def on_hub_shutdown_requested(self):
-        PTLogger.info("Hub shutdown requested")
+        logger.info("Hub shutdown requested")
         self._publish_server.publish_shutdown_requested()
 
-        PTLogger.info("Notifying hub of shutdown...")
+        logger.info("Notifying hub of shutdown...")
         self._hub_manager.shutdown()
 
-        PTLogger.info("Triggering OS shutdown...")
+        logger.info("Triggering OS shutdown...")
         self._power_manager.shutdown()
 
     def on_hub_brightness_changed(self, new_value):

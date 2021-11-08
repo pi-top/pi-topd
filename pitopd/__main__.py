@@ -1,30 +1,20 @@
-from os import environ
+import logging
 from signal import SIGINT, SIGTERM, signal
 
 import click
-from pitop.common.logger import PTLogger
+import click_logging
 from systemd.daemon import notify
 
 from .app import App
 
+logger = logging.getLogger()
+click_logging.basic_config(logger)
+
 
 @click.command()
-@click.option(
-    "--log-level",
-    type=int,
-    help="set logging level from 10 (more verbose) to 50 (less verbose)",
-    default=20,
-    show_default=True,
-)
+@click_logging.simple_verbosity_option(logger)
 @click.version_option()
 def main(log_level) -> None:
-    # Set the display env var
-    environ["DISPLAY"] = ":0.0"
-
-    PTLogger.setup_logging(
-        logger_name="pi-topd", logging_level=log_level, log_to_journal=False
-    )
-
     app = App()
 
     for sig in [SIGINT, SIGTERM]:
@@ -37,7 +27,7 @@ def main(log_level) -> None:
     notify("STOPPING=1")
 
     if not successful_start:
-        PTLogger.error("Unable to start pi-topd")
+        logger.error("Unable to start pi-topd")
         app.stop()
 
     # Exiting with 1 will cause systemd service to restart - we should only do this if we failed to determine a device ID
