@@ -1,4 +1,5 @@
 click python3-click; PEP386
+click-logging python3-click-logging; PEP386
 pitop python3-pitop; PEP386
 # smbus2 is a pure Python implementation of the python-smbus package
 # Versions do not match so ignore PEP386
