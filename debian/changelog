@@ -1,3 +1,34 @@
+pi-topd (5.1.0-2) bullseye; urgency=medium
+
+  * Updated master workflow files
+  * Updated master workflow files
+  * Drop default log_to_journal
+  * Apply latest Python pre-commit (#125)
+  * Drop ptdm_; rename controller to app
+  * Use setup.cfg for pre-commit config
+  * Move servers into server dir
+  * Delete unused shutdown manager
+  * README update
+  * debian/extra/pt-xhost-local-root.conf
+  * Provide all files in the same directory
+  * Move initialisation of components into app
+  * `pi-topd` rework: retiring `/etc/pi-top` for non-configuration files (#118)
+  * New changelog entry: v5.1.0-1 (#120)
+  * [pre-commit.ci] pre-commit autoupdate (#127)
+  * Add i2s.sh to manifest
+  * Reduce logging
+  * Fix power off command
+  * Fix poweroff
+  * Use short link
+  * [pre-commit.ci] pre-commit autoupdate (#129)
+  * Remove PTLogger (#131)
+  * [pre-commit.ci] pre-commit autoupdate (#132)
+  * Add click-logging to py3dist-overrides
+  * Relax SDK version dependency in Debian packaging
+  * Add click-logging to setup.cfg
+
+ -- pi-top <deb-maintainers@pi-top.com>  Tue, 09 Nov 2021 17:05:14 +0000
+
 pi-topd (5.1.0-1) bullseye; urgency=medium
 
   * Drop default log_to_journal
