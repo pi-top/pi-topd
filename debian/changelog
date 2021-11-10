@@ -1,14 +1,11 @@
 pi-topd (5.1.0-2) bullseye; urgency=medium
 
-  * [pre-commit.ci] pre-commit autoupdate (#127)
+  * [pre-commit.ci] pre-commit autoupdate (#127, #129, #132)
   * Add i2s.sh to manifest
   * Reduce logging
   * Fix power off command
-  * Fix poweroff
   * Use short link
-  * [pre-commit.ci] pre-commit autoupdate (#129)
   * Remove PTLogger (#131)
-  * [pre-commit.ci] pre-commit autoupdate (#132)
   * Add click-logging to py3dist-overrides
   * Relax SDK version dependency in Debian packaging
   * Add click-logging to setup.cfg
