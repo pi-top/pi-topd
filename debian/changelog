@@ -1,3 +1,17 @@
+pi-topd (5.1.0-2) bullseye; urgency=medium
+
+  * [pre-commit.ci] pre-commit autoupdate (#127, #129, #132)
+  * Add i2s.sh to manifest
+  * Reduce logging
+  * Fix power off command
+  * Use short link
+  * Remove PTLogger (#131)
+  * Add click-logging to py3dist-overrides
+  * Relax SDK version dependency in Debian packaging
+  * Add click-logging to setup.cfg
+
+ -- pi-top <deb-maintainers@pi-top.com>  Tue, 09 Nov 2021 17:05:14 +0000
+
 pi-topd (5.1.0-1) bullseye; urgency=medium
 
   * Drop default log_to_journal
