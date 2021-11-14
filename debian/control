@@ -20,10 +20,7 @@ Depends:
 # Hardware interface management for devices and peripherals
  raspi-config,
 Suggests:
-# Low battery warnings
- notify-send-ng,
-# User idle time
- xprintidle,
+ pi-topd-desktop,
 Description: pi-top System Daemon
  Core pi-top service for interfacing with pi-top hardware.
  Provides support for management of all pi-top units.
@@ -33,3 +30,15 @@ Description: pi-top System Daemon
  .
  Additional functionality is provided to communicate with the system,
  such as automatically blanking the display after a timeout.
+
+Package: pi-topd-desktop
+Architecture: all
+Depends:
+ ${misc:Depends},
+ ${python3:Depends},
+# Low battery warnings
+ notify-send-ng,
+# User idle time
+ xprintidle,
+Description: pi-top System Daemon (Desktop Components)
+ Provides desktop support for pi-topd.
