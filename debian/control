@@ -55,5 +55,5 @@ Depends:
  ${misc:Depends},
 # User idle time
  xprintidle,
-Description: pi-topd Notification Support dummy package
+Description: pi-topd Display Blanking Support dummy package
  Provides display blanking support for pi-topd.
