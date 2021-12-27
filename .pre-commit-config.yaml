@@ -2,7 +2,7 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.0.1
+    rev: v4.1.0
     hooks:
     - id: trailing-whitespace
       # debian/patches needs whitespace at end of line
@@ -43,7 +43,7 @@ repos:
     - id: flake8
 
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v0.910-1
+    rev: v0.930
     hooks:
     -   id: mypy
         additional_dependencies: [types-all]
