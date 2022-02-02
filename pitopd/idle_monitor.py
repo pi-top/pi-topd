@@ -73,6 +73,10 @@ class IdleMonitor:
 
             try:
                 xprintidle_resp = check_output(["xprintidle"], stderr=FNULL)
+            except FileNotFoundError:
+                logger.warning("xprintidle not found")
+                break
+
             except CalledProcessError:
                 logger.warning(
                     "Unable to call xprintidle - have non-network local"
