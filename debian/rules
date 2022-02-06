@@ -1,6 +1,7 @@
 #!/usr/bin/make -f
 
 export PYBUILD_NAME=pitopd
+export PYBUILD_DESTDIR_python3=debian/pi-topd/
 
 %:
 	dh $@ --buildsystem=pybuild
