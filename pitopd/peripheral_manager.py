@@ -6,9 +6,9 @@ from time import sleep
 from pitop.common.common_ids import DeviceID, Peripheral, PeripheralID
 from pitop.common.current_session_info import get_user_using_first_display
 
-from .ptspeaker import ptspeaker
-from .ptpulse import ptpulse
 from . import state
+from .ptpulse import ptpulse
+from .ptspeaker import ptspeaker
 from .sys_config import I2C, I2S, Hifiberry, System
 from .utils import get_project_root
 
