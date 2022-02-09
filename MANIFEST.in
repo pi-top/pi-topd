@@ -1,5 +1,6 @@
 recursive-include pitopd/assets/ *
 recursive-include pitopd/scripts/ i2s.sh
+recursive-include pitopd/ptspeaker/ setup.cfg
 
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
