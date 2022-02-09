@@ -320,3 +320,15 @@ class HubManager:
                     __c.on_hub_shutdown_requested,
                     __c.on_hub_battery_state_changed,
                 )
+
+    def get_serial_id(self):
+        if hasattr(self._active_hub_module, "get_serial_id"):
+            return self._active_hub_module.get_serial_id()
+
+    def get_battery_serial_number(self):
+        if hasattr(self._active_hub_module, "get_battery_serial_number"):
+            return self._active_hub_module.get_battery_serial_number()
+
+    def get_display_serial_id(self):
+        if hasattr(self._active_hub_module, "get_display_serial_id"):
+            return self._active_hub_module.get_display_serial_id()
