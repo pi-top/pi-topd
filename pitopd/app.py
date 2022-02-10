@@ -66,14 +66,12 @@ class App:
             return False
 
         if self._hub_manager.connect_to_hub():
-            self._pipe_manager.set_hub_serial_number(
-                self._hub_manager._active_hub_module.get_serial_id()
-            )
+            self._pipe_manager.set_hub_serial_number(self._hub_manager.get_serial_id())
             self._pipe_manager.set_battery_serial_number(
-                self._hub_manager._active_hub_module.get_battery_serial_number()
+                self._hub_manager.get_battery_serial_number()
             )
             self._pipe_manager.set_display_serial_number(
-                self._hub_manager._active_hub_module.get_display_serial_id()
+                self._hub_manager.get_display_serial_id()
             )
             self._hub_manager.start()
         else:

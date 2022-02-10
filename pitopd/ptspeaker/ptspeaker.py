@@ -7,7 +7,7 @@ from pitop.common.common_ids import DeviceID
 from pitop.common.current_session_info import get_user_using_first_display
 from smbus2 import SMBus
 
-from .sys_config import HDMI, I2C, I2S
+from ..sys_config import HDMI, I2C, I2S
 
 logger = logging.getLogger(__name__)
 

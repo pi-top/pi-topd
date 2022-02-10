@@ -14,8 +14,8 @@ Last-Update: 2021-09-05
  
  logger = logging.getLogger(__name__)
  
---- a/pitopd/ptpulse/configuration.py
-+++ b/pitopd/ptpulse/configuration.py
+--- a/pitopd/ptpulse/ptpulse.py
++++ b/pitopd/ptpulse/ptpulse.py
 @@ -2,7 +2,7 @@
  from math import pow
  
@@ -25,8 +25,8 @@ Last-Update: 2021-09-05
  
  from ..sys_config import HDMI, I2S, UART
  
---- a/pitopd/ptspeaker/configuration.py
-+++ b/pitopd/ptspeaker/configuration.py
+--- a/pitopd/ptspeaker/ptspeaker.py
++++ b/pitopd/ptspeaker/ptspeaker.py
 @@ -5,7 +5,7 @@
  
  from pitop.common.common_ids import DeviceID
@@ -34,5 +34,5 @@ Last-Update: 2021-09-05
 -from smbus2 import SMBus
 +from smbus import SMBus
  
- from .sys_config import HDMI, I2C, I2S
+ from ..sys_config import HDMI, I2C, I2S
  
