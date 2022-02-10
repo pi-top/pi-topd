@@ -1,4 +1,4 @@
-pi-topd (5.1.0-6) bullseye; urgency=medium
+pi-topd (5.2.0-1) bullseye; urgency=medium
 
   * Support legacy devices and accessories (#148)
 
