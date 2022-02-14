@@ -1,3 +1,9 @@
+pi-topd (5.2.0-2) bullseye; urgency=medium
+
+  * Take control of miniscreen on initialization
+
+ -- pi-top <deb-maintainers@pi-top.com>  Mon, 14 Feb 2022 17:28:40 +0000
+
 pi-topd (5.2.0-1) bullseye; urgency=medium
 
   * Support legacy devices and accessories (#148)
