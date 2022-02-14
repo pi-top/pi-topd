@@ -103,6 +103,9 @@ class App:
                 self._interface_manager.spi0 = spi_bus_to_use == 0
                 self._interface_manager.spi1 = spi_bus_to_use == 1
 
+            logger.info("Taking control of miniscreen")
+            self.on_request_set_oled_pi_control(True)
+
         # Check if any peripherals need to be set up
         self._peripheral_manager.auto_initialise_peripherals()
 
