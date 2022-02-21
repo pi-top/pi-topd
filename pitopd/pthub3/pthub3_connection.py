@@ -4,6 +4,8 @@ from time import sleep
 
 from pitop.common import bitwise_ops
 from pitop.common.i2c_device import I2CDevice
+from pitopd.event import AppEvents, subscribe
+
 
 from .internal.apcad import APCAD
 from .internal.battery import BatteryControl
@@ -57,6 +59,7 @@ class HubConnection:
             logger.warning("Unable to read from hub (v3) over i2c: " + str(e))
             return False
 
+        subscribe(AppEvents.SPI_BUS_CHANGED, self.set_oled_use_spi0)
         return True
 
     def start(self):

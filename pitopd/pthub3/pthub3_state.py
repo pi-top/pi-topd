@@ -1,3 +1,6 @@
+from pitopd.event import AppEvents, post_event
+
+
 class State:
     def __init__(self):
         self.brightness = 16
@@ -158,6 +161,7 @@ class State:
         if self.oled_is_using_spi0 is not is_using_spi0:
             self.oled_is_using_spi0 = is_using_spi0
             self.emit_oled_spi_bus_state_changed()
+            post_event(AppEvents.SPI_BUS_CHANGED, is_using_spi0)
 
     def set_up_button_press_state(self, is_pressed):
         if self.up_button_press_state is not is_pressed:
