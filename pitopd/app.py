@@ -4,6 +4,8 @@ from time import sleep
 from pitop.common.common_ids import DeviceID
 from systemd.daemon import notify
 
+from pitopd.event import AppEvents, subscribe
+
 from . import state
 from .hub_manager import HubManager
 from .idle_monitor import IdleMonitor
@@ -105,6 +107,7 @@ class App:
 
             logger.info("Taking control of miniscreen")
             self.on_request_set_oled_pi_control(True)
+            subscribe(AppEvents.SPI_BUS_CHANGED, self.on_request_set_oled_spi_bus)
 
         # Check if any peripherals need to be set up
         self._peripheral_manager.auto_initialise_peripherals()

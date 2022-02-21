@@ -3,7 +3,7 @@ from typing import Dict, List
 
 
 class AppEvents(Enum):
-    SPI_BUS_CHANGED = auto()  # int with new SPI bus
+    SPI_BUS_CHANGED = auto()  # bool - set to use SPI 0
 
 
 subscribers: Dict[AppEvents, List] = dict()

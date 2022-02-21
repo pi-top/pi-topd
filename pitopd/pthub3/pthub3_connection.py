@@ -5,8 +5,6 @@ from time import sleep
 from pitop.common import bitwise_ops
 from pitop.common.i2c_device import I2CDevice
 
-from pitopd.event import AppEvents, subscribe
-
 from .internal.apcad import APCAD
 from .internal.battery import BatteryControl
 from .internal.device_info import DeviceInfo
@@ -59,7 +57,6 @@ class HubConnection:
             logger.warning("Unable to read from hub (v3) over i2c: " + str(e))
             return False
 
-        subscribe(AppEvents.SPI_BUS_CHANGED, self.set_oled_use_spi0)
         return True
 
     def start(self):
@@ -141,7 +138,6 @@ class HubConnection:
         full_byte = self._i2c_device.read_unsigned_byte(
             HardwareControl.CTRL__UI_OLED_CTRL
         )
-        logger.info(f"'set_oled_control' to {controlled_by_pi} - read {full_byte}")
         if controlled_by_pi:
             full_byte = bitwise_ops.set_bits_high(
                 OLEDControlRegister.CTRL__UI_OLED_CTRL__RPI_CONTROL, full_byte
@@ -150,7 +146,6 @@ class HubConnection:
             full_byte = bitwise_ops.set_bits_low(
                 OLEDControlRegister.CTRL__UI_OLED_CTRL__RPI_CONTROL, full_byte
             )
-        logger.info(f"'set_oled_control' to {controlled_by_pi} - writing {full_byte}")
         self._i2c_device.write_byte(HardwareControl.CTRL__UI_OLED_CTRL, full_byte)
         self.reset_oled()
 
@@ -756,19 +751,19 @@ class HubConnection:
         oled_controlled_state = self._i2c_device.read_unsigned_byte(
             HardwareControl.CTRL__UI_OLED_CTRL
         )
-        oled_controller = bitwise_ops.get_bits(
-            OLEDControlRegister.CTRL__UI_OLED_CTRL__RPI_CONTROL,
-            oled_controlled_state,
-        )
-        using_spi0_state = bitwise_ops.get_bits(
-            OLEDControlRegister.CTRL__UI_OLED_CTRL__SPI_ALT, oled_controlled_state
-        )
 
-        logger.debug(
-            f"'_read_oled_register' {bin(oled_controlled_state)} : controller: {bin(oled_controller)} spi0_state: {bin(using_spi0_state)}"
+        logger.debug(f"Hub: OLED register is {bin(oled_controlled_state)}")
+        self._state.set_oled_controller(
+            bitwise_ops.get_bits(
+                OLEDControlRegister.CTRL__UI_OLED_CTRL__RPI_CONTROL,
+                oled_controlled_state,
+            )
         )
-        self._state.set_oled_controller(oled_controller)
-        self._state.set_oled_using_spi0_state(using_spi0_state)
+        self._state.set_oled_using_spi0_state(
+            bitwise_ops.get_bits(
+                OLEDControlRegister.CTRL__UI_OLED_CTRL__SPI_ALT, oled_controlled_state
+            )
+        )
 
     def _read_ui_buttons_register(self):
         logger.debug("Hub: Reading UI button register")

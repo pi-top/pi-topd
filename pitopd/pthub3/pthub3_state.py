@@ -46,6 +46,7 @@ class State:
             func(self.oled_is_pi_controlled)
 
     def emit_oled_spi_bus_state_changed(self):
+        post_event(AppEvents.SPI_BUS_CHANGED, 0 if self.oled_is_using_spi0 else 1)
         func = self.funcs.get("oled_spi_state")
         if callable(func):
             func(self.oled_is_using_spi0)
@@ -161,7 +162,6 @@ class State:
         if self.oled_is_using_spi0 is not is_using_spi0:
             self.oled_is_using_spi0 = is_using_spi0
             self.emit_oled_spi_bus_state_changed()
-            post_event(AppEvents.SPI_BUS_CHANGED, is_using_spi0)
 
     def set_up_button_press_state(self, is_pressed):
         if self.up_button_press_state is not is_pressed:

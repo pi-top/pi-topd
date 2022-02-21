@@ -282,6 +282,7 @@ class HubManager:
 
     def set_oled_use_spi0(self, use_spi0):
         if self._hub_connected():
+            logger.info(f"Setting OLED to use SPI bus {0 if use_spi0 else 1}")
             return self._active_hub_module.set_oled_use_spi0(use_spi0)
         else:
             logger.warning(
