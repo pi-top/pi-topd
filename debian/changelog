@@ -1,3 +1,9 @@
+pi-topd (5.3.1-1) bullseye; urgency=medium
+
+  * Configure SPI bus when a change is detected (#152)
+
+ -- pi-top <deb-maintainers@pi-top.com>  Tue, 22 Feb 2022 18:17:11 +0000
+
 pi-topd (5.2.1-1) bullseye; urgency=medium
 
   * Take control of miniscreen on initialization
