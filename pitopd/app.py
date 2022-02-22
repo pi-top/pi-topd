@@ -2,7 +2,7 @@ import logging
 from time import sleep
 
 from pitop.common.common_ids import DeviceID
-from pyee.base import EventEmitter
+from pyee import EventEmitter
 from systemd.daemon import notify
 
 from . import state
@@ -108,7 +108,7 @@ class App:
 
             logger.info("Taking control of miniscreen")
             self.on_request_set_oled_pi_control(True)
-            self.ee.add_listener("SPI_BUS_CHANGED", self.on_request_set_oled_spi_bus)
+            self.ee.on("SPI_BUS_CHANGED", self.on_request_set_oled_spi_bus)
 
         # Check if any peripherals need to be set up
         self._peripheral_manager.auto_initialise_peripherals()

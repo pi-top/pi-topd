@@ -1,4 +1,4 @@
-from pyee.base import EventEmitter
+from pyee import EventEmitter
 
 
 class State:
