@@ -1,4 +1,6 @@
-from pyee import EventEmitter
+from pitopd.event import AppEvents
+
+from .event import event_emitter
 
 
 class State:
@@ -21,7 +23,6 @@ class State:
         self.battery_capacity_override_counter = 0
 
         self.funcs = None
-        self.ee = EventEmitter()
 
     def register_client(self, funcs):
         self.funcs = funcs
@@ -47,7 +48,9 @@ class State:
             func(self.oled_is_pi_controlled)
 
     def emit_oled_spi_bus_state_changed(self):
-        self.ee.emit("SPI_BUS_CHANGED", 0 if self.oled_is_using_spi0 else 1)
+        event_emitter.emit(
+            AppEvents.SPI_BUS_CHANGED, 0 if self.oled_is_using_spi0 else 1
+        )
 
         func = self.funcs.get("oled_spi_state")
         if callable(func):
