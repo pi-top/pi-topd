@@ -1,6 +1,4 @@
-from pitopd.event import AppEvents
-
-from .event import event_emitter
+from ..event import AppEvents, event_emitter
 
 
 class State:
