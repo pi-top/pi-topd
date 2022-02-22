@@ -138,7 +138,6 @@ class HubConnection:
         full_byte = self._i2c_device.read_unsigned_byte(
             HardwareControl.CTRL__UI_OLED_CTRL
         )
-
         if controlled_by_pi:
             full_byte = bitwise_ops.set_bits_high(
                 OLEDControlRegister.CTRL__UI_OLED_CTRL__RPI_CONTROL, full_byte
@@ -147,7 +146,6 @@ class HubConnection:
             full_byte = bitwise_ops.set_bits_low(
                 OLEDControlRegister.CTRL__UI_OLED_CTRL__RPI_CONTROL, full_byte
             )
-
         self._i2c_device.write_byte(HardwareControl.CTRL__UI_OLED_CTRL, full_byte)
         self.reset_oled()
 
@@ -753,6 +751,8 @@ class HubConnection:
         oled_controlled_state = self._i2c_device.read_unsigned_byte(
             HardwareControl.CTRL__UI_OLED_CTRL
         )
+
+        logger.debug(f"Hub: OLED register is {bin(oled_controlled_state)}")
         self._state.set_oled_controller(
             bitwise_ops.get_bits(
                 OLEDControlRegister.CTRL__UI_OLED_CTRL__RPI_CONTROL,

@@ -1,3 +1,6 @@
+from ..event import AppEvents, event_emitter
+
+
 class State:
     def __init__(self):
         self.brightness = 16
@@ -43,6 +46,10 @@ class State:
             func(self.oled_is_pi_controlled)
 
     def emit_oled_spi_bus_state_changed(self):
+        event_emitter.emit(
+            AppEvents.SPI_BUS_CHANGED, 0 if self.oled_is_using_spi0 else 1
+        )
+
         func = self.funcs.get("oled_spi_state")
         if callable(func):
             func(self.oled_is_using_spi0)
