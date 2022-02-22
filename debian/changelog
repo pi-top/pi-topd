@@ -1,4 +1,4 @@
-pi-topd (5.2.1-2) bullseye; urgency=medium
+pi-topd (5.3.1-1) bullseye; urgency=medium
 
   * Configure SPI bus when a change is detected (#152)
 
