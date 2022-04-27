@@ -214,7 +214,6 @@ class RequestServer:
                     target=self._callback_client.on_request_set_oled_spi_bus,
                     args=[int(message.parameters[0])],
                 ).start()
-
                 response = Message.from_parts(Message.RSP_SET_OLED_SPI_BUS)
 
             else:

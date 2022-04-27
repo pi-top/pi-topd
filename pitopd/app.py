@@ -97,12 +97,13 @@ class App:
         if self.device_id == DeviceID.pi_top_4:
             logger.info("Running on a pi-top [4]. Configuring SPI bus for OLED...")
 
-            spi_bus_to_use = self._hub_manager.get_oled_spi_bus()
+            spi_bus_to_use = state.get(
+                "oled", "spi_bus", fallback=self._hub_manager.get_oled_spi_bus()
+            )
             logger.info(f"Hub says to use SPI bus {spi_bus_to_use}")
 
             if spi_bus_to_use is not None:
-                self._interface_manager.spi0 = spi_bus_to_use == 0
-                self._interface_manager.spi1 = spi_bus_to_use == 1
+                self.on_request_set_oled_spi_bus(spi_bus_to_use)
 
             logger.info("Taking control of miniscreen")
             self.on_request_set_oled_pi_control(True)
@@ -222,15 +223,13 @@ class App:
     def on_request_set_oled_spi_bus(self, spi_bus):
         logger.info(f"OLED SPI bus requested to be changed to use {spi_bus}")
 
+        # Configure Raspberry Pi with correct bus
+        self._interface_manager.spi0 = spi_bus == 0
+        self._interface_manager.spi1 = spi_bus == 1
         if spi_bus == 0:
-            self._interface_manager.spi0 = True
-            # self._interface_manager.spi1 = False  # Can't be done?
             self._notification_manager.display_old_spi_bus_still_active_message()
 
-        else:
-            self._interface_manager.spi0 = False
-            self._interface_manager.spi1 = True
-
+        # Write to hub
         self._hub_manager.set_oled_use_spi0(spi_bus == 0)
 
     ###########################################

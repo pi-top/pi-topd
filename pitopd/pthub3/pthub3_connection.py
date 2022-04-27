@@ -759,11 +759,18 @@ class HubConnection:
                 oled_controlled_state,
             )
         )
-        self._state.set_oled_using_spi0_state(
-            bitwise_ops.get_bits(
-                OLEDControlRegister.CTRL__UI_OLED_CTRL__SPI_ALT, oled_controlled_state
-            )
+
+        spi_bus_bits = bitwise_ops.get_bits(
+            OLEDControlRegister.CTRL__UI_OLED_CTRL__SPI_ALT, oled_controlled_state
         )
+        spi_bus = "1" if spi_bus_bits == 0 else "0"
+        expected_bus = self._state.oled_is_using_spi0
+        if spi_bus != expected_bus:
+            logger.warning(
+                "SPI bus number changed unexpectedly from '{expected_bus}' to '{spi_bus}'"
+            )
+
+        self._state.set_oled_using_spi0_state(expected_bus)
 
     def _read_ui_buttons_register(self):
         logger.debug("Hub: Reading UI button register")
