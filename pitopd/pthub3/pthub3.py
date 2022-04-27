@@ -87,7 +87,7 @@ def get_oled_pi_control_state():
 
 
 def get_oled_use_spi0():
-    return _state.oled_is_using_spi0
+    return _hub_connection.read_oled_use_spi0()
 
 
 def get_lid_open_state():
