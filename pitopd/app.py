@@ -97,10 +97,11 @@ class App:
         if self.device_id == DeviceID.pi_top_4:
             logger.info("Running on a pi-top [4]. Configuring SPI bus for OLED...")
 
-            spi_bus_to_use = self._hub_manager.get_oled_spi_bus()  # from state
+            spi_bus_to_use = self._hub_manager.get_oled_spi_bus()
             logger.info(f"Hub says to use SPI bus {spi_bus_to_use}")
 
             if spi_bus_to_use is not None:
+                # TODO: don't display notification
                 self.on_request_set_oled_spi_bus(spi_bus_to_use)
 
             logger.info("Taking control of miniscreen")
@@ -227,7 +228,7 @@ class App:
         if spi_bus == 0:
             self._notification_manager.display_old_spi_bus_still_active_message()
 
-        # Write to hub
+        # Update state and write to hub
         self._hub_manager.set_oled_use_spi0(spi_bus == 0)
 
     ###########################################
