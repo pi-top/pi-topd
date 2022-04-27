@@ -20,6 +20,7 @@ from .internal.hardware import (
 )
 from .internal.misc import AudioConfig, AudioRegister, UnixTime
 from .internal.power import PowerControl, ShutdownRegister
+from .pthub3_state import OledSpi
 
 logger = logging.getLogger(__name__)
 
@@ -763,14 +764,18 @@ class HubConnection:
         spi_bus_bits = bitwise_ops.get_bits(
             OLEDControlRegister.CTRL__UI_OLED_CTRL__SPI_ALT, oled_controlled_state
         )
-        spi_bus = "1" if spi_bus_bits == 0 else "0"
-        expected_bus = self._state.oled_is_using_spi0
-        if spi_bus != expected_bus:
+
+        state_spi_bus = self._state.oled_spi_bus
+        spi_bus = OledSpi.BUS1 if spi_bus_bits == 0 else OledSpi.BUS0
+        spi_bus_changed = state_spi_bus != OledSpi.UNKNOWN and spi_bus != state_spi_bus
+        if spi_bus_changed:
             logger.warning(
-                "SPI bus number changed unexpectedly from '{expected_bus}' to '{spi_bus}'"
+                f"SPI bus number changed unexpectedly from '{state_spi_bus}' to '{spi_bus}'"
             )
 
-        self._state.set_oled_using_spi0_state(expected_bus)
+        self._state.set_oled_using_spi0_state(
+            state_spi_bus == OledSpi.BUS0, force=spi_bus_changed
+        )
 
     def _read_ui_buttons_register(self):
         logger.debug("Hub: Reading UI button register")

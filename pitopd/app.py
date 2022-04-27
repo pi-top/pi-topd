@@ -97,9 +97,7 @@ class App:
         if self.device_id == DeviceID.pi_top_4:
             logger.info("Running on a pi-top [4]. Configuring SPI bus for OLED...")
 
-            spi_bus_to_use = state.get(
-                "oled", "spi_bus", fallback=self._hub_manager.get_oled_spi_bus()
-            )
+            spi_bus_to_use = self._hub_manager.get_oled_spi_bus()  # from state
             logger.info(f"Hub says to use SPI bus {spi_bus_to_use}")
 
             if spi_bus_to_use is not None:
