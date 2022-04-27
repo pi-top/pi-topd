@@ -101,8 +101,7 @@ class App:
             logger.info(f"Hub says to use SPI bus {spi_bus_to_use}")
 
             if spi_bus_to_use is not None:
-                # TODO: don't display notification
-                self.on_request_set_oled_spi_bus(spi_bus_to_use)
+                self.on_request_set_oled_spi_bus(spi_bus_to_use, notify=False)
 
             logger.info("Taking control of miniscreen")
             self.on_request_set_oled_pi_control(True)
@@ -219,13 +218,13 @@ class App:
     def on_request_get_oled_spi_bus(self):
         return self._hub_manager.get_oled_spi_bus()
 
-    def on_request_set_oled_spi_bus(self, spi_bus):
+    def on_request_set_oled_spi_bus(self, spi_bus, notify=True):
         logger.info(f"OLED SPI bus requested to be changed to use {spi_bus}")
 
         # Configure Raspberry Pi with correct bus
         self._interface_manager.spi0 = spi_bus == 0
         self._interface_manager.spi1 = spi_bus == 1
-        if spi_bus == 0:
+        if spi_bus == 0 and notify:
             self._notification_manager.display_old_spi_bus_still_active_message()
 
         # Update state and write to hub

@@ -773,7 +773,7 @@ class HubConnection:
         spi_bus_changed = spi_bus != state_spi_bus
         if spi_bus_changed:
             logger.warning(
-                f"SPI bus number changed unexpectedly from '{state_spi_bus}' to '{spi_bus}'"
+                f"SPI bus number changed unexpectedly from '{state_spi_bus}' to '{spi_bus}'... reverting to '{state_spi_bus}'"
             )
 
         self._state.set_oled_using_spi0_state(
