@@ -770,15 +770,12 @@ class HubConnection:
         if state_spi_bus == OledSpi.UNKNOWN:
             state_spi_bus = spi_bus
 
-        spi_bus_changed = spi_bus != state_spi_bus
-        if spi_bus_changed:
+        if spi_bus != state_spi_bus:
             logger.warning(
                 f"SPI bus number changed unexpectedly from '{state_spi_bus}' to '{spi_bus}'... reverting to '{state_spi_bus}'"
             )
-
-        self._state.set_oled_using_spi0_state(
-            state_spi_bus == OledSpi.BUS0, force=spi_bus_changed
-        )
+            self._state.set_oled_using_spi0_state(state_spi_bus == OledSpi.BUS0)
+            self.set_oled_use_spi0(state_spi_bus == OledSpi.BUS0)
 
     def _read_ui_buttons_register(self):
         logger.debug("Hub: Reading UI button register")

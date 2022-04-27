@@ -174,8 +174,8 @@ class State:
             self.oled_is_pi_controlled = is_pi_controlled
             self.emit_oled_pi_control_state_changed()
 
-    def set_oled_using_spi0_state(self, is_using_spi0, force=False):
-        if (self.oled_is_using_spi0 != is_using_spi0) or force:
+    def set_oled_using_spi0_state(self, is_using_spi0):
+        if self.oled_is_using_spi0 != is_using_spi0:
             self.oled_is_using_spi0 = is_using_spi0
             self.emit_oled_spi_bus_state_changed()
 
