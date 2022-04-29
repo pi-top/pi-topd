@@ -780,6 +780,7 @@ class HubConnection:
 
         self._state.set_oled_using_spi0_state(state_spi_bus == OledSpi.BUS0)
         self.set_oled_use_spi0(state_spi_bus == OledSpi.BUS0)
+        self._state.emit_oled_spi_bus_state_changed()
 
     def _read_ui_buttons_register(self):
         logger.debug("Hub: Reading UI button register")
