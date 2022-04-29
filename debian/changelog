@@ -1,3 +1,9 @@
+pi-topd (5.4.1-1) bullseye; urgency=medium
+
+  * Handle unexpected changes to SPI bus (#158)
+
+ -- pi-top <deb-maintainers@pi-top.com>  Fri, 29 Apr 2022 16:30:58 +0000
+
 pi-topd (5.3.1-1) bullseye; urgency=medium
 
   * Configure SPI bus when a change is detected (#152)
