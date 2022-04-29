@@ -1,8 +1,5 @@
-pi-topd (5.3.1-2) bullseye; urgency=medium
+pi-topd (5.4.1-1) bullseye; urgency=medium
 
-  * [pre-commit.ci] pre-commit autoupdate (#154)
-  * [pre-commit.ci] pre-commit autoupdate (#156)
-  * [pre-commit.ci] pre-commit autoupdate (#157)
   * Handle unexpected changes to SPI bus (#158)
 
  -- pi-top <deb-maintainers@pi-top.com>  Fri, 29 Apr 2022 16:30:58 +0000
