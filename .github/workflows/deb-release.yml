@@ -2,8 +2,6 @@ name: Create GitHub Release
 
 on:
   workflow_dispatch:
-    branches:
-      - master
 
 env:
   DEB_BUILD_DOCKER_IMAGE: "pitop/pi-top-os-deb-build"
