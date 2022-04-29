@@ -1,4 +1,13 @@
-from ..event import AppEvents, event_emitter
+import logging
+from enum import Enum, auto
+
+logger = logging.getLogger(__name__)
+
+
+class OledSpi(Enum):
+    BUS0 = auto()
+    BUS1 = auto()
+    UNKNOWN = auto()
 
 
 class State:
@@ -12,15 +21,23 @@ class State:
         self.battery_capacity = -1
         self.buttons_route_to_gpio_enabled = False
         self.oled_is_pi_controlled = False
-        self.oled_is_using_spi0 = False
         self.up_button_press_state = False
         self.down_button_press_state = False
         self.select_button_press_state = False
         self.cancel_button_press_state = False
+        self.oled_spi_bus = OledSpi.UNKNOWN
 
         self.battery_capacity_override_counter = 0
 
         self.funcs = None
+
+    @property
+    def oled_is_using_spi0(self):
+        return self.oled_spi_bus == OledSpi.BUS0
+
+    @oled_is_using_spi0.setter
+    def oled_is_using_spi0(self, is_using_spi0):
+        self.oled_spi_bus = OledSpi.BUS0 if is_using_spi0 else OledSpi.BUS1
 
     def register_client(self, funcs):
         self.funcs = funcs
@@ -46,10 +63,6 @@ class State:
             func(self.oled_is_pi_controlled)
 
     def emit_oled_spi_bus_state_changed(self):
-        event_emitter.emit(
-            AppEvents.SPI_BUS_CHANGED, 0 if self.oled_is_using_spi0 else 1
-        )
-
         func = self.funcs.get("oled_spi_state")
         if callable(func):
             func(self.oled_is_using_spi0)
@@ -162,7 +175,7 @@ class State:
             self.emit_oled_pi_control_state_changed()
 
     def set_oled_using_spi0_state(self, is_using_spi0):
-        if self.oled_is_using_spi0 is not is_using_spi0:
+        if self.oled_is_using_spi0 != is_using_spi0:
             self.oled_is_using_spi0 = is_using_spi0
             self.emit_oled_spi_bus_state_changed()
 

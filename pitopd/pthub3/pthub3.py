@@ -62,6 +62,7 @@ def reset_oled():
 
 
 def set_oled_use_spi0(use_spi0):
+    _state.set_oled_using_spi0_state(use_spi0)
     _hub_connection.set_oled_use_spi0(use_spi0)
 
 
@@ -86,7 +87,7 @@ def get_oled_pi_control_state():
 
 
 def get_oled_use_spi0():
-    return _state.oled_is_using_spi0
+    return _hub_connection.read_oled_use_spi0()
 
 
 def get_lid_open_state():
