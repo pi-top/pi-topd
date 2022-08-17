@@ -1,7 +1,8 @@
-from pkg_resources import get_distribution
+from os import environ
 
-__version__ = "N/A"
-try:
-    __version__ = get_distribution("pitopd").version
-except Exception:
-    pass
+import setuptools
+
+if __name__ == "__main__":
+    setuptools.setup(
+        version=environ.get("PYTHON_PACKAGE_VERSION", "0.0.1.dev1").replace('"', "")
+    )
