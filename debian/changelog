@@ -1,3 +1,10 @@
+pi-topd (5.4.2-1) bullseye; urgency=medium
+
+  * Updated master workflow files
+  * Set package version using environment variable (#167)
+
+ -- pi-top <deb-maintainers@pi-top.com>  Thu, 18 Aug 2022 19:54:27 +0000
+
 pi-topd (5.4.1-1) bullseye; urgency=medium
 
   * Handle unexpected changes to SPI bus (#158)
