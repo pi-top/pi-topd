@@ -1,11 +1,6 @@
-pi-topd (5.4.1-2) bullseye; urgency=medium
+pi-topd (5.4.2-1) bullseye; urgency=medium
 
   * Updated master workflow files
-  * Updated master workflow files
-  * [pre-commit.ci] pre-commit autoupdate (#161)
-  * [pre-commit.ci] pre-commit autoupdate (#163)
-  * [pre-commit.ci] pre-commit autoupdate (#164)
-  * [pre-commit.ci] pre-commit autoupdate (#165)
   * Set package version using environment variable (#167)
 
  -- pi-top <deb-maintainers@pi-top.com>  Thu, 18 Aug 2022 19:54:27 +0000
