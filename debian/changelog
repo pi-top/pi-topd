@@ -1,3 +1,10 @@
+pi-topd (5.4.3-1) bullseye; urgency=medium
+
+  * Fix workflow variable: PYTHON_PYTHON_PACKAGE_VERSION -> PYTHON_PACKAGE_VERSION
+  * Update dependencies & imports to use SDK subpackages (#169)
+
+ -- pi-top <deb-maintainers@pi-top.com>  Mon, 03 Oct 2022 17:22:04 +0000
+
 pi-topd (5.4.2-1) bullseye; urgency=medium
 
   * Updated master workflow files
