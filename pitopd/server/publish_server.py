@@ -146,6 +146,10 @@ class PublishServer:
             Message.PUB_OLED_SPI_BUS_CHANGED, [0 if oled_uses_spi0 else 1]
         )
 
+    def publish_pitopd_ready(self):
+        self._emit_messages = True
+        self._send_message(Message.PUB_PITOPD_READY)
+
     # Internal functions
     def _send_message(self, message_id, parameters=None, log_message=True):
         if parameters is None:
