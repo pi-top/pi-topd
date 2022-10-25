@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 # and publishes state change messages to these clients
 class PublishServer:
     def __init__(self):
-        self._emit_messages = False
+        self.emit_messages = False
         self._socket_lock = Lock()
         self._shutting_down = False
         self._zmq_context = None
@@ -148,7 +148,6 @@ class PublishServer:
         )
 
     def publish_pitopd_ready(self):
-        self._emit_messages = True
         self._send_message(Message.PUB_PITOPD_READY)
 
     # Internal functions
@@ -157,7 +156,7 @@ class PublishServer:
             parameters = list()
         message = Message.from_parts(message_id, parameters)
 
-        if self._zmq_socket is None or not self._emit_messages:
+        if self._zmq_socket is None or not self.emit_messages:
             msg = f"Not publishing message: {message.message_friendly_string()}"
             msg += (
                 " - publish server not ready"
