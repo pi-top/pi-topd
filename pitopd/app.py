@@ -110,6 +110,8 @@ class App:
 
         logger.info("Configured for dependencies - unblocking systemd")
         notify("READY=1")
+        self._publish_server.emit_messages = True
+        self._publish_server.publish_pitopd_ready()
 
         if self.device_id != last_identified_device_id:
             logger.info(

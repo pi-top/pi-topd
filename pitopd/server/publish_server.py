@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 # and publishes state change messages to these clients
 class PublishServer:
     def __init__(self):
+        self.emit_messages = False
         self._socket_lock = Lock()
         self._shutting_down = False
         self._zmq_context = None
@@ -146,18 +147,23 @@ class PublishServer:
             Message.PUB_OLED_SPI_BUS_CHANGED, [0 if oled_uses_spi0 else 1]
         )
 
+    def publish_pitopd_ready(self):
+        self._send_message(Message.PUB_PITOPD_READY)
+
     # Internal functions
     def _send_message(self, message_id, parameters=None, log_message=True):
         if parameters is None:
             parameters = list()
         message = Message.from_parts(message_id, parameters)
 
-        if self._zmq_socket is None:
-            logger.info(
-                "Not publishing message: "
-                + message.message_friendly_string()
-                + " - publish server not ready"
+        if self._zmq_socket is None or not self.emit_messages:
+            msg = f"Not publishing message: {message.message_friendly_string()}"
+            msg += (
+                " - publish server not ready"
+                if self._zmq_socket is None
+                else " - pi-topd not initialized"
             )
+            logger.info(msg)
             return
 
         if log_message:
