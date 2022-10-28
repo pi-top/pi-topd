@@ -37,10 +37,10 @@ This is a Python 3 application that is managed by a systemd service, configured 
 Installation
 ------------
 
-`pi-topd` is installed out of the box with pi-topOS, which is available from
+:code:`pi-topd` is installed out of the box with pi-topOS, which is available from
 pi-top.com_.
 
-If you want to install this package in your device and you're not using pi-topOS, you'll need other packages to provide full device support. Please consider installing the `pt-device-support` package instead, which will install several packages, including `pi-topd`.
+If you want to install this package in your device and you're not using pi-topOS, you'll need other packages to provide full device support. Please consider installing the :code:`pt-device-support` package instead, which will install several packages, including :code:`pi-topd`.
 More information about using pi-top hardware with Raspberry Pi-OS can be found in the `Using pi-top Hardware with Raspberry Pi OS`_ page on the pi-top knowledge base.
 
 .. _pi-top.com: https://www.pi-top.com/products/os/
