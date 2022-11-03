@@ -26,18 +26,22 @@ About
 
 This application runs as a background process in order to receive state/event information from pi-top hardware and manage the system configuration in order to provide plug-and-play functionality. It also provides an interface for getting information from the hub without requiring any knowledge of the hub's internal register interface.
 
-`pi-topd` is included out-of-the-box with pi-topOS.
+This package is needed by all pi-top devices in order for them to work properly. It's included out-of-the-box with pi-topOS and can be installed in other Debian based OS.
 
 Ensure that you keep your system up-to-date to enjoy the latest features and bug fixes.
 
 This is a Python 3 application that is managed by a systemd service, configured to automatically run on startup and restart during software updates.
 
+
 ------------
 Installation
 ------------
 
-`pi-topd` is installed out of the box with pi-topOS, which is available from
-pi-top.com_. To install on Raspberry Pi OS or other operating systems, check out the `Using pi-top Hardware with Raspberry Pi OS`_ page on the pi-top knowledge base.
+:code:`pi-topd` is installed out of the box with pi-topOS, which is available from
+pi-top.com_.
+
+If you want to install this package in your device and you're not using pi-topOS, you'll need other packages to provide full device support. Please consider installing the :code:`pt-device-support` package instead, which will install several packages, including :code:`pi-topd`.
+More information about using pi-top hardware with Raspberry Pi-OS can be found in the `Using pi-top Hardware with Raspberry Pi OS`_ page on the pi-top knowledge base.
 
 .. _pi-top.com: https://www.pi-top.com/products/os/
 
