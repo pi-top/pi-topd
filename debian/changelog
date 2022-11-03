@@ -1,4 +1,4 @@
-pi-topd (5.5.1-1) bullseye; urgency=medium
+pi-topd (5.5.0-1) bullseye; urgency=medium
 
   * Send messages only when app is initialized (#171)
   * Update README with suggestions for full device support (#173)
