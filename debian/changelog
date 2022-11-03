@@ -1,3 +1,10 @@
+pi-topd (5.4.3-2) bullseye; urgency=medium
+
+  * Send messages only when app is initialized (#171)
+  * Update README with suggestions for full device support (#173)
+
+ -- pi-top <deb-maintainers@pi-top.com>  Thu, 03 Nov 2022 13:38:31 +0000
+
 pi-topd (5.4.3-1) bullseye; urgency=medium
 
   * Fix workflow variable: PYTHON_PYTHON_PACKAGE_VERSION -> PYTHON_PACKAGE_VERSION
