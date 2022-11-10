@@ -99,7 +99,7 @@ def get_screen_blanked_state():
 
 
 def get_shutdown_button_held():
-    return _hub_connection.read_shutdown_button_held()
+    return _state.power_button_press_state
 
 
 def get_shutdown_mode():

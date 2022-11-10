@@ -305,6 +305,7 @@ class HubManager:
                         "hub_shutdown_requested": __c.on_hub_shutdown_requested,
                         "hub_battery_state": __c.on_hub_battery_state_changed,
                         "button_press_state": __c.on_button_press_state_changed,
+                        "power_press_state": __c.on_power_button_press_state_changed,
                         "oled_pi_controlled_state": __c.on_oled_pi_controlled_state_changed,
                         "oled_spi_state": __c.on_oled_spi_bus_changed,
                         # "buttons_route_to_gpio": __c.on_buttons_route_to_gpio_state_changed,

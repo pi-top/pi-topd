@@ -332,6 +332,9 @@ class App:
         elif button_pressed == "Cancel":
             self._publish_server.publish_cancel_button_press_state_changed(is_pressed)
 
+    def on_power_button_press_state_changed(self, is_pressed):
+        self._publish_server.publish_power_button_press_state_changed(is_pressed)
+
     def on_device_id_changed(self, device_id_int):
         # Inform the power manager that the device id has changed, so
         # it can handle battery notifications correctly
