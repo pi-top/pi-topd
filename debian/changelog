@@ -1,3 +1,9 @@
+pi-topd (5.5.0-2) bullseye; urgency=medium
+
+  * Emit power-button press/release events (#175)
+
+ -- pi-top <deb-maintainers@pi-top.com>  Mon, 21 Nov 2022 21:04:18 +0000
+
 pi-topd (5.5.0-1) bullseye; urgency=medium
 
   * Send messages only when app is initialized (#171)
