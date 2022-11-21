@@ -25,6 +25,7 @@ class State:
         self.down_button_press_state = False
         self.select_button_press_state = False
         self.cancel_button_press_state = False
+        self.power_button_press_state = False
         self.oled_spi_bus = OledSpi.UNKNOWN
 
         self.battery_capacity_override_counter = 0
@@ -117,6 +118,11 @@ class State:
         if callable(func):
             func("Cancel", self.cancel_button_press_state)
 
+    def emit_power_button_state_changed(self):
+        func = self.funcs.get("power_press_state")
+        if callable(func):
+            func(self.power_button_press_state)
+
     def set_battery_state(self, charging_state, capacity, remaining_time, wattage):
         state_changed = False
 
@@ -198,3 +204,8 @@ class State:
         if self.cancel_button_press_state is not is_pressed:
             self.cancel_button_press_state = is_pressed
             self.emit_cancel_button_state_changed()
+
+    def set_power_button_press_state(self, is_pressed):
+        if self.power_button_press_state is not is_pressed:
+            self.power_button_press_state = is_pressed
+            self.emit_power_button_state_changed()

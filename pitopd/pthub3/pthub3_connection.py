@@ -272,11 +272,13 @@ class HubConnection:
         logger.debug("Hub: Reading number of power cycles of lifetime")
         return self._i2c_device.read_unsigned_word(Diagnostics.DIAG__UPTIME_STDBY)
 
-    def read_shutdown_button_held(self):
+    def _read_shutdown_button_held(self):
         logger.debug("Hub: Reading shutdown button held")
-        return self._i2c_device.read_bits_from_byte_at_address(
-            bits_to_read=ShutdownRegister.PWR__SHUTDOWN_CTRL__HELD,
-            addr_to_read=PowerControl.PWR__SHUTDOWN_CTRL,
+        self._state.set_power_button_press_state(
+            self._i2c_device.read_bits_from_byte_at_address(
+                bits_to_read=ShutdownRegister.PWR__SHUTDOWN_CTRL__HELD,
+                addr_to_read=PowerControl.PWR__SHUTDOWN_CTRL,
+            )
         )
 
     def _read_shutdown_control(self):
@@ -882,6 +884,7 @@ class HubConnection:
             logger.debug("Starting poll hub registers")
             self._read_battery_registers_if_min_time_passed()
             self._read_shutdown_control()
+            self._read_shutdown_button_held()
             self._read_oled_register()
             self._read_ui_buttons_register()
             self._write_cpu_temp_register_if_min_time_passed()

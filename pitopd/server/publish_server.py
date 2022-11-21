@@ -137,6 +137,12 @@ class PublishServer:
         else:
             self._send_message(Message.PUB_V3_BUTTON_CANCEL_RELEASED)
 
+    def publish_power_button_press_state_changed(self, is_pressed):
+        if is_pressed:
+            self._send_message(Message.PUB_V3_BUTTON_POWER_PRESSED)
+        else:
+            self._send_message(Message.PUB_V3_BUTTON_POWER_RELEASED)
+
     def publish_oled_pi_controlled_state_changed(self, oled_controlled_by_pi):
         self._send_message(
             Message.PUB_OLED_CONTROL_CHANGED, [1 if oled_controlled_by_pi else 0]
