@@ -22,7 +22,6 @@ class HubManager:
         self._callback_client = callback_client
 
     def connect_to_hub(self):
-
         # Enable I2C for hub checking
         self._callback_client.on_i2c_state_required(True)
 
@@ -79,7 +78,6 @@ class HubManager:
             logger.warning("Attempted to call start when there was no active hub")
 
     def stop(self):
-
         # When stopping, we unblank the screen and set the brightness to full
         # to prevent restarting with no display
 
@@ -92,7 +90,6 @@ class HubManager:
             self._active_hub_module.stop()
 
     def wait_for_device_identification(self):
-
         logger.debug("Waiting for device id to be established...")
 
         time_waited = 0

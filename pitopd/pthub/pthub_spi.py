@@ -100,7 +100,6 @@ class SPIHandler:
         self.queued_changes = [init_state]
 
     def _update_state_from_pending_state_change(self, state_change_to_send):
-
         # If state is to change, update appropriate bit(s)
         if state_change_to_send is not None:
 
@@ -263,7 +262,6 @@ class SPIHandler:
             self._shutdown_ctr.reset()
 
     def _process_spi_resp(self, resp, init=False):
-
         # Message from hub bits:
 
         # 0     : check sum: set if odd number of set bits in rest of message
@@ -390,7 +388,6 @@ class SPIHandler:
         return valid, resp_bin_str
 
     def _get_state_from_hub(self, init=False, process_state=True):
-
         valid = False
         get_state_ctr = Counter(5)
 

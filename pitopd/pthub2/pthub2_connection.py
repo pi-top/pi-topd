@@ -28,7 +28,6 @@ class HubRegisters:
 
 
 class ShutdownRegister:
-
     # Bits
     PWR__SHUTDOWN_CTRL__HELD = 0x1
     PWR__SHUTDOWN_CTRL__BUTT = 0x2
@@ -38,7 +37,6 @@ class ShutdownRegister:
 
 
 class BacklightRegister:
-
     # Bits
     DIS__BACKLIGHT__PERC_B1 = 0x01
     DIS__BACKLIGHT__PERC_B2 = 0x02
@@ -60,14 +58,12 @@ class BacklightRegister:
 
 
 class AudioRegister:
-
     # Bits
     AUD__CONFIG__HDMI = 0x01
     AUD__CONFIG__HPDET = 0x02
 
 
 class HubConnection:
-
     POWER_OFF_TIMEOUT_SECONDS = 10
 
     def initialise(self, state):
@@ -103,7 +99,6 @@ class HubConnection:
         self._cycle_sleep_time = float(1 / no_of_polls_per_second)
 
     def increment_brightness(self):
-
         try:
             logger.debug("Hub: increment_brightness")
             backlight_settings = self._i2c_device.read_unsigned_byte(
@@ -122,7 +117,6 @@ class HubConnection:
             logger.error("Error incrementing brightness: " + str(e))
 
     def decrement_brightness(self):
-
         try:
             logger.debug("Hub: decrement_brightness")
             backlight_settings = self._i2c_device.read_unsigned_byte(
@@ -141,7 +135,6 @@ class HubConnection:
             logger.error("Error decrementing brightness: " + str(e))
 
     def set_brightness(self, value):
-
         try:
             logger.debug("Hub: set_brightness")
 
@@ -167,7 +160,6 @@ class HubConnection:
             logger.error("Error setting brightness: " + str(e))
 
     def blank_screen(self):
-
         try:
             logger.debug("Hub: blank_screen")
             backlight_settings = self._i2c_device.read_unsigned_byte(
@@ -182,7 +174,6 @@ class HubConnection:
             logger.error("Error blanking screen: " + str(e))
 
     def unblank_screen(self):
-
         try:
             logger.debug("Hub: unblank_screen")
             backlight_settings = self._i2c_device.read_unsigned_byte(
@@ -197,7 +188,6 @@ class HubConnection:
             logger.error("Error unblanking screen: " + str(e))
 
     def shutdown(self):
-
         # IMPORTANT: The default way in which the hub shuts down is as follows:
         # (1) The OS is shut down
         # (2) During shutdown a systemd service fires off shutdown command to hub
@@ -212,7 +202,6 @@ class HubConnection:
         self._run_polling_thread = False
 
     def enable_hdmi_audio(self):
-
         try:
             logger.debug("Hub: enable_hdmi_audio")
             audio_settings = self._i2c_device.read_unsigned_byte(
@@ -227,7 +216,6 @@ class HubConnection:
             logger.error("Error enabling hdmi audio (multiplexer): " + str(e))
 
     def disable_hdmi_audio(self):
-
         try:
             logger.debug("Hub: disable_hdmi_audio")
             audio_settings = self._i2c_device.read_unsigned_byte(
@@ -246,14 +234,12 @@ class HubConnection:
     ########################
 
     def _main_thread_loop(self):
-
         while self._run_polling_thread is True:
 
             self._poll_hub()
             sleep(self._cycle_sleep_time)
 
     def _poll_hub(self):
-
         try:
             logger.debug("Polling for shutdown...")
             self._read_shutdown_control()
@@ -271,7 +257,6 @@ class HubConnection:
             logger.error("Error polling hub: " + str(e))
 
     def _read_shutdown_control(self):
-
         shutdown_control = self._i2c_device.read_unsigned_byte(
             HubRegisters.PWR__SHUTDOWN_CTRL
         )
@@ -282,7 +267,6 @@ class HubConnection:
             self._state.emit_shutdown()
 
     def _read_battery_registers(self):
-
         # Get values from the hub
 
         current_ma = self._i2c_device.read_signed_word(HubRegisters.BAT__CURRENT)
@@ -335,7 +319,6 @@ class HubConnection:
         self._state.set_battery_wattage(int(current_ma * voltage_v * 0.00001))
 
     def _read_backlight_register(self):
-
         backlight_settings = self._i2c_device.read_unsigned_byte(
             HubRegisters.DIS__BACKLIGHT
         )

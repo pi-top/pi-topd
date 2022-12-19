@@ -327,7 +327,6 @@ class _BootConfig:
 
     @staticmethod
     def _get_number_value_from_line(line_to_check):
-
         value = ""
         index = 0
 

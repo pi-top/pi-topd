@@ -13,7 +13,6 @@ spi_cycle_sleep_time = pthub_spi._cycle_sleep_time
 
 class State:
     def __init__(self):
-
         self._brightness = 10
         self._screen_blanked = False
         self._lid_closed = False

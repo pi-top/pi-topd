@@ -10,7 +10,6 @@ logger = logging.getLogger(__name__)
 
 
 class IdleMonitor:
-
     DEFAULT_CYCLE_SLEEP_TIME = 5
     SENSITIVE_CYCLE_SLEEP_TIME = 0.2
 
