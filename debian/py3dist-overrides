@@ -2,7 +2,7 @@ click python3-click; PEP386
 click-logging python3-click-logging; PEP386
 # Package will always update in-step with SDK
 # So avoid version-locking
-pitop-common python3-pitop-common
+pitop.common python3-pitop-common
 # smbus2 is a pure Python implementation of the python-smbus package
 # Versions do not match so ignore PEP386
 smbus2 python3-smbus
