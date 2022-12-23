@@ -1,6 +1,5 @@
 class State:
     def __init__(self):
-
         self.brightness = 16
         self.screen_blanked = False
         self.lid_open = True

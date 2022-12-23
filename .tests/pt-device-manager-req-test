@@ -49,7 +49,6 @@ def test_request(
 
 
 def listen_thread():
-
     print("Connecting to publish server...")
     zmq_context_listen = zmq.Context()
     zmq_socket = zmq_context_listen.socket(zmq.SUB)

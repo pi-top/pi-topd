@@ -168,7 +168,6 @@ def _reset_device_state(enable):
 
 
 def _check_and_set_I2S_config(i2s_required):
-
     reboot_required = False
 
     if I2S.get_current_state() is not i2s_required:
@@ -181,7 +180,6 @@ def _check_and_set_I2S_config(i2s_required):
 
 
 def _check_and_set_serial_config():
-
     reboot_required = False
 
     if UART.enabled() is True:
@@ -201,7 +199,6 @@ def _initialise_v3_hub_pulse():
 
 
 def _initialise_v2_hub_pulse():
-
     if HDMI.set_as_audio_output() is False:
         logger.warning("Failed to configure HDMI output")
 
@@ -213,7 +210,6 @@ def _initialise_v2_hub_pulse():
 
 
 def _initialise_v1_hub_pulse():
-
     HDMI_reboot = HDMI.set_hdmi_drive_in_boot_config(2)
     UART_reboot = _check_and_set_serial_config()
     I2S_reboot = _check_and_set_I2S_config(True)
@@ -242,7 +238,6 @@ def reset_device_state(enable):
 
 
 def enable_device():
-
     enabled = False
     reboot_required = False
     v2_hub_hdmi_to_i2s_required = False
@@ -279,7 +274,6 @@ def enable_device():
 
 
 def disable_device():
-
     _reset_device_state(False)
 
     return True

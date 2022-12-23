@@ -61,7 +61,6 @@ def _set_write_to_v1_speaker_enabled(address, enable):
 
 
 def _parse_v1_speaker_playback_mode_file(mode):
-
     logger.info("Writing config data to pi-topSPEAKER")
 
     try:
