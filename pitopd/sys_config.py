@@ -6,6 +6,7 @@ from re import compile
 from shutil import copy
 from subprocess import CalledProcessError, call, check_output
 from sys import version_info
+from typing import Optional
 
 from pitop.common.command_runner import run_command
 from pitop.common.current_session_info import get_current_user
@@ -237,7 +238,7 @@ class _SystemCalls:
         return card_number
 
     @staticmethod
-    def set_audio_output_interface(interface: AudioDevice, user: str = None):
+    def set_audio_output_interface(interface: AudioDevice, user: Optional[str] = None):
         logger.info(f"Setting audio output to {interface.name}")
 
         if user is None:
