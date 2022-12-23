@@ -568,7 +568,6 @@ def communicate():
         logger.error("Error transceiving SPI data from pi-topHUB. " + str(e))
         logger.info(traceback.format_exc())
         raise e
-        return False
 
 
 def _main_thread_loop():
