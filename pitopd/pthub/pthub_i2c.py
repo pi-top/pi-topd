@@ -297,7 +297,6 @@ def _main_thread_loop():
 
     // MAIN CODE STARTS HERE // ///////////////////////////
     """
-
     while _run_main_thread:
         communicate()
         sleep(_cycle_sleep_time)
