@@ -6,7 +6,7 @@ pitop.common python3-pitop-common
 # smbus2 is a pure Python implementation of the python-smbus package
 # Versions do not match so ignore PEP386
 smbus2 python3-smbus
-spidev python3-spidev; PEP386
+spidev python3-spidev
 # Journal handling
 systemd_python python3-systemd; PEP386
 # System state change communication
