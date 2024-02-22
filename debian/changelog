@@ -1,3 +1,10 @@
+pi-topd (5.6.0-3) bullseye; urgency=medium
+
+  * Upload all artifacts on release
+  * Update release workflow
+
+ -- pi-top <deb-maintainers@pi-top.com>  Thu, 22 Feb 2024 16:45:53 +0000
+
 pi-topd (5.6.0-2) bullseye; urgency=medium
 
   * Fix dependency name: pitop-common -> pitop.common (#178)
