@@ -1,3 +1,20 @@
+pi-topd (5.6.0-2) bullseye; urgency=medium
+
+  * Fix dependency name: pitop-common -> pitop.common (#178)
+  * Add CodeQL workflow for GitHub code scanning (#174)
+  * [pre-commit.ci] pre-commit autoupdate (#166)
+  * Fix dependency version specification in setup.cfg (#182)
+  * Fix click-logging dependency. (#184)
+  * Ignore version lock for spidev on Debian package (#185)
+  * [pre-commit.ci] pre-commit autoupdate (#181)
+  * Remove smbus2 to smbus patch (#186)
+  * Updated master workflow files
+  * Updated master workflow files
+  * Updated master workflow files
+  * Package for bookworm (#188)
+
+ -- pi-top <deb-maintainers@pi-top.com>  Thu, 22 Feb 2024 14:35:27 +0000
+
 pi-topd (5.6.0-1) bullseye; urgency=medium
 
   * Emit power-button press/release events (#175)
