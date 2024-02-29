@@ -1,0 +1,9 @@
+pi-topd: no-manual-page usr/bin/pi-topd
+pi-topd: no-manual-page usr/bin/pt-poweroff
+pi-topd: no-manual-page usr/bin/pt-reboot
+pi-topd: systemd-service-file-refers-to-unusual-wantedby-target lib/systemd/system/pt-poweroff.service halt.target
+pi-topd: systemd-service-file-refers-to-unusual-wantedby-target lib/systemd/system/pt-poweroff.service poweroff.target
+pi-topd: systemd-service-file-refers-to-unusual-wantedby-target lib/systemd/system/pt-reboot.service reboot.target
+pi-topd: package-supports-alternative-init-but-no-init.d-script lib/systemd/system/pi-topd.service
+pi-topd: package-supports-alternative-init-but-no-init.d-script lib/systemd/system/pt-poweroff.service
+pi-topd: package-supports-alternative-init-but-no-init.d-script lib/systemd/system/pt-reboot.service
