@@ -1,3 +1,9 @@
+pi-topd (5.6.0-4) bullseye; urgency=medium
+
+  * Don't use python_version in package dependencies (#190)
+
+ -- pi-top <deb-maintainers@pi-top.com>  Thu, 29 Feb 2024 19:28:30 +0000
+
 pi-topd (5.6.0-3) bullseye; urgency=medium
 
   * Upload all artifacts on release
