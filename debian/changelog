@@ -1,3 +1,9 @@
+pi-topd (5.6.0-5) bullseye; urgency=medium
+
+  * Don't crash lightdm if xhost fails (#193)
+
+ -- pi-top <deb-maintainers@pi-top.com>  Fri, 15 Mar 2024 20:22:06 +0000
+
 pi-topd (5.6.0-4) bullseye; urgency=medium
 
   * Don't use python_version in package dependencies (#190)
