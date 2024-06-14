@@ -12,10 +12,12 @@ from pitop.common.command_runner import run_command
 from pitop.common.current_session_info import get_current_user
 from pitop.common.file_ops import create_temp_file, sed_inplace
 from pitop.common.formatting import get_uncommented_line, is_line_commented
+from pitop.common.pt_os import get_boot_partition_path
 
 from .utils import get_project_root
 
 logger = logging.getLogger(__name__)
+BOOT_PARTITION_MOUNTPOINT = get_boot_partition_path()
 
 
 class AudioDevice(Enum):
@@ -198,14 +200,14 @@ class _SystemCalls:
         )
         force_hdmi0_output = (
             run_command(
-                "raspi-config nonint get_config_var hdmi_force_hotplug:0 /boot/config.txt",
+                f"raspi-config nonint get_config_var hdmi_force_hotplug:0 {BOOT_PARTITION_MOUNTPOINT}/config.txt",
                 timeout=3,
             ).strip()
             == "1"
         )
         force_hdmi1_output = (
             run_command(
-                "raspi-config nonint get_config_var hdmi_force_hotplug:1 /boot/config.txt",
+                f"raspi-config nonint get_config_var hdmi_force_hotplug:1 {BOOT_PARTITION_MOUNTPOINT}/config.txt",
                 timeout=3,
             ).strip()
             == "1"
@@ -294,7 +296,7 @@ class _SystemCalls:
 
 
 class _BootCmdline:
-    BOOT_CMDLINE_FILE = "/boot/cmdline.txt"
+    BOOT_CMDLINE_FILE = "{BOOT_PARTITION_MOUNTPOINT}/cmdline.txt"
 
     @staticmethod
     def remove_serial():
@@ -319,7 +321,7 @@ class _BootCmdline:
 
 
 class _BootConfig:
-    BOOT_CONFIG_FILE = "/boot/config.txt"
+    fBOOT_CONFIG_FILE = "{BOOT_PARTITION_MOUNTPOINT}/config.txt"
 
     @staticmethod
     def _get_last_field_from_line(line_to_check):
@@ -562,19 +564,19 @@ class UART:
             _BootConfig.set_value("init_uart_clock", init_uart_clock)
         else:
             logger.warning(
-                "Unable to set init_uart_clock in /boot/config.txt to non-integer value"
+                f"Unable to set init_uart_clock in {BOOT_PARTITION_MOUNTPOINT}/config.txt to non-integer value"
             )
         if isinstance(init_uart_baud, int):
             _BootConfig.set_value("init_uart_baud", init_uart_baud)
         else:
             logger.warning(
-                "Unable to set init_uart_baud in /boot/config.txt to non-integer value"
+                f"Unable to set init_uart_baud in {BOOT_PARTITION_MOUNTPOINT}/config.txt to non-integer value"
             )
         if enable_uart == 1 or enable_uart == 0:
             _BootConfig.set_value("enable_uart", enable_uart)
         else:
             logger.warning(
-                "Unable to set enable_uart in /boot/config.txt to value other than 0 or 1"
+                f"Unable to set enable_uart in {BOOT_PARTITION_MOUNTPOINT}/config.txt to value other than 0 or 1"
             )
 
     @staticmethod
@@ -590,7 +592,7 @@ class UART:
                 clock_val_okay = clock_string == str(expected_clock_val)
             else:
                 logger.warning(
-                    "Invalid init_uart_clock value to check for in /boot/config.txt - must be an integer"
+                    f"Invalid init_uart_clock value to check for in {BOOT_PARTITION_MOUNTPOINT}/config.txt - must be an integer"
                 )
         else:
             clock_val_okay = True
@@ -603,7 +605,7 @@ class UART:
                 baud_val_okay = baud_string == str(expected_baud_val)
             else:
                 logger.warning(
-                    "Invalid init_uart_baud value to check for in /boot/config.txt - must be an integer"
+                    f"Invalid init_uart_baud value to check for in {BOOT_PARTITION_MOUNTPOINT}/config.txt - must be an integer"
                 )
         else:
             baud_val_okay = True
@@ -616,7 +618,7 @@ class UART:
                 enabled_val_okay = enabled_string == str(expected_enabled_val)
             else:
                 logger.warning(
-                    "Invalid enable_uart value to check for in /boot/config.txt - must be 0 or 1"
+                    f"Invalid enable_uart value to check for in {BOOT_PARTITION_MOUNTPOINT}/config.txt - must be 0 or 1"
                 )
         else:
             enabled_val_okay = True
