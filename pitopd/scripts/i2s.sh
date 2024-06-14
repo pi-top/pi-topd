@@ -2,8 +2,17 @@
 
 # i2s.sh [enable|disable]
 #   status/enable/disable
+boot_partition_mountpont() {
+	if [ -e /boot/firmware/config.txt ] ; then
+		FIRMWARE="/firmware"
+	else
+		FIRMWARE=""
+	fi
+	echo "/boot${FIRMWARE}"
+}
 
-CONFIG="/boot/config.txt"
+BOOT_MOUNTPOINT=$(boot_partition_mountpont)
+CONFIG="${BOOT_MOUNTPOINT}/config.txt"
 TEMP_ASOUND_CONF="/tmp/asound.conf.tmp"
 BAK_ASOUND_CONF="/etc/asound.conf.bak"
 ASOUND_CONF="/etc/asound.conf"
