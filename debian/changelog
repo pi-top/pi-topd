@@ -1,3 +1,9 @@
+pi-topd (5.6.0-7) bullseye; urgency=medium
+
+  * Find path to boot partition (#197)
+
+ -- pi-top <deb-maintainers@pi-top.com>  Fri, 14 Jun 2024 19:43:56 +0000
+
 pi-topd (5.6.0-6) bullseye; urgency=medium
 
   * Stop using hardcoded path to boot partition (#195)
