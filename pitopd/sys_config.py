@@ -584,6 +584,7 @@ class UART:
         expected_clock_val=None, expected_baud_val=None, expected_enabled_val=None
     ):
 
+        clock_val_okay = True
         if expected_clock_val is not None:
             if isinstance(expected_clock_val, int):
                 clock_string = _BootConfig.get_value(
@@ -594,9 +595,8 @@ class UART:
                 logger.warning(
                     f"Invalid init_uart_clock value to check for in {BOOT_PARTITION_MOUNTPOINT}/config.txt - must be an integer"
                 )
-        else:
-            clock_val_okay = True
 
+        baud_val_okay = True
         if expected_baud_val is not None:
             if isinstance(expected_baud_val, int):
                 baud_string = _BootConfig.get_value(
@@ -607,9 +607,8 @@ class UART:
                 logger.warning(
                     f"Invalid init_uart_baud value to check for in {BOOT_PARTITION_MOUNTPOINT}/config.txt - must be an integer"
                 )
-        else:
-            baud_val_okay = True
 
+        enabled_val_okay = True
         if expected_enabled_val is not None:
             if expected_enabled_val == 1 or expected_enabled_val == 0:
                 enabled_string = _BootConfig.get_value(
@@ -620,8 +619,6 @@ class UART:
                 logger.warning(
                     f"Invalid enable_uart value to check for in {BOOT_PARTITION_MOUNTPOINT}/config.txt - must be 0 or 1"
                 )
-        else:
-            enabled_val_okay = True
 
         return clock_val_okay and baud_val_okay and enabled_val_okay
 
