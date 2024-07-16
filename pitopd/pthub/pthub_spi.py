@@ -1,9 +1,9 @@
 import logging
 import threading
 import traceback
-from distutils.version import StrictVersion
 from enum import Enum
 from platform import uname
+from re import match
 from time import sleep
 
 from pitop.common.common_ids import DeviceID
@@ -301,8 +301,10 @@ class SPIHandler:
             self._state.set_brightness(spi_brightness_int, False)
 
     def __using_old_kernel(self):
-        current_version_name = uname().release.split("-")[0]
-        return StrictVersion(current_version_name) < StrictVersion("5.0.0")
+        # check if kernel version is lower than "5.0.0"
+        # to avoid errors when setting cshigh
+        # https://github.com/raspberrypi/linux/issues/3745
+        return match(r"^[0-4]\.", uname().release) is not None
 
     def _transceive_spi(self, bits_to_send):
         hex_str_to_send = "0x" + str(hex(bits_to_send))[2:].zfill(2)
