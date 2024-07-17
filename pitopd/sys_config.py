@@ -6,7 +6,7 @@ from re import compile
 from shutil import copy
 from subprocess import PIPE, CalledProcessError, Popen, call, check_output
 from sys import version_info
-from typing import Optional
+from typing import Dict, List, Optional
 
 from pitop.common.command_runner import run_command
 from pitop.common.current_session_info import get_current_user
@@ -23,7 +23,7 @@ BOOT_PARTITION_MOUNTPOINT = get_boot_partition_path()
 def linux_distro():
     cmd = "grep VERSION_CODENAME /etc/os-release | cut -d'=' -f2"
     process = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE)
-    stdout, stderr = process.communicate()
+    stdout, _ = process.communicate()
     return stdout.decode().strip()
 
 
@@ -235,21 +235,26 @@ class _SystemCalls:
             return "bcm2835 HDMI 1"
 
     @staticmethod
-    def _get_card_names(user: Optional[str] = None):
-        cards = []
+    def _get_card_names(user: Optional[str] = None) -> List[Dict]:
+        cards: List[Dict] = []
 
         if user is None:
             user = get_current_user()
 
         if user is None:
             logger.warning("Couldn't find user to set audio output")
-            return
+            return cards
 
         uid = run_command(f"id -u {user}", timeout=1).strip()
         cmd = f"sudo -u {user} XDG_RUNTIME_DIR=/run/user/{uid} LANG=C pactl list sinks | grep -e 'Sink #' -e 'alsa.card_name'"
 
         process = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE)
         stdout, stderr = process.communicate()
+
+        if stderr:
+            logger.error(f"Error getting card names: {stderr.decode()}")
+            return cards
+
         values = [x.strip() for x in stdout.decode().strip().split("\n")]
         for i, value in enumerate(values):
             if value.startswith("Sink #"):
