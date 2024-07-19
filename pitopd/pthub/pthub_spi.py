@@ -1,9 +1,7 @@
 import logging
 import threading
 import traceback
-from distutils.version import StrictVersion
 from enum import Enum
-from platform import uname
 from time import sleep
 
 from pitop.common.common_ids import DeviceID
@@ -221,7 +219,6 @@ class SPIHandler:
             self.spi.max_speed_hz = 9600
             self.spi.mode = 0b00
             self.spi.bits_per_word = 8
-            self.spi.cshigh = True
             self.spi.lsbfirst = False
 
     def _determine_byte(self, resp):
@@ -300,10 +297,6 @@ class SPIHandler:
         if init or not screen_is_blanked:
             self._state.set_brightness(spi_brightness_int, False)
 
-    def __using_old_kernel(self):
-        current_version_name = uname().release.split("-")[0]
-        return StrictVersion(current_version_name) < StrictVersion("5.0.0")
-
     def _transceive_spi(self, bits_to_send):
         hex_str_to_send = "0x" + str(hex(bits_to_send))[2:].zfill(2)
         bin_str_to_send = "{0:b}".format(int(hex_str_to_send[2:], 16)).zfill(8)
@@ -329,12 +322,8 @@ class SPIHandler:
                 + "]"
             )
 
-        if self.__using_old_kernel():
-            # Initiate receiving communication from hub
-            self.spi.cshigh = False
         # Transfer data with hub
         resp = self.spi.xfer2([bits_to_send], self.spi.max_speed_hz)
-        self.spi.cshigh = True
 
         resp_hex = hex(resp[0])
         resp_hex_str = "0x" + str(resp_hex)[2:].zfill(2)

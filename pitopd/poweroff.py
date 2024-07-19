@@ -1,6 +1,6 @@
-from distutils.version import StrictVersion
 from os.path import isfile
 from platform import uname
+from re import match
 from time import sleep
 
 from pitop.common.common_ids import DeviceID
@@ -22,8 +22,10 @@ def _do_poweroff_legacy():
     request_shutdown = False
 
     def using_old_kernel():
-        current_version_name = uname().release.split("-")[0]
-        return StrictVersion(current_version_name) < StrictVersion("5.0.0")
+        # check if kernel version is lower than "5.0.0"
+        # to avoid errors when setting cshigh
+        # https://github.com/raspberrypi/linux/issues/3745
+        return match(r"^[0-4]\.", uname().release) is not None
 
     def parity7(data):
         p = False

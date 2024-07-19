@@ -4,9 +4,9 @@ from enum import Enum, auto
 from os import devnull, path
 from re import compile
 from shutil import copy
-from subprocess import CalledProcessError, call, check_output
+from subprocess import PIPE, CalledProcessError, Popen, call, check_output
 from sys import version_info
-from typing import Optional
+from typing import Dict, List, Optional
 
 from pitop.common.command_runner import run_command
 from pitop.common.current_session_info import get_current_user
@@ -18,6 +18,13 @@ from .utils import get_project_root
 
 logger = logging.getLogger(__name__)
 BOOT_PARTITION_MOUNTPOINT = get_boot_partition_path()
+
+
+def linux_distro():
+    cmd = "grep VERSION_CODENAME /etc/os-release | cut -d'=' -f2"
+    process = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    stdout, _ = process.communicate()
+    return stdout.decode().strip()
 
 
 class AudioDevice(Enum):
@@ -175,13 +182,14 @@ class _SystemCalls:
 
     @staticmethod
     def _get_config_specific_alsa_card_name(interface: AudioDevice):
-        logger.debug("Getting configuration-specific alsa card name for {interface}")
+        logger.info(f"Getting configuration-specific alsa card name for {interface}")
+
         if interface == AudioDevice.Headphones:
-            logger.debug("Interface is headphones - using common card name")
+            logger.info("Interface is headphones - using common card name")
             return "bcm2835 Headphones"
 
         if interface == AudioDevice.Hifiberry:
-            logger.debug(
+            logger.info(
                 "Interface is Hifiberry - card name is assumed to be 'snd_rpi_hifiberry_dac'"
             )
             return "snd_rpi_hifiberry_dac"
@@ -190,10 +198,13 @@ class _SystemCalls:
             logger.warning("Unknown interface")
             return None
 
-        logger.debug("Interface is HDMI - checking for multiple HDMI outputs...")
+        logger.info("Interface is HDMI - checking for multiple HDMI outputs...")
         if _SystemCalls._get_alsa_card_number_from_name("bcm2835 HDMI 2") is None:
-            logger.debug("Only one HDMI port available - using 'HDMI 1'")
-            return "bcm2835 HDMI 1"
+            if linux_distro() == "bullseye":
+                logger.info("Only one HDMI port available - using 'HDMI 1'")
+                return "bcm2835 HDMI 1"
+            logger.info("Only one HDMI port available - 'vc4-hdmi'")
+            return "vc4-hdmi"
 
         logger.debug(
             "Multiple HDMI ports available - checking if HDMI 1 is set to be forced out..."
@@ -224,19 +235,48 @@ class _SystemCalls:
             return "bcm2835 HDMI 1"
 
     @staticmethod
-    def _get_alsa_card_number_from_name(card_name: str):
-        logger.debug("Getting device-specific alsa card number for {interface}")
+    def _get_card_names(user: Optional[str] = None) -> List[Dict]:
+        cards: List[Dict] = []
+
+        if user is None:
+            user = get_current_user()
+
+        if user is None:
+            logger.warning("Couldn't find user to set audio output")
+            return cards
+
+        uid = run_command(f"id -u {user}", timeout=1).strip()
+        cmd = f"sudo -u {user} XDG_RUNTIME_DIR=/run/user/{uid} LANG=C pactl list sinks | grep -e 'Sink #' -e 'alsa.card_name'"
+
+        process = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+        stdout, stderr = process.communicate()
+
+        if stderr:
+            logger.error(f"Error getting card names: {stderr.decode()}")
+            return cards
+
+        values = [x.strip() for x in stdout.decode().strip().split("\n")]
+        for i, value in enumerate(values):
+            if value.startswith("Sink #"):
+                card_name = values[i + 1].split(" = ")[1].strip().strip('"')
+                card_number = value.split("#")[1]
+                cards.append({"name": card_name, "number": card_number})
+
+        return cards
+
+    @staticmethod
+    def _get_alsa_card_number_from_name(card_name: str, user: Optional[str] = None):
+        logger.info(f"Getting device-specific alsa card number for {card_name}")
+
         card_number = None
-        for line in run_command("aplay -l", timeout=5).split("\n"):
-            print(line)
-            if card_name in line:
-                fields = line.split(" ")
-                if len(fields) > 1:
-                    try:
-                        card_number = int(fields[1].strip().replace(":", ""))
-                    except ValueError:
-                        pass
-                    break
+        cards = _SystemCalls._get_card_names(user)
+        for card in cards:
+            if card.get("name", "") == card_name:
+                card_number = card.get("number")
+                break
+        if card_number:
+            logger.info(f"Card number for '{card_name}' is {card_number}")
+
         return card_number
 
     @staticmethod
@@ -296,7 +336,7 @@ class _SystemCalls:
 
 
 class _BootCmdline:
-    BOOT_CMDLINE_FILE = "{BOOT_PARTITION_MOUNTPOINT}/cmdline.txt"
+    BOOT_CMDLINE_FILE = f"{BOOT_PARTITION_MOUNTPOINT}/cmdline.txt"
 
     @staticmethod
     def remove_serial():
@@ -321,7 +361,7 @@ class _BootCmdline:
 
 
 class _BootConfig:
-    fBOOT_CONFIG_FILE = "{BOOT_PARTITION_MOUNTPOINT}/config.txt"
+    BOOT_CONFIG_FILE = f"{BOOT_PARTITION_MOUNTPOINT}/config.txt"
 
     @staticmethod
     def _get_last_field_from_line(line_to_check):
