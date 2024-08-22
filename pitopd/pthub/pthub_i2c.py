@@ -105,7 +105,7 @@ class BatteryStateHandler:
 
         logger.debug("Getting battery time...")
         if not self._get_battery_data(BatteryDataType.time):
-            logger.warning("Unable to get battery time")
+            logger.debug("Unable to get battery time")
             # return False - Don't return False - non essential
 
         logger.debug("Wattage set from battery voltage and current")

@@ -4,7 +4,7 @@ from enum import Enum, auto
 from os import devnull, path
 from re import compile
 from shutil import copy
-from subprocess import PIPE, CalledProcessError, Popen, call, check_output
+from subprocess import PIPE, CalledProcessError, Popen, call, check_output, run
 from sys import version_info
 from typing import Dict, List, Optional
 
@@ -508,7 +508,7 @@ class HeadphoneJack:
 class HDMI:
     @staticmethod
     def set_hdmi_drive_in_boot_config(mode):
-        _BootConfig.set_value("hdmi_drive", mode)
+        return _BootConfig.set_value("hdmi_drive", mode)
 
     @staticmethod
     def set_as_audio_output(user=None):
@@ -675,3 +675,77 @@ class UART:
             UART.configure_in_boot_config(enable_uart=1)
         else:
             UART.configure_in_boot_config(enable_uart=0)
+
+
+def enable_kms_video_overlay():
+    try:
+        run(
+            [
+                "sed",
+                "-i",
+                "s/dtoverlay=vc4-fkms-v3d/dtoverlay=vc4-kms-v3d/g",
+                f"{BOOT_PARTITION_MOUNTPOINT}/config.txt",
+            ]
+        )
+    except Exception as e:
+        logger.error(f"Failed to enable KMS video overlay: {e}")
+
+
+def enable_fkms_video_overlay():
+    try:
+        run(
+            [
+                "sed",
+                "-i",
+                "s/dtoverlay=vc4-kms-v3d/dtoverlay=vc4-fkms-v3d/g",
+                f"{BOOT_PARTITION_MOUNTPOINT}/config.txt",
+            ]
+        )
+    except Exception as e:
+        logger.error(f"Failed to enable FKMS video overlay: {e}")
+
+
+def current_video_overlay() -> str:
+    def read_status_file() -> str:
+        file = "/proc/device-tree/soc/hvs@7e400000/status"
+        cmd = f"grep -q okay {file} && echo kms || echo fkms"
+        process = run(
+            cmd,
+            shell=True,
+            check=True,
+            stdout=PIPE,
+            stderr=PIPE,
+        )
+        return process.stdout.decode().strip()
+
+    def read_config_txt() -> str:
+        overlay = ""
+        try:
+            with open(f"{BOOT_PARTITION_MOUNTPOINT}/config.txt", "r") as file:
+                lines = file.readlines()
+                for line in lines:
+                    if "dtoverlay=vc4-kms-v3d" in line:
+                        overlay = "kms"
+                        break
+                    elif "dtoverlay=vc4-fkms-v3d" in line:
+                        overlay = "fkms"
+                        break
+        except Exception as e:
+            logger.debug(f"Failed to read video overlay from config.txt: {e}")
+        return overlay
+
+    try:
+        return read_status_file()
+    except Exception:
+        logger.info(
+            "Failed to read video overaly status file, will read from config.txt"
+        )
+    return read_config_txt()
+
+
+def is_using_kms_video_overlay() -> bool:
+    return current_video_overlay() == "kms"
+
+
+def is_using_fkms_video_overlay() -> bool:
+    return current_video_overlay() == "fkms"
