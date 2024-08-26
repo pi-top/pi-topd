@@ -14,6 +14,8 @@ from pitop.common.file_ops import create_temp_file, sed_inplace
 from pitop.common.formatting import get_uncommented_line, is_line_commented
 from pitop.common.pt_os import get_boot_partition_path
 
+from pitopd.config_parser import RpiConfigParser, Section
+
 from .utils import get_project_root
 
 logger = logging.getLogger(__name__)
@@ -86,6 +88,7 @@ class _SystemCalls:
 
     @staticmethod
     def _run_cmd(cmd_arr, print_std_out=False, print_std_err=False):
+        logger.info(f"Executing command: '{cmd_arr}'")
         with open(devnull, "w") as FNULL:
             if print_std_out is True and print_std_err is True:
                 call(cmd_arr)
@@ -677,70 +680,100 @@ class UART:
             UART.configure_in_boot_config(enable_uart=0)
 
 
+def add_overlay(overlay: str):
+    conf = RpiConfigParser(f"{BOOT_PARTITION_MOUNTPOINT}/config.txt")
+
+    section = conf.find("all")
+    if section is None:
+        section = Section("all")
+
+    if section.find(f"{overlay}"):
+        logger.info(f"Overlay '{overlay}' already exists in config.txt...")
+        return
+
+    if section.find(f"#{overlay}"):
+        logger.info(f"Overlay '{overlay}' was commented in config.txt, uncommenting...")
+        section.uncomment(f"{overlay}")
+    else:
+        logger.info(f"Adding overlay '{overlay}'...")
+        section.add(f"{overlay}")
+
+    conf.update(section)
+    conf.write()
+
+
+def remove_overlay(overlay: str):
+    conf = RpiConfigParser(f"{BOOT_PARTITION_MOUNTPOINT}/config.txt")
+
+    section = conf.find("all")
+    if section is None:
+        logger.info(f"Overlay '{overlay}' doesn't exist in config.txt...")
+        return
+
+    if section.find(overlay):
+        logger.info(f"Overlay '{overlay}' exists in config.txt, commenting it...")
+        section.comment(overlay)
+
+    conf.update(section)
+    conf.write()
+
+
 def enable_kms_video_overlay():
     try:
-        run(
-            [
-                "sed",
-                "-i",
-                "s/dtoverlay=vc4-fkms-v3d/dtoverlay=vc4-kms-v3d/g",
-                f"{BOOT_PARTITION_MOUNTPOINT}/config.txt",
-            ]
-        )
+        remove_overlay("dtoverlay=vc4-fkms-v3d")
+        add_overlay("dtoverlay=vc4-kms-v3d")
     except Exception as e:
         logger.error(f"Failed to enable KMS video overlay: {e}")
 
 
 def enable_fkms_video_overlay():
     try:
-        run(
-            [
-                "sed",
-                "-i",
-                "s/dtoverlay=vc4-kms-v3d/dtoverlay=vc4-fkms-v3d/g",
-                f"{BOOT_PARTITION_MOUNTPOINT}/config.txt",
-            ]
-        )
+        remove_overlay("dtoverlay=vc4-kms-v3d")
+        add_overlay("dtoverlay=vc4-fkms-v3d")
     except Exception as e:
         logger.error(f"Failed to enable FKMS video overlay: {e}")
 
 
 def current_video_overlay() -> str:
     def read_status_file() -> str:
-        file = "/proc/device-tree/soc/hvs@7e400000/status"
-        cmd = f"grep -q okay {file} && echo kms || echo fkms"
-        process = run(
-            cmd,
-            shell=True,
-            check=True,
-            stdout=PIPE,
-            stderr=PIPE,
-        )
-        return process.stdout.decode().strip()
-
-    def read_config_txt() -> str:
-        overlay = ""
         try:
-            with open(f"{BOOT_PARTITION_MOUNTPOINT}/config.txt", "r") as file:
-                lines = file.readlines()
-                for line in lines:
-                    if "dtoverlay=vc4-kms-v3d" in line:
-                        overlay = "kms"
-                        break
-                    elif "dtoverlay=vc4-fkms-v3d" in line:
-                        overlay = "fkms"
-                        break
+            cmd = "grep -q okay /proc/device-tree/soc/hvs@7e400000/status && echo kms || echo fkms"
+            process = run(
+                cmd,
+                shell=True,
+                check=True,
+                stdout=PIPE,
+                stderr=PIPE,
+            )
+            return process.stdout.decode().strip()
         except Exception as e:
-            logger.debug(f"Failed to read video overlay from config.txt: {e}")
-        return overlay
+            logger.info(f"Failed to read video overlay status file: {e}")
+            return ""
 
+    response = ""
     try:
-        return read_status_file()
-    except Exception:
-        logger.info(
-            "Failed to read video overaly status file, will read from config.txt"
-        )
-    return read_config_txt()
+        # Look in config.txt
+        conf = RpiConfigParser(f"{BOOT_PARTITION_MOUNTPOINT}/config.txt")
+        sections = conf.find_all("all")
+        for section in sections:
+            if section.find("dtoverlay=vc4-kms-v3d"):
+                logger.info("Found dtoverlay=vc4-kms-v3d in config.txt")
+                response = "kms"
+                break
+            if section.find("dtoverlay=vc4-fkms-v3d"):
+                logger.info("Found dtoverlay=vc4-fkms-v3d in config.txt")
+                response = "fkms"
+                break
+
+        if response == "":
+            status_file_output = read_status_file()
+            if status_file_output:
+                response = status_file_output
+    except Exception as e:
+        logger.error(f"Failed to determine video overlay: {e}")
+
+    logger.info(f"Current video overlay: {response}")
+    return response
 
 
 def is_using_kms_video_overlay() -> bool:

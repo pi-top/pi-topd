@@ -1,0 +1,94 @@
+# Some settings in this file are managed by pi-topOS programs and services.
+# Details can be found in the OS documentation:
+#   File:       /usr/share/pt-docs/os-configtxt
+#   Website:    https://pi-top.com/pt-docs/os-configtxt
+#//////////////////////////////////////////////////////////////////////////
+# For more options and information on how settings in this file work, see
+# Raspberry Pi Foundation's documentation:
+# http://rpf.io/configtxt
+#
+# Some settings may impact device functionality. See link above for details
+# Additional overlays and parameters are documented /boot/overlays/README
+#//////////////////////////////////////////////////////////////////////////
+# DO NOT EDIT 'ptconfig' SETTINGS
+# USED BY THE OS TO SUPPORT BUGFIXES AND LATEST FUNCTIONALITY
+#
+# pt_config_txt_orig_version=2020.12.14-1_all
+# pt_config_txt_mods_applied=
+#//////////////////////////////////////////////////////////////////////////
+
+#//////////////////////////////
+# Display stack configuration /
+#//////////////////////////////
+
+# Default case: 1 display maximum
+max_framebuffers=1
+
+# Default case: legacy driver
+# Compatible with all non-Pi 4 models
+#dtoverlay=vc4-fkms-v3d
+
+[pi4]
+# RPi 4: 2 displays maximum
+max_framebuffers=2
+
+# RPi 4: DRM VC4 V3D driver on top of the dispmanx display stack
+dtoverlay=vc4-fkms-v3d
+
+#//////////////////////////////////////
+# Additional networking configuration /
+#//////////////////////////////////////
+
+# Enable USB-C Virtual Ethernet port
+# Required by pt-networking (not pt-display-port)
+dtoverlay=dwc2
+
+#/////////////////////
+# HDMI configuration /
+#/////////////////////
+# Force HDMI out
+#  - allow hotplugging a display
+#  - allow VNC without a display attached
+hdmi_force_hotplug:1=1
+
+[all]
+# Prevent black border of unused pixels
+disable_overscan=1
+
+# Enable sound over HDMI
+hdmi_drive=2
+
+# Allow HDMI display to go into low-power mode when idle
+hdmi_blanking=1
+
+# Uncomment if you get no picture on HDMI for a default "safe" mode
+#hdmi_safe=1
+
+# Uncomment to increase signal to HDMI, if you have interference, blanking, or
+# no display
+#config_hdmi_boost=7
+
+#///////////////////////////////////
+# Hardware interface configuration /
+#///////////////////////////////////
+# I2C - used for communicating with pi-top hubs
+dtparam=i2c_arm=on
+
+# UART Serial (locks VPU core freq to 250MHz) - default off
+# Available on pi-top PMA
+enable_uart=0
+
+# Extra video codecs in Raspberry Pi GPU firmware; adds native support for Raspberry Pi Camera - default on
+start_x=1
+
+#///////////////////////
+# System configuration /
+#///////////////////////
+# GPU memory allocation - default 128MB
+gpu_mem=128
+
+# Audio - default on
+dtparam=audio=on
+
+# Rainbow splash screen - default on
+disable_splash=0
