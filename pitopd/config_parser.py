@@ -134,3 +134,48 @@ class RpiConfigParser:
                     f.write(f"[{section.name}]\n")
                 for setting in section.settings:
                     f.write(f"{setting}\n")
+
+    def find_all_sections_with_setting(
+        self, section_name: str, setting: str
+    ) -> list[Section]:
+        matching_sections = []
+        sections = self.find_all(section_name)
+        for section in sections:
+            if section.find(setting) is not None:
+                matching_sections.append(section)
+        return matching_sections
+
+    def add_or_uncomment(self, section_name: str, setting: str) -> None:
+        # check if already exists
+        sections = self.find_all_sections_with_setting(section_name, setting)
+        if len(sections) > 0:
+            print(f"Setting '{setting}' already exists in section '{section_name}'")
+            return
+
+        # check if it's commented
+        sections = self.find_all_sections_with_setting(section_name, f"#{setting}")
+        if len(sections) > 0:
+            print(f"Uncommenting setting '{setting}' in section '{section_name}'")
+            for section in sections:
+                section.uncomment(setting)
+            return
+
+        # didn't find it; add it
+        sec = self.find("all")
+        if sec is None:
+            sec = Section("all")
+        print(f"Adding setting '{setting}' to section '{section_name}'")
+        sec.add(f"{setting}")
+        self.update(sec)
+
+    def comment_setting(self, section_name: str, setting: str) -> None:
+        for section in self.find_all_sections_with_setting(section_name, setting):
+            print(f"Commenting setting '{setting}' in section '{section_name}'")
+            section.comment(setting)
+
+    def uncomment_setting(self, section_name: str, setting: str) -> None:
+        if not setting.startswith("#"):
+            setting = f"#{setting}"
+        for section in self.find_all_sections_with_setting(section_name, setting):
+            print(f"Uncommenting setting '{setting}' in section '{section_name}'")
+            section.uncomment(setting)

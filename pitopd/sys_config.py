@@ -14,7 +14,7 @@ from pitop.common.file_ops import create_temp_file, sed_inplace
 from pitop.common.formatting import get_uncommented_line, is_line_commented
 from pitop.common.pt_os import get_boot_partition_path
 
-from pitopd.config_parser import RpiConfigParser, Section
+from pitopd.config_parser import RpiConfigParser
 
 from .utils import get_project_root
 
@@ -316,7 +316,9 @@ class _SystemCalls:
 
     @staticmethod
     def legacy_set_audio_output_interface_no(interface_no, debug_interface_name):
-        logger.debug("Setting audio output to " + debug_interface_name + "...")
+        logger.info(
+            f"legacy_set_audio_output_interface_no: Setting audio output to {debug_interface_name}..."
+        )
 
         try:
             amixer_set_interface_cmd_arr = list(_SystemCalls.OLD_AMIXER_SET_CMD_ARR)
@@ -680,56 +682,30 @@ class UART:
             UART.configure_in_boot_config(enable_uart=0)
 
 
-def add_overlay(overlay: str):
+def add_overlay_to_config(overlay: str):
     conf = RpiConfigParser(f"{BOOT_PARTITION_MOUNTPOINT}/config.txt")
-
-    section = conf.find("all")
-    if section is None:
-        section = Section("all")
-
-    if section.find(f"{overlay}"):
-        logger.info(f"Overlay '{overlay}' already exists in config.txt...")
-        return
-
-    if section.find(f"#{overlay}"):
-        logger.info(f"Overlay '{overlay}' was commented in config.txt, uncommenting...")
-        section.uncomment(f"{overlay}")
-    else:
-        logger.info(f"Adding overlay '{overlay}'...")
-        section.add(f"{overlay}")
-
-    conf.update(section)
+    conf.add_or_uncomment(section_name="all", setting=overlay)
     conf.write()
 
 
-def remove_overlay(overlay: str):
+def comment_overlay_in_config_txt(overlay: str):
     conf = RpiConfigParser(f"{BOOT_PARTITION_MOUNTPOINT}/config.txt")
-
-    section = conf.find("all")
-    if section is None:
-        logger.info(f"Overlay '{overlay}' doesn't exist in config.txt...")
-        return
-
-    if section.find(overlay):
-        logger.info(f"Overlay '{overlay}' exists in config.txt, commenting it...")
-        section.comment(overlay)
-
-    conf.update(section)
+    conf.comment_setting(section_name="all", setting=overlay)
     conf.write()
 
 
 def enable_kms_video_overlay():
     try:
-        remove_overlay("dtoverlay=vc4-fkms-v3d")
-        add_overlay("dtoverlay=vc4-kms-v3d")
+        comment_overlay_in_config_txt("dtoverlay=vc4-fkms-v3d")
+        add_overlay_to_config("dtoverlay=vc4-kms-v3d")
     except Exception as e:
         logger.error(f"Failed to enable KMS video overlay: {e}")
 
 
 def enable_fkms_video_overlay():
     try:
-        remove_overlay("dtoverlay=vc4-kms-v3d")
-        add_overlay("dtoverlay=vc4-fkms-v3d")
+        comment_overlay_in_config_txt("dtoverlay=vc4-kms-v3d")
+        add_overlay_to_config("dtoverlay=vc4-fkms-v3d")
     except Exception as e:
         logger.error(f"Failed to enable FKMS video overlay: {e}")
 
@@ -754,17 +730,26 @@ def current_video_overlay() -> str:
     try:
         # Look in config.txt
         conf = RpiConfigParser(f"{BOOT_PARTITION_MOUNTPOINT}/config.txt")
-        sections = conf.find_all("all")
-        for section in sections:
-            if section.find("dtoverlay=vc4-kms-v3d"):
-                logger.info("Found dtoverlay=vc4-kms-v3d in config.txt")
-                response = "kms"
-                break
-            if section.find("dtoverlay=vc4-fkms-v3d"):
-                logger.info("Found dtoverlay=vc4-fkms-v3d in config.txt")
-                response = "fkms"
-                break
+        if (
+            len(
+                conf.find_all_sections_with_setting(
+                    section_name="all", setting="dtoverlay=vc4-kms-v3d"
+                )
+            )
+            > 0
+        ):
+            response = "kms"
+        if (
+            len(
+                conf.find_all_sections_with_setting(
+                    section_name="all", setting="dtoverlay=vc4-fkms-v3d"
+                )
+            )
+            > 0
+        ):
+            response = "fkms"
 
+        # Look in device tree file
         if response == "":
             status_file_output = read_status_file()
             if status_file_output:

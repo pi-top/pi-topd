@@ -8,4 +8,4 @@ max_framebuffers=4
 max_framebuffers=3
 [all]
 
-max_framebuffers=99
+max_framebuffers=0

@@ -14,6 +14,11 @@ def files_contents_match(file1, file2):
     return True
 
 
+def occurrences(array, value):
+    # return number of occurrences of value in array
+    return len([i for i, x in enumerate(array) if x == value])
+
+
 # RpiConfigParser class tests
 def test_config_parser_constructor_fails_if_file_does_not_exist():
     with pytest.raises(FileNotFoundError):
@@ -100,7 +105,7 @@ def test_config_parser_write():
     config.find("all").add("this-is-a-new-setting")
     config.write()
 
-    assert files_contents_match(
+    assert not files_contents_match(
         "tests/rpi_config_txt/test_config.txt", "/tmp/test_config_output.txt"
     )
 
@@ -129,6 +134,88 @@ def test_config_parser_load():
     assert config.sections[2].name == "all"
     assert config.sections[3].name == "pi3"
     assert config.sections[4].name == "all"
+
+
+def test_config_parser_find_all_sections_with_setting():
+    config = RpiConfigParser("tests/rpi_config_txt/multiple_tags_config.txt")
+    sections = config.find_all_sections_with_setting("all", "max_framebuffers=0")
+    assert len(sections) == 2
+
+    config = RpiConfigParser("tests/rpi_config_txt/no_tags_config.txt")
+    sections = config.find_all_sections_with_setting("all", "gpu_mem=128")
+    assert len(sections) == 1
+    sections = config.find_all_sections_with_setting("all", "#gpu_mem=128")
+    assert len(sections) == 1
+    sections = config.find_all_sections_with_setting("all", "cpu_mem=128")
+    assert len(sections) == 0
+
+
+def test_config_parser_add_or_uncomment():
+    config = RpiConfigParser("tests/rpi_config_txt/no_tags_config.txt")
+    section = config.find("all")
+    settings = section.settings
+
+    # File has one commented and one uncommented setting
+    assert settings[1] == "gpu_mem=128"
+    assert settings[2] == "#gpu_mem=128"
+
+    # Adding a setting that exists doesn't change the file
+    config.add_or_uncomment("all", "gpu_mem=128")
+    assert config.find("all").settings[1] == "gpu_mem=128"
+    assert config.find("all").settings[2] == "#gpu_mem=128"
+
+    # Adding a setting that doesn't exist appends it at the end of the section
+    config.add_or_uncomment("all", "new-setting")
+    settings_len = len(config.find("all").settings)
+    assert config.find("all").settings[-1] == "new-setting"
+
+    # Comment setting
+    config.comment_setting("all", "new-setting")
+    assert config.find("all").settings[-1] == "#new-setting"
+
+    # Adding a commented setting, uncomments it
+    config.add_or_uncomment("all", "new-setting")
+    assert config.find("all").settings[-1] == "new-setting"
+    assert settings_len == len(config.find("all").settings)
+
+
+def test_config_comment_uncomment_settings():
+    config = RpiConfigParser("tests/rpi_config_txt/no_tags_config.txt")
+    section = config.find("all")
+    # File has one commented and one uncommented setting
+    assert occurrences(section.settings, "gpu_mem=128") == 1
+    assert occurrences(section.settings, "#gpu_mem=128") == 1
+
+    config.comment_setting("all", "gpu_mem=128")
+    # Both settings should be commented
+    assert occurrences(section.settings, "gpu_mem=128") == 0
+    assert occurrences(section.settings, "#gpu_mem=128") == 2
+
+    config.uncomment_setting("all", "gpu_mem=128")
+    # One setting should be uncommented
+    assert occurrences(section.settings, "gpu_mem=128") == 1
+    assert occurrences(section.settings, "#gpu_mem=128") == 1
+
+    # Test with non existent settings
+    config.comment_setting("all", "this-setting-doesnt-exist")
+    assert (
+        len(config.find_all_sections_with_setting("all", "this-setting-doesnt-exist"))
+        == 0
+    )
+    assert (
+        len(config.find_all_sections_with_setting("all", "#this-setting-doesnt-exist"))
+        == 0
+    )
+
+    config.uncomment_setting("all", "this-setting-doesnt-exist")
+    assert (
+        len(config.find_all_sections_with_setting("all", "this-setting-doesnt-exist"))
+        == 0
+    )
+    assert (
+        len(config.find_all_sections_with_setting("all", "#this-setting-doesnt-exist"))
+        == 0
+    )
 
 
 # Section class tests

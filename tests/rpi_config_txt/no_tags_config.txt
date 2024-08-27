@@ -1,5 +1,6 @@
 # GPU memory allocation - default 128MB
 gpu_mem=128
+#gpu_mem=128
 
 # Audio - default on
 dtparam=audio=on

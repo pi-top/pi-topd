@@ -15,6 +15,7 @@ from ..sys_config import (
     enable_kms_video_overlay,
     is_using_fkms_video_overlay,
     is_using_kms_video_overlay,
+    linux_distro,
 )
 
 logger = logging.getLogger(__name__)
@@ -153,7 +154,7 @@ def _initialise_v1_hub_v1_speaker(mode):
             I2S.set_state(False)
             reboot_required = True
 
-    if is_using_kms_video_overlay():
+    if linux_distro() != "bullseye" and is_using_kms_video_overlay():
         logger.info("Video overlay is KMS - switching to FKMS")
         enable_fkms_video_overlay()
         reboot_required = True
@@ -185,7 +186,7 @@ def _initialise_v1_hub_v2_speaker():
             I2S.set_state(True)
             reboot_required = True
 
-    if is_using_fkms_video_overlay():
+    if linux_distro() != "bullseye" and is_using_fkms_video_overlay():
         logger.info("Video overlay is FKMS - switching to KMS")
         enable_kms_video_overlay()
         reboot_required = True
@@ -215,7 +216,7 @@ def _initialise_v2_hub_v2_speaker():
             I2S.set_state(False)
             reboot_required = True
 
-    if is_using_fkms_video_overlay():
+    if linux_distro() != "bullseye" and is_using_fkms_video_overlay():
         logger.info("Video overlay is FKMS - switching to KMS")
         enable_kms_video_overlay()
         reboot_required = True
