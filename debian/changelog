@@ -1,4 +1,4 @@
-pi-topd (5.6.0-10) bullseye; urgency=medium
+pi-topd (5.7.0-1) bullseye; urgency=medium
 
   * Set video overlay when speakers are connected (#205)
 
