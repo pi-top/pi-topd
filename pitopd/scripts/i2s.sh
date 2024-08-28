@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -ex
 
 # i2s.sh [enable|disable]
 #   status/enable/disable

@@ -4,7 +4,7 @@ from enum import Enum, auto
 from os import devnull, path
 from re import compile
 from shutil import copy
-from subprocess import PIPE, CalledProcessError, Popen, call, check_output
+from subprocess import PIPE, CalledProcessError, Popen, call, check_output, run
 from sys import version_info
 from typing import Dict, List, Optional
 
@@ -13,6 +13,8 @@ from pitop.common.current_session_info import get_current_user
 from pitop.common.file_ops import create_temp_file, sed_inplace
 from pitop.common.formatting import get_uncommented_line, is_line_commented
 from pitop.common.pt_os import get_boot_partition_path
+
+from pitopd.config_parser import RpiConfigParser
 
 from .utils import get_project_root
 
@@ -86,6 +88,7 @@ class _SystemCalls:
 
     @staticmethod
     def _run_cmd(cmd_arr, print_std_out=False, print_std_err=False):
+        logger.info(f"Executing command: '{cmd_arr}'")
         with open(devnull, "w") as FNULL:
             if print_std_out is True and print_std_err is True:
                 call(cmd_arr)
@@ -313,7 +316,9 @@ class _SystemCalls:
 
     @staticmethod
     def legacy_set_audio_output_interface_no(interface_no, debug_interface_name):
-        logger.debug("Setting audio output to " + debug_interface_name + "...")
+        logger.info(
+            f"legacy_set_audio_output_interface_no: Setting audio output to {debug_interface_name}..."
+        )
 
         try:
             amixer_set_interface_cmd_arr = list(_SystemCalls.OLD_AMIXER_SET_CMD_ARR)
@@ -508,7 +513,7 @@ class HeadphoneJack:
 class HDMI:
     @staticmethod
     def set_hdmi_drive_in_boot_config(mode):
-        _BootConfig.set_value("hdmi_drive", mode)
+        return _BootConfig.set_value("hdmi_drive", mode)
 
     @staticmethod
     def set_as_audio_output(user=None):
@@ -675,3 +680,90 @@ class UART:
             UART.configure_in_boot_config(enable_uart=1)
         else:
             UART.configure_in_boot_config(enable_uart=0)
+
+
+def add_overlay_to_config(overlay: str):
+    conf = RpiConfigParser(f"{BOOT_PARTITION_MOUNTPOINT}/config.txt")
+    conf.add_or_uncomment(section_name="all", setting=overlay)
+    conf.write()
+
+
+def comment_overlay_in_config_txt(overlay: str):
+    conf = RpiConfigParser(f"{BOOT_PARTITION_MOUNTPOINT}/config.txt")
+    conf.comment_setting(section_name="all", setting=overlay)
+    conf.write()
+
+
+def enable_kms_video_overlay():
+    try:
+        comment_overlay_in_config_txt("dtoverlay=vc4-fkms-v3d")
+        add_overlay_to_config("dtoverlay=vc4-kms-v3d")
+    except Exception as e:
+        logger.error(f"Failed to enable KMS video overlay: {e}")
+
+
+def enable_fkms_video_overlay():
+    try:
+        comment_overlay_in_config_txt("dtoverlay=vc4-kms-v3d")
+        add_overlay_to_config("dtoverlay=vc4-fkms-v3d")
+    except Exception as e:
+        logger.error(f"Failed to enable FKMS video overlay: {e}")
+
+
+def current_video_overlay() -> str:
+    def read_status_file() -> str:
+        try:
+            cmd = "grep -q okay /proc/device-tree/soc/hvs@7e400000/status && echo kms || echo fkms"
+            process = run(
+                cmd,
+                shell=True,
+                check=True,
+                stdout=PIPE,
+                stderr=PIPE,
+            )
+            return process.stdout.decode().strip()
+        except Exception as e:
+            logger.info(f"Failed to read video overlay status file: {e}")
+            return ""
+
+    response = ""
+    try:
+        # Look in config.txt
+        conf = RpiConfigParser(f"{BOOT_PARTITION_MOUNTPOINT}/config.txt")
+        if (
+            len(
+                conf.find_all_sections_with_setting(
+                    section_name="all", setting="dtoverlay=vc4-kms-v3d"
+                )
+            )
+            > 0
+        ):
+            response = "kms"
+        if (
+            len(
+                conf.find_all_sections_with_setting(
+                    section_name="all", setting="dtoverlay=vc4-fkms-v3d"
+                )
+            )
+            > 0
+        ):
+            response = "fkms"
+
+        # Look in device tree file
+        if response == "":
+            status_file_output = read_status_file()
+            if status_file_output:
+                response = status_file_output
+    except Exception as e:
+        logger.error(f"Failed to determine video overlay: {e}")
+
+    logger.info(f"Current video overlay: {response}")
+    return response
+
+
+def is_using_kms_video_overlay() -> bool:
+    return current_video_overlay() == "kms"
+
+
+def is_using_fkms_video_overlay() -> bool:
+    return current_video_overlay() == "fkms"

@@ -1,0 +1,11 @@
+max_framebuffers=0
+
+[pi4]
+max_framebuffers=4
+[all]
+
+[pi3]
+max_framebuffers=3
+[all]
+
+max_framebuffers=0

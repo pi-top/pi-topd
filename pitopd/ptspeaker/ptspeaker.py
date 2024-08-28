@@ -7,7 +7,16 @@ from pitop.common.common_ids import DeviceID
 from pitop.common.current_session_info import get_user_using_first_display
 from smbus2 import SMBus
 
-from ..sys_config import HDMI, I2C, I2S
+from ..sys_config import (
+    HDMI,
+    I2C,
+    I2S,
+    enable_fkms_video_overlay,
+    enable_kms_video_overlay,
+    is_using_fkms_video_overlay,
+    is_using_kms_video_overlay,
+    linux_distro,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -131,7 +140,8 @@ def _enable_v1_speaker(mode):
 
 
 def _initialise_v1_hub_v1_speaker(mode):
-    # HDMI w/ config
+    # Use HDMI as audio output, and disable I2S if enabled
+    # Use FKMS video overlay
 
     enabled = False
     reboot_required = False
@@ -140,44 +150,53 @@ def _initialise_v1_hub_v1_speaker(mode):
     if i2s_mode_current is True:
         # If in I2S mode
         if i2s_mode_next is True:
-            logger.debug("I2S appears to be enabled - disabling...")
+            logger.info("I2S appears to be enabled - disabling...")
             I2S.set_state(False)
             reboot_required = True
-    else:
-        logger.debug("Initialising pi-topSPEAKER...")
+
+    if linux_distro() != "bullseye" and is_using_kms_video_overlay():
+        logger.info("Video overlay is KMS - switching to FKMS")
+        enable_fkms_video_overlay()
+        reboot_required = True
+
+    if not reboot_required:
+        logger.info("Initialising pi-topSPEAKER...")
         _set_hdmi_as_audio_output()
         _enable_i2c_if_disabled()
         enabled = _enable_v1_speaker(mode)
+        reboot_required = HDMI.set_hdmi_drive_in_boot_config(2)
 
-    reboot_required = HDMI.set_hdmi_drive_in_boot_config(2) or reboot_required
     enabled = enabled and not reboot_required
-
     v2_hub_hdmi_to_i2s_required = False
-
     return enabled, reboot_required, v2_hub_hdmi_to_i2s_required
 
 
 def _initialise_v1_hub_v2_speaker():
-    # Enable I2S
+    # Enable I2S if disabled
+    # Use KMS video overlay
 
     enabled = False
     reboot_required = False
 
     i2s_mode_current, i2s_mode_next = I2S.get_states()
-
     if i2s_mode_current is False:
         # If not in I2S mode
         if i2s_mode_next is False:
-            logger.debug("I2S appears to be disabled - enabling...")
+            logger.info("I2S appears to be disabled - enabling...")
             I2S.set_state(True)
             reboot_required = True
-    else:
-        logger.debug("Initialising pi-topSPEAKER...")
+
+    if linux_distro() != "bullseye" and is_using_fkms_video_overlay():
+        logger.info("Video overlay is FKMS - switching to KMS")
+        enable_kms_video_overlay()
+        reboot_required = True
+
+    if not reboot_required:
+        logger.info("Initialising pi-topSPEAKER...")
         enabled = True
+        reboot_required = HDMI.set_hdmi_drive_in_boot_config(2)
 
-    reboot_required = HDMI.set_hdmi_drive_in_boot_config(2) or reboot_required
     enabled = enabled and not reboot_required
-
     v2_hub_hdmi_to_i2s_required = False
 
     return enabled, reboot_required, v2_hub_hdmi_to_i2s_required
@@ -193,18 +212,23 @@ def _initialise_v2_hub_v2_speaker():
     if i2s_mode_current is True:
         # If in I2S mode
         if i2s_mode_next is True:
-            logger.debug("I2S appears to be enabled - disabling...")
+            logger.info("I2S appears to be enabled - disabling...")
             I2S.set_state(False)
             reboot_required = True
-    else:
-        logger.debug("Initialising pi-topSPEAKER v2...")
+
+    if linux_distro() != "bullseye" and is_using_fkms_video_overlay():
+        logger.info("Video overlay is FKMS - switching to KMS")
+        enable_kms_video_overlay()
+        reboot_required = True
+
+    if not reboot_required:
+        logger.info("Initialising pi-topSPEAKER v2...")
         _set_hdmi_as_audio_output()
         _enable_i2c_if_disabled()
         enabled = True
+        reboot_required = HDMI.set_hdmi_drive_in_boot_config(2)
 
-    reboot_required = HDMI.set_hdmi_drive_in_boot_config(2) or reboot_required
     enabled = enabled and not reboot_required
-
     v2_hub_hdmi_to_i2s_required = True
 
     return enabled, reboot_required, v2_hub_hdmi_to_i2s_required
@@ -240,6 +264,7 @@ def enable_device():
             ) = _initialise_v2_hub_v2_speaker()
         else:
             logger.error("Error - unrecognised device: " + _speaker_type_name)
+
     elif hub_is_v1 or (_host_device_id == DeviceID.unknown):
         if "pi-topSPEAKER-v1-" in _speaker_type_name:
             mode_long = _speaker_type_name.replace("pi-topSPEAKER-v1-", "")
@@ -260,10 +285,7 @@ def enable_device():
 
     else:
         logger.error(
-            "Error - unrecognised device ID '"
-            + str(_host_device_id)
-            + "' - unsure how to initialise "
-            + _speaker_type_name
+            f"Error - unrecognised device ID '{_host_device_id}' - unsure how to initialise {_speaker_type_name}"
         )
 
     return enabled, reboot_required, v2_hub_hdmi_to_i2s_required

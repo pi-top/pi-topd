@@ -349,12 +349,14 @@ class PeripheralManager:
                 self.attempt_enable_peripheral_by_name(current_peripheral.name)
 
     def configure_hifiberry(self):
+        logger.info("Configuring HiFiBerry audio output")
         if I2S.get_current_state() is True:
             if state.get("sound", "i2s_configured", fallback="false") == "false":
                 call(("/usr/sbin/alsactl", "-f", self._i2s_config_file_path, "restore"))
                 state.set("sound", "i2s_configured", "true")
                 System.reboot_system()
             else:
+                logger.info("Setting HiFiBerry as audio output")
                 Hifiberry.set_as_audio_output(user=get_user_using_first_display())
 
     def get_peripheral_enabled(self, peripheral):
