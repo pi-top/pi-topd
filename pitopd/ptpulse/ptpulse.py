@@ -196,11 +196,11 @@ def _initialise_v2_hub_pulse():
     if HDMI.set_as_audio_output() is False:
         logger.warning("Failed to configure HDMI output")
 
-    HDMI_reboot = HDMI.set_hdmi_drive_in_boot_config(2)
+    HDMI.set_hdmi_drive_in_boot_config(2)
     UART_reboot = _check_and_set_serial_config()
     I2S_reboot = _check_and_set_I2S_config(False)
 
-    return HDMI_reboot or UART_reboot or I2S_reboot
+    return UART_reboot or I2S_reboot
 
 
 def _initialise_v1_hub_pulse():
