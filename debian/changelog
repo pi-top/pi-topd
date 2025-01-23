@@ -1,3 +1,12 @@
+pi-topd (5.7.0-2) bullseye; urgency=medium
+
+  * Updated master workflow files
+  * Updated master workflow files
+  * Updated master workflow files
+  * Updated master workflow files
+
+ -- pi-top <deb-maintainers@pi-top.com>  Thu, 23 Jan 2025 21:21:37 +0000
+
 pi-topd (5.7.0-1) bullseye; urgency=medium
 
   * Set video overlay when speakers are connected (#205)
