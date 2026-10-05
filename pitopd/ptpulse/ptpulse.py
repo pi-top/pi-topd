@@ -223,7 +223,7 @@ def initialise(host_device_id, device_name="pi-topPULSE"):
 
 
 def reset_device_state(enable):
-    """reset_device_state: Deprecated"""
+    """reset_device_state: Deprecated."""
     logger.info(
         "'reset_device_state' function has been deprecated, and can likely be removed. "
         "If you experience problems, please see documentation for instructions."
@@ -276,14 +276,12 @@ def disable_device():
 def set_microphone_sample_rate_to_16khz():
     """Set the appropriate I2C bits to enable 16,000Hz recording on the
     microphone."""
-
     return _update_device_state_bit(_16khz_bit, 1)
 
 
 def set_microphone_sample_rate_to_22khz():
     """Set the appropriate I2C bits to enable 22,050Hz recording on the
     microphone."""
-
     return _update_device_state_bit(_16khz_bit, 0)
 
 
@@ -308,12 +306,10 @@ def eeprom_enabled():
 def microphone_sample_rate_is_16khz():
     """Get whether the microphone is set to record at a sample rate of
     16,000Hz."""
-
     return (_read_device_state() & _get_addr_for_bit(_16khz_bit)) != 0
 
 
 def microphone_sample_rate_is_22khz():
     """Get whether the microphone is set to record at a sample rate of
     22,050Hz."""
-
     return (_read_device_state() & _get_addr_for_bit(_16khz_bit)) == 0
