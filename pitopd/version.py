@@ -1,7 +1,7 @@
-from pkg_resources import get_distribution
+from importlib.metadata import version
 
 __version__ = "N/A"
 try:
-    __version__ = get_distribution("pitopd").version
+    __version__ = version("pitopd")
 except Exception:
     pass
