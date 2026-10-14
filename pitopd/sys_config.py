@@ -682,6 +682,14 @@ class UART:
             UART.configure_in_boot_config(enable_uart=0)
 
 
+def overlay_in_config(overlay: str) -> bool:
+    conf = RpiConfigParser(f"{BOOT_PARTITION_MOUNTPOINT}/config.txt")
+    return (
+        len(conf.find_all_sections_with_setting(section_name="all", setting=overlay))
+        > 0
+    )
+
+
 def add_overlay_to_config(overlay: str):
     conf = RpiConfigParser(f"{BOOT_PARTITION_MOUNTPOINT}/config.txt")
     conf.add_or_uncomment(section_name="all", setting=overlay)
