@@ -152,6 +152,17 @@ def test_disable_spi1_removes_overlay_from_config(system):
     assert system.config_writes == [("comment", SPI1_OVERLAY)]
 
 
+def test_disable_spi1_logs_error_if_it_cannot_be_deactivated_at_runtime(system, caplog):
+    system.config.add(SPI1_OVERLAY)
+    system.spi1_device = True
+
+    with caplog.at_level(logging.ERROR):
+        system.interface_manager.spi1 = False
+
+    assert system.config_writes == [("comment", SPI1_OVERLAY)]
+    assert "disabled after the next reboot" in caplog.text
+
+
 def test_disable_spi1_does_not_touch_config_if_overlay_absent(system):
     system.interface_manager.spi1 = False
 
