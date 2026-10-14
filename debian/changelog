@@ -1,3 +1,13 @@
+pi-topd (5.7.0-2) bullseye; urgency=medium
+
+  * Updated master workflow files
+  * Updated master workflow files
+  * Updated master workflow files
+  * Updated master workflow files
+  * Load SPI1 overlay at boot so the OLED works when runtime load stalls (#209)
+
+ -- pi-top <deb-maintainers@pi-top.com>  Wed, 14 Oct 2026 19:29:15 +0000
+
 pi-topd (5.7.0-1) bullseye; urgency=medium
 
   * Set video overlay when speakers are connected (#205)
