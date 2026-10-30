@@ -1,3 +1,15 @@
+pi-topd (5.7.0-3) bullseye; urgency=medium
+
+  * Updated master workflow files
+  * Updated master workflow files
+  * Updated master workflow files
+  * Updated master workflow files
+  * Load SPI1 overlay at boot so the OLED works when runtime load stalls (#209)
+  * New changelog entry: v5.7.0-2 (#207)
+  * Regenerate Debian workflows: drop bullseye (#210)
+
+ -- pi-top <deb-maintainers@pi-top.com>  Fri, 30 Oct 2026 16:23:11 +0000
+
 pi-topd (5.7.0-2) bullseye; urgency=medium
 
   * Updated master workflow files
