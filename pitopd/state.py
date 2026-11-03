@@ -23,8 +23,7 @@ def get(section: str, key: str, fallback=None):
         except Exception:
             if fallback is None:
                 raise
-        finally:
-            return val
+        return val
 
 
 def set(section: str, key: str, value):
