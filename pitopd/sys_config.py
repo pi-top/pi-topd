@@ -22,13 +22,6 @@ logger = logging.getLogger(__name__)
 BOOT_PARTITION_MOUNTPOINT = get_boot_partition_path()
 
 
-def linux_distro():
-    cmd = "grep VERSION_CODENAME /etc/os-release | cut -d'=' -f2"
-    process = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE)
-    stdout, _ = process.communicate()
-    return stdout.decode().strip()
-
-
 class AudioDevice(Enum):
     Headphones = auto()
     HDMI = auto()
@@ -203,9 +196,6 @@ class _SystemCalls:
 
         logger.info("Interface is HDMI - checking for multiple HDMI outputs...")
         if _SystemCalls._get_alsa_card_number_from_name("bcm2835 HDMI 2") is None:
-            if linux_distro() == "bullseye":
-                logger.info("Only one HDMI port available - using 'HDMI 1'")
-                return "bcm2835 HDMI 1"
             logger.info("Only one HDMI port available - 'vc4-hdmi'")
             return "vc4-hdmi"
 
