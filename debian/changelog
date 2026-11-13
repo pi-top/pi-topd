@@ -1,17 +1,11 @@
-pi-topd (5.7.1-1) bookworm; urgency=medium
+pi-topd (5.8.0-1) bookworm; urgency=medium
 
-  * Updated master workflow files
-  * Updated master workflow files
-  * Updated master workflow files
-  * Updated master workflow files
-  * Load SPI1 overlay at boot so the OLED works when runtime load stalls (#209)
-  * New changelog entry: v5.7.0-2 (#207)
-  * Regenerate Debian workflows: drop bullseye (#210)
-  * Remove debian/bullseye-overrides (#212)
-  * Create releases with the workflow's own token
-  * Move CodeQL to codeql-action v4 and drop the schedule
-  * Allow running the changelog bump by hand
-  * Remove bullseye checks from pi-topd (#215)
+  * Remove the bullseye checks from speaker and HDMI audio setup; behaviour
+    on bookworm is unchanged (#215)
+  * Build for bookworm only: regenerate the Debian workflows and drop the
+    bullseye dependency overrides (#210, #212)
+  * CI: create releases with the workflow's own token, move CodeQL to v4,
+    and allow running the changelog bump by hand
 
  -- pi-top <deb-maintainers@pi-top.com>  Fri, 13 Nov 2026 18:40:33 +0000
 
