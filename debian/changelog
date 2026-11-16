@@ -1,3 +1,9 @@
+pi-topd (5.8.1-1) bookworm; urgency=medium
+
+  * Clear the pi-top [4] shutdown mode before setting it (#217)
+
+ -- pi-top <deb-maintainers@pi-top.com>  Mon, 16 Nov 2026 14:19:23 +0000
+
 pi-topd (5.8.0-1) bookworm; urgency=medium
 
   * Remove the bullseye checks from speaker and HDMI audio setup; behaviour
