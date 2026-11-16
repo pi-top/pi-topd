@@ -1,3 +1,9 @@
+pi-topd (5.8.2-1) bookworm; urgency=medium
+
+  * Select HDMI audio by KMS card name on a Pi 4 (#219)
+
+ -- pi-top <deb-maintainers@pi-top.com>  Mon, 16 Nov 2026 17:32:03 +0000
+
 pi-topd (5.8.1-2) bookworm; urgency=medium
 
   * Name GitHub releases after their tag and add changelog notes (#220)
