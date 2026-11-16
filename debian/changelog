@@ -1,4 +1,4 @@
-pi-topd (5.8.2-1) bookworm; urgency=medium
+pi-topd (5.8.1-2) bookworm; urgency=medium
 
   * Name GitHub releases after their tag and add changelog notes (#220)
 
