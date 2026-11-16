@@ -195,7 +195,9 @@ class _SystemCalls:
             return None
 
         logger.info("Interface is HDMI - checking for multiple HDMI outputs...")
-        if _SystemCalls._get_alsa_card_number_from_name("bcm2835 HDMI 2") is None:
+        card_names = [card.get("name", "") for card in _SystemCalls._get_card_names()]
+        kms_two_ports = "vc4-hdmi-0" in card_names or "vc4-hdmi-1" in card_names
+        if "bcm2835 HDMI 2" not in card_names and not kms_two_ports:
             logger.info("Only one HDMI port available - 'vc4-hdmi'")
             return "vc4-hdmi"
 
@@ -222,7 +224,16 @@ class _SystemCalls:
 
         # HDMI0 port = HDMI 1 output
         # HDMI1 port = HDMI 2 output
-        if not force_hdmi0_output and force_hdmi1_output:
+        use_hdmi1 = not force_hdmi0_output and force_hdmi1_output
+
+        if kms_two_ports:
+            # KMS names the cards by port; only ports with a display have a sink
+            preferred, other = ("vc4-hdmi-1", "vc4-hdmi-0")
+            if not use_hdmi1:
+                preferred, other = other, preferred
+            return preferred if preferred in card_names else other
+
+        if use_hdmi1:
             return "bcm2835 HDMI 2"
         else:
             return "bcm2835 HDMI 1"
