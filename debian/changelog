@@ -1,3 +1,9 @@
+pi-topd (5.8.1-2) bookworm; urgency=medium
+
+  * Name GitHub releases after their tag and add changelog notes (#220)
+
+ -- pi-top <deb-maintainers@pi-top.com>  Mon, 16 Nov 2026 17:05:11 +0000
+
 pi-topd (5.8.1-1) bookworm; urgency=medium
 
   * Clear the pi-top [4] shutdown mode before setting it (#217)
