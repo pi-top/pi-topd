@@ -9,6 +9,9 @@ from spidev import SpiDev
 
 from . import state
 
+# pi-top [4] hub: 3-bit shutdown mode field in PWR__SHUTDOWN_CTRL
+PT4_HUB_SHUTDOWN_MODE_MASK = 0x38
+
 
 def _do_poweroff_legacy():
     MASK_SHUTDOWN = 0x01  # 00000001
@@ -117,6 +120,8 @@ def _do_poweroff(device_id):
 
         # Get the current power control register
         shutdown_control = hub.read_unsigned_byte(PWR__SHUTDOWN_CTRL)
+        if device_id == DeviceID.pi_top_4:
+            shutdown_control &= ~PT4_HUB_SHUTDOWN_MODE_MASK
 
         if isfile("/tmp/.com.pi-top.pi-topd.pt-poweroff.reboot-on-shutdown"):
             # Set shutdown mode to 4
@@ -142,6 +147,7 @@ def _do_reboot():
 
     # Get the current power control register
     shutdown_control = hub.read_unsigned_byte(PWR__SHUTDOWN_CTRL)
+    shutdown_control &= ~PT4_HUB_SHUTDOWN_MODE_MASK
 
     # Set the shutdown mode to 5
     shutdown_control = shutdown_control | PWR__SHUTDOWN_CTRL__MODE5
